@@ -1,13 +1,24 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Inter, Orbitron } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import Header from "@/components/layout/Header";
+import MobileHeader from "@/components/layout/MobileHeader";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata = {
-  title: "MS SaaS Starter",
+  title: "ForeverCars | Achat & Revente de Véhicules",
   description:
-    "Starter Next.js 15 + Tailwind + shadcn + Framer par Mathieu Scicluna",
+    "ForeverCars - Agence d'achat et revente de véhicules dans le Loiret (45). Tu t'occupes de rien, je m'occupe de tout.",
 };
 
 export default function RootLayout({
@@ -18,10 +29,12 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className={`${inter.className} min-h-screen flex flex-col bg-white text-gray-900`}
+        className={`${inter.variable} ${orbitron.variable} font-inter min-h-screen flex flex-col bg-brand-black text-brand-white`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main className="flex-grow">{children}</main>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <Header />
+          <MobileHeader />
+          <main className="flex-grow pt-16 lg:pt-20">{children}</main>
         </ThemeProvider>
       </body>
     </html>
