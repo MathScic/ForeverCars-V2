@@ -17,14 +17,18 @@ interface FiltersProps {
 
 const brands = [
   "Tous",
-  "Peugeot",
-  "Volkswagen",
-  "BMW",
-  "Renault",
   "Audi",
-  "Mercedes",
-  "Toyota",
+  "BMW",
+  "Citroën",
   "Ford",
+  "Hyundai",
+  "Kia",
+  "Mercedes",
+  "Peugeot",
+  "Renault",
+  "Skoda",
+  "Toyota",
+  "Volkswagen",
 ];
 const fuels = ["Tous", "Essence", "Diesel", "Hybride", "Électrique"];
 const transmissions = ["Tous", "Manuelle", "Automatique"];
