@@ -25,7 +25,7 @@ export default function Hero() {
         </p>
         <Link
           href="/stock"
-          className="mt-8 font-orbitron text-sm font-semibold px-8 py-3 bg-brand-orange text-brand-black rounded hover:bg-brand-orange/90 transition-all duration-300"
+          className="mt-8 font-orbitron text-sm font-semibold px-8 py-3 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
         >
           Voir notre stock
         </Link>

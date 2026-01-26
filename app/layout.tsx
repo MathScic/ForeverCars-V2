@@ -3,6 +3,7 @@ import { Inter, Orbitron } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/layout/Header";
 import MobileHeader from "@/components/layout/MobileHeader";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,11 +22,7 @@ export const metadata = {
     "ForeverCars - Agence d'achat et revente de véhicules dans le Loiret (45). Tu t'occupes de rien, je m'occupe de tout.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
@@ -36,6 +33,7 @@ export default function RootLayout({
           <MobileHeader />
           <main className="flex-grow pt-16 lg:pt-20">{children}</main>
         </ThemeProvider>
+        <Footer />
       </body>
     </html>
   );

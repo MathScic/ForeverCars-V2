@@ -1,0 +1,214 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Vehicle } from "@/lib/types/vehicle";
+
+interface VehicleDetailPanelProps {
+  vehicle: Vehicle | null;
+  onClose: () => void;
+}
+
+export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPanelProps) {
+  const [currentImage, setCurrentImage] = useState(0);
+  const router = useRouter();
+
+  const handleInterest = () => {
+    if (!vehicle) return;
+    const params = new URLSearchParams({
+      vehicule: `${vehicle.brand} ${vehicle.model}`,
+      sujet: "achat",
+    });
+    router.push(`/contact?${params.toString()}`);
+  };
+
+  // Utiliser toutes les images du véhicule (max 10), avec placeholders si < 3
+  const getImages = () => {
+    if (!vehicle) return [];
+    const realImages = vehicle.images.slice(0, 10); // Max 10 images
+    // Si moins de 3 images, ajouter des placeholders pour la démo
+    if (realImages.length < 3) {
+      const placeholders = Array(3 - realImages.length).fill(null);
+      return [...realImages, ...placeholders];
+    }
+    return realImages;
+  };
+
+  const images = getImages();
+
+  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+  return (
+    <AnimatePresence>
+      {vehicle && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+          />
+
+          {/* Panel */}
+          <motion.div
+            key="panel"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-brand-gray-dark border-l border-brand-gray-medium/20 z-50 overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-brand-gray-dark/95 backdrop-blur-sm border-b border-brand-gray-medium/20 p-4 flex items-center justify-between z-10">
+              <h2 className="font-orbitron text-lg font-bold text-brand-white">
+                {vehicle.brand} {vehicle.model}
+              </h2>
+              <button
+                onClick={onClose}
+                className="p-2 text-brand-gray-light hover:text-brand-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Carousel */}
+            <div className="relative h-64 bg-brand-gray-medium">
+              {/* Image actuelle */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentImage}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0"
+                >
+                  {images[currentImage] ? (
+                    <Image
+                      src={images[currentImage]}
+                      alt={`${vehicle.brand} ${vehicle.model}`}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full bg-brand-black">
+                      <span className="font-orbitron text-brand-gray-medium">
+                        Photo {currentImage + 1}
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Badge Nouveau */}
+              {vehicle.isNew && (
+                <span className="absolute top-4 left-4 bg-brand-orange text-brand-black text-xs font-semibold px-3 py-1 rounded-full z-10">
+                  Nouveau
+                </span>
+              )}
+
+              {/* Flèches navigation */}
+              <button
+                onClick={prevImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
+              >
+                <ChevronRight size={20} />
+              </button>
+
+              {/* Indicateurs (dots) */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImage(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentImage
+                        ? "bg-brand-orange w-4"
+                        : "bg-brand-white/50 hover:bg-brand-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Prix */}
+              <div className="text-center py-4 bg-brand-black rounded-lg">
+                <span className="font-orbitron text-3xl font-bold text-brand-orange">
+                  {vehicle.price.toLocaleString()} €
+                </span>
+              </div>
+
+              {/* Caractéristiques principales */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-brand-black p-4 rounded-lg text-center">
+                  <p className="font-inter text-xs text-brand-gray-light uppercase">Année</p>
+                  <p className="font-orbitron text-lg font-semibold text-brand-white">{vehicle.year}</p>
+                </div>
+                <div className="bg-brand-black p-4 rounded-lg text-center">
+                  <p className="font-inter text-xs text-brand-gray-light uppercase">Kilométrage</p>
+                  <p className="font-orbitron text-lg font-semibold text-brand-white">{vehicle.mileage.toLocaleString()} km</p>
+                </div>
+                <div className="bg-brand-black p-4 rounded-lg text-center">
+                  <p className="font-inter text-xs text-brand-gray-light uppercase">Carburant</p>
+                  <p className="font-orbitron text-lg font-semibold text-brand-white capitalize">{vehicle.fuel}</p>
+                </div>
+                <div className="bg-brand-black p-4 rounded-lg text-center">
+                  <p className="font-inter text-xs text-brand-gray-light uppercase">Boîte</p>
+                  <p className="font-orbitron text-lg font-semibold text-brand-white capitalize">{vehicle.transmission}</p>
+                </div>
+              </div>
+
+              {/* Puissance */}
+              <div className="bg-brand-black p-4 rounded-lg flex items-center justify-between">
+                <span className="font-inter text-sm text-brand-gray-light">Puissance</span>
+                <span className="font-orbitron text-lg font-semibold text-brand-white">{vehicle.power} ch</span>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h3 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Description</h3>
+                <p className="font-inter text-sm text-brand-gray-light leading-relaxed">{vehicle.description}</p>
+              </div>
+
+              {/* Équipements */}
+              <div>
+                <h3 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Équipements</h3>
+                <div className="flex flex-wrap gap-2">
+                  {vehicle.features.map((feature) => (
+                    <span key={feature} className="px-3 py-1 bg-brand-black text-brand-gray-light font-inter text-sm rounded-full">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={handleInterest}
+                className="w-full font-orbitron text-sm font-semibold px-8 py-4 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
+              >
+                Je suis intéressé
+              </button>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

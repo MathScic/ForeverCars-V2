@@ -111,7 +111,7 @@ export default function MobileHeader() {
                   <Link
                     href="/contact"
                     onClick={closeMenu}
-                    className="block w-full text-center font-orbitron text-sm font-semibold px-6 py-3 bg-brand-orange text-brand-black rounded hover:bg-brand-orange/90 transition-all duration-300"
+                    className="block w-full text-center font-orbitron text-sm font-semibold px-6 py-3 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
                   >
                     Nous Contacter
                   </Link>

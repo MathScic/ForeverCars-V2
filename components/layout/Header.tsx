@@ -42,7 +42,7 @@ export default function Header() {
           {/* CTA Button */}
           <Link
             href="/contact"
-            className="font-orbitron text-sm font-semibold px-6 py-2.5 bg-brand-orange text-brand-black rounded hover:bg-brand-orange/90 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/20"
+            className="font-orbitron text-sm font-semibold px-6 py-2.5 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/20"
           >
             Nous Contacter
           </Link>
