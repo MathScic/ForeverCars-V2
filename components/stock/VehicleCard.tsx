@@ -11,13 +11,13 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
     <div onClick={onClick} className="h-full cursor-pointer">
       <div className="h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border border-brand-gray-medium/20 hover:border-brand-orange/50 hover:scale-[1.02] transition-all duration-300">
         {/* Image */}
-        <div className="relative h-56 bg-brand-black">
+        <div className="relative h-56 bg-brand-gray-medium">
           {vehicle.images[0] ? (
             <Image
               src={vehicle.images[0]}
               alt={`${vehicle.brand} ${vehicle.model}`}
               fill
-              className="object-contain object-center"
+              className="object-cover object-top"
             />
           ) : (
             <div className="flex items-center justify-center h-full">
