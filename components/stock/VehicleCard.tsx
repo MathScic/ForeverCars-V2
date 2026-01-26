@@ -17,7 +17,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
               src={vehicle.images[0]}
               alt={`${vehicle.brand} ${vehicle.model}`}
               fill
-              className="object-cover"
+              className="object-contain object-center"
             />
           ) : (
             <div className="flex items-center justify-center h-full">
