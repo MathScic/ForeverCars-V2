@@ -11,12 +11,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ForeverCars Brand Colors
+        // ForeverCars Brand Colors (Logo officiel)
         brand: {
-          black: "#0A0A0A",
-          orange: "#FF8C42",
-          white: "#FFFFFF",
-          "gray-dark": "#1A1A1A",
+          black: "#131313",
+          orange: "#fe904d",
+          white: "#ffffff",
+          "gray-dark": "#1c1c1c",
           "gray-medium": "#404040",
           "gray-light": "#E5E5E5",
         },
