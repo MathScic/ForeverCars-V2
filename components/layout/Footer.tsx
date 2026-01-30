@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const navLinks = [
@@ -15,9 +16,12 @@ export default function Footer() {
           {/* Logo & Tagline */}
           <div>
             <Link href="/" className="inline-block">
-              <span className="font-orbitron text-2xl font-bold text-brand-white">
-                FOREVER<span className="text-brand-orange">CARS</span>
-              </span>
+              <Image
+                src="/images/Forever-CarsLogo.svg"
+                alt="Forever Cars Logo"
+                width={200}
+                height={50}
+              />
             </Link>
             <p className="font-inter text-sm text-brand-gray-light mt-4 italic">
               "Acheter ou vendre autrement"

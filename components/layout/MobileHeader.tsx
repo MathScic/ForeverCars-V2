@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -25,9 +26,12 @@ export default function MobileHeader() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center" onClick={closeMenu}>
-            <span className="font-orbitron text-xl font-bold text-brand-white">
-              FOREVER<span className="text-brand-orange">CARS</span>
-            </span>
+            <Image
+              src="/images/Forever-CarsLogo.svg"
+              alt="Forever Cars Logo"
+              width={80}
+              height={50}
+            />
           </Link>
 
           {/* Burger Button */}
@@ -65,9 +69,7 @@ export default function MobileHeader() {
             >
               {/* Menu Header */}
               <div className="flex items-center justify-between p-4 border-b border-brand-gray-medium/20">
-                <span className="font-orbitron text-lg font-bold text-brand-white">
-                  Menu
-                </span>
+                <span className="font-orbitron text-lg font-bold text-brand-white">Menu</span>
                 <button
                   onClick={closeMenu}
                   className="p-2 text-brand-white hover:text-brand-orange transition-colors duration-300"

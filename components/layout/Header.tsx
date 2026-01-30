@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 const navLinks = [
@@ -17,7 +18,12 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <span className="font-orbitron text-2xl font-bold text-brand-white">
-              FOREVER<span className="text-brand-orange">CARS</span>
+              <Image
+                src="/images/Forever-CarsLogo.svg"
+                alt="Forever Cars Logo"
+                width={80}
+                height={50}
+              />
             </span>
           </Link>
 
