@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Shield, Heart, Award, Users } from "lucide-react";
+import { Shield, Heart, Award, Users, Car, ClipboardCheck, FileText, Search, Truck } from "lucide-react";
 import FadeIn from "@/components/ui/FadeIn";
 
 const valeurs = [
@@ -25,6 +24,29 @@ const valeurs = [
     icon: Users,
     title: "Proximité",
     description: "Un accompagnement personnalisé du début à la fin.",
+  },
+];
+
+const services = [
+  {
+    icon: Car,
+    title: "Gestion de la vente",
+    description: "Confiez-nous la vente de votre véhicule. Photos professionnelles, annonces, négociation, nous gérons tout.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Expertise complète",
+    description: "Contrôle technique, historique, essai routier. Chaque véhicule est minutieusement vérifié.",
+  },
+  {
+    icon: FileText,
+    title: "Démarches administratives",
+    description: "Carte grise, assurance, contrôle technique. On s'occupe de toute la paperasse.",
+  },
+  {
+    icon: Search,
+    title: "Recherche sur mesure",
+    description: "Vous cherchez un véhicule précis ? On le trouve pour vous aux meilleures conditions.",
   },
 ];
 
@@ -71,7 +93,7 @@ export default function AProposPage() {
                   de créer une agence différente, où le client est au centre de toutes les attentions.
                 </p>
                 <p className="text-brand-orange font-medium">
-                  &quot;Tu s&apos;occupes de rien, je s&apos;occupe de tout&quot;
+                  &quot;Acheter ou vendre autrement&quot;
                 </p>
                 <p>
                   Cette devise résume notre philosophie : vous accompagner de A à Z,
@@ -83,8 +105,42 @@ export default function AProposPage() {
         </div>
       </section>
 
-      {/* Valeurs */}
+      {/* Nos Services */}
       <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <FadeIn>
+            <h2 className="font-orbitron text-2xl md:text-3xl font-bold text-brand-white text-center mb-4">
+              Nos Services
+            </h2>
+            <p className="font-inter text-brand-gray-light text-center mb-12 max-w-2xl mx-auto">
+              Un accompagnement complet pour tous vos projets automobiles
+            </p>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {services.map((service, index) => (
+              <FadeIn key={service.title} delay={index * 0.1}>
+                <div className="bg-brand-gray-dark p-6 rounded-lg border border-brand-gray-medium/20 flex gap-4 h-full">
+                  <div className="w-12 h-12 bg-brand-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <service.icon className="w-6 h-6 text-brand-orange" />
+                  </div>
+                  <div>
+                    <h3 className="font-orbitron text-lg font-semibold text-brand-white mb-2">
+                      {service.title}
+                    </h3>
+                    <p className="font-inter text-sm text-brand-gray-light">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Valeurs */}
+      <section className="py-16 px-4 bg-brand-gray-dark">
         <div className="max-w-6xl mx-auto">
           <FadeIn>
             <h2 className="font-orbitron text-2xl md:text-3xl font-bold text-brand-white text-center mb-12">
@@ -95,7 +151,7 @@ export default function AProposPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {valeurs.map((valeur, index) => (
               <FadeIn key={valeur.title} delay={index * 0.1}>
-                <div className="bg-brand-gray-dark p-6 rounded-lg border border-brand-gray-medium/20 text-center h-full">
+                <div className="bg-brand-black p-6 rounded-lg border border-brand-gray-medium/20 text-center h-full">
                   <div className="w-14 h-14 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <valeur.icon className="w-7 h-7 text-brand-orange" />
                   </div>
@@ -109,6 +165,26 @@ export default function AProposPage() {
               </FadeIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Livraison */}
+      <section className="py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <div className="bg-brand-gray-dark p-8 rounded-lg border border-brand-orange/20 text-center">
+              <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Truck className="w-8 h-8 text-brand-orange" />
+              </div>
+              <h2 className="font-orbitron text-xl md:text-2xl font-bold text-brand-white mb-4">
+                Livraison à domicile
+              </h2>
+              <p className="font-inter text-brand-gray-light max-w-xl mx-auto">
+                Possibilité de livrer votre véhicule directement devant chez vous.
+                Nous nous déplaçons dans tout le Loiret et ses alentours.
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -140,7 +216,7 @@ export default function AProposPage() {
               </div>
               <div className="bg-brand-black p-4 rounded-lg">
                 <p className="font-orbitron text-2xl font-bold text-brand-orange">45</p>
-                <p className="font-inter text-xs text-brand-gray-light mt-1">Zone Loiret</p>
+                <p className="font-inter text-xs text-brand-gray-light mt-1">Loiret</p>
               </div>
               <div className="bg-brand-black p-4 rounded-lg">
                 <p className="font-orbitron text-2xl font-bold text-brand-orange">5★</p>

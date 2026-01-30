@@ -21,7 +21,7 @@ export default function Hero() {
           Votre prochain véhicule vous attend.
         </h1>
         <p className="font-inter text-lg md:text-xl text-brand-gray-light mt-4 text-center">
-          Tu s'occupe de rien, je s'occupe de tout
+          Acheter ou vendre autrement
         </p>
         <Link
           href="/stock"

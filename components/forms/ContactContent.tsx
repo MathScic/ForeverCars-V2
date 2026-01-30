@@ -232,16 +232,17 @@ export default function ContactContent() {
                 </h3>
                 <ul className="space-y-4 font-inter text-sm text-brand-gray-light">
                   <li>
+                    <span className="text-brand-white block">Adresse</span>
+                    Lot N23, 1695 rue de la Grand Cour<br />
+                    45760 Marigny-Les-Usages
+                  </li>
+                  <li>
                     <span className="text-brand-white block">Téléphone</span>
-                    06 XX XX XX XX
+                    06.67.53.74.00
                   </li>
                   <li>
                     <span className="text-brand-white block">Email</span>
-                    contact@forevercars.fr
-                  </li>
-                  <li>
-                    <span className="text-brand-white block">Zone d&apos;intervention</span>
-                    Loiret (45) et alentours
+                    c.forevercars@gmail.com
                   </li>
                 </ul>
               </div>

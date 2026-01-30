@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface FilterState {
@@ -40,25 +40,13 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
     transmission: "Tous",
     maxPrice: 50000,
   });
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleChange = (key: keyof FilterState, value: string | number) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
-
-  // Fermer le dropdown si on clique ailleurs
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const pillClass = (isActive: boolean) =>
     `px-4 py-2 rounded-full font-inter text-sm cursor-pointer transition-all duration-300 ${
@@ -67,125 +55,137 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
         : "bg-brand-black border border-brand-gray-medium/40 text-brand-gray-light hover:border-brand-orange/50"
     }`;
 
+  const activeFiltersCount = [
+    filters.brand !== "Tous",
+    filters.fuel !== "Tous",
+    filters.transmission !== "Tous",
+    filters.maxPrice < 50000,
+  ].filter(Boolean).length;
+
   return (
-    <div className="bg-brand-gray-dark p-6 rounded-lg border border-brand-gray-medium/20 mb-8 space-y-6">
-      {/* Marque - Custom Dropdown Animé */}
-      <div>
-        <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
-          Marque
-        </label>
-        <div className="relative w-full sm:w-64" ref={dropdownRef}>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-full flex items-center justify-between bg-brand-black border border-brand-gray-medium/40 rounded-lg px-4 py-2.5 font-inter text-sm text-brand-white focus:border-brand-orange focus:outline-none cursor-pointer"
-          >
-            {filters.brand}
-            <ChevronDown
-              className={`w-4 h-4 text-brand-gray-light transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-            />
-          </button>
-
-          <AnimatePresence>
-            {isOpen && (
-              <motion.ul
-                initial={{ opacity: 0, y: -10, scaleY: 0.95 }}
-                animate={{ opacity: 1, y: 0, scaleY: 1 }}
-                exit={{ opacity: 0, y: -10, scaleY: 0.95 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="absolute z-50 top-full left-0 right-0 mt-2 bg-brand-black border border-brand-gray-medium/40 rounded-lg overflow-hidden origin-top"
-              >
-                {brands.map((brand) => (
-                  <li
-                    key={brand}
-                    onClick={() => {
-                      handleChange("brand", brand);
-                      setIsOpen(false);
-                    }}
-                    className={`px-4 py-2.5 font-inter text-sm cursor-pointer transition-colors duration-200 ${
-                      filters.brand === brand
-                        ? "bg-brand-orange/20 text-brand-orange"
-                        : "text-brand-white hover:bg-brand-gray-dark"
-                    }`}
-                  >
-                    {brand}
-                  </li>
-                ))}
-              </motion.ul>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Carburant - Pills */}
-      <div>
-        <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
-          Carburant
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {fuels.map((fuel) => (
-            <button
-              key={fuel}
-              onClick={() => handleChange("fuel", fuel === "Tous" ? "Tous" : fuel.toLowerCase())}
-              className={pillClass(
-                filters.fuel === (fuel === "Tous" ? "Tous" : fuel.toLowerCase()),
-              )}
-            >
-              {fuel}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Transmission - Pills */}
-      <div>
-        <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
-          Boîte de vitesse
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {transmissions.map((t) => (
-            <button
-              key={t}
-              onClick={() => handleChange("transmission", t === "Tous" ? "Tous" : t.toLowerCase())}
-              className={pillClass(
-                filters.transmission === (t === "Tous" ? "Tous" : t.toLowerCase()),
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Prix - Slider */}
-      <div>
-        <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
-          Budget maximum
-        </label>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="font-inter text-sm text-brand-gray-light">5 000 €</span>
-            <span className="font-orbitron text-lg font-bold text-brand-orange">
-              {filters.maxPrice.toLocaleString()} €
+    <div className="mb-8">
+      {/* Bannière cliquable */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between bg-brand-gray-dark p-4 rounded-lg border border-brand-gray-medium/20 hover:border-brand-orange/30 transition-all duration-300"
+      >
+        <div className="flex items-center gap-3">
+          <SlidersHorizontal className="w-5 h-5 text-brand-orange" />
+          <span className="font-inter text-sm text-brand-white">Filtres</span>
+          {activeFiltersCount > 0 && (
+            <span className="bg-brand-orange text-brand-black text-xs font-semibold px-2 py-0.5 rounded-full">
+              {activeFiltersCount}
             </span>
-            <span className="font-inter text-sm text-brand-gray-light">50 000 €</span>
-          </div>
-          <div className="relative h-2 bg-brand-black rounded-full">
-            <div
-              className="absolute h-full bg-brand-orange rounded-full transition-all duration-150"
-              style={{ width: `${((filters.maxPrice - 5000) / 45000) * 100}%` }}
-            />
-            <input
-              type="range"
-              min="5000"
-              max="50000"
-              step="1000"
-              value={filters.maxPrice}
-              onChange={(e) => handleChange("maxPrice", Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </div>
+          )}
         </div>
-      </div>
+        <ChevronDown
+          className={`w-5 h-5 text-brand-gray-light transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {/* Filtres dépliables */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="bg-brand-gray-dark p-6 rounded-b-lg border border-t-0 border-brand-gray-medium/20 space-y-6">
+              {/* Marque - Pills */}
+              <div>
+                <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
+                  Marque
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {brands.map((brand) => (
+                    <button
+                      key={brand}
+                      onClick={() => handleChange("brand", brand)}
+                      className={pillClass(filters.brand === brand)}
+                    >
+                      {brand}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Carburant - Pills */}
+              <div>
+                <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
+                  Carburant
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {fuels.map((fuel) => (
+                    <button
+                      key={fuel}
+                      onClick={() => handleChange("fuel", fuel === "Tous" ? "Tous" : fuel.toLowerCase())}
+                      className={pillClass(
+                        filters.fuel === (fuel === "Tous" ? "Tous" : fuel.toLowerCase()),
+                      )}
+                    >
+                      {fuel}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transmission - Pills */}
+              <div>
+                <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
+                  Boîte de vitesse
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {transmissions.map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => handleChange("transmission", t === "Tous" ? "Tous" : t.toLowerCase())}
+                      className={pillClass(
+                        filters.transmission === (t === "Tous" ? "Tous" : t.toLowerCase()),
+                      )}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Prix - Slider */}
+              <div>
+                <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
+                  Budget maximum
+                </label>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-inter text-sm text-brand-gray-light">5 000 €</span>
+                    <span className="font-orbitron text-lg font-bold text-brand-orange">
+                      {filters.maxPrice.toLocaleString()} €
+                    </span>
+                    <span className="font-inter text-sm text-brand-gray-light">50 000 €</span>
+                  </div>
+                  <div className="relative h-2 bg-brand-black rounded-full">
+                    <div
+                      className="absolute h-full bg-brand-orange rounded-full transition-all duration-150"
+                      style={{ width: `${((filters.maxPrice - 5000) / 45000) * 100}%` }}
+                    />
+                    <input
+                      type="range"
+                      min="5000"
+                      max="50000"
+                      step="1000"
+                      value={filters.maxPrice}
+                      onChange={(e) => handleChange("maxPrice", Number(e.target.value))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -5,9 +5,8 @@ import Link from "next/link";
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/stock", label: "Notre Stock" },
-  { href: "/services", label: "Nos Services" },
+  { href: "/vendu", label: "Vendu" },
   { href: "/a-propos", label: "À Propos" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
@@ -15,11 +14,8 @@ export default function Header() {
     <header className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo - À remplacer par <Image /> quand le logo sera prêt */}
+          {/* Logo */}
           <Link href="/" className="flex items-center">
-            {/* TODO: Remplacer par le logo
-            <Image src="/images/logo.svg" alt="ForeverCars" width={180} height={40} />
-            */}
             <span className="font-orbitron text-2xl font-bold text-brand-white">
               FOREVER<span className="text-brand-orange">CARS</span>
             </span>

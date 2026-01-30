@@ -8,9 +8,8 @@ import { Menu, X } from "lucide-react";
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/stock", label: "Notre Stock" },
-  { href: "/services", label: "Nos Services" },
+  { href: "/vendu", label: "Vendu" },
   { href: "/a-propos", label: "À Propos" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export default function MobileHeader() {
@@ -24,11 +23,8 @@ export default function MobileHeader() {
       {/* Top Bar */}
       <div className="bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20 px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo - À remplacer par <Image /> quand le logo sera prêt */}
+          {/* Logo */}
           <Link href="/" className="flex items-center" onClick={closeMenu}>
-            {/* TODO: Remplacer par le logo
-            <Image src="/images/logo.svg" alt="ForeverCars" width={140} height={32} />
-            */}
             <span className="font-orbitron text-xl font-bold text-brand-white">
               FOREVER<span className="text-brand-orange">CARS</span>
             </span>
@@ -119,7 +115,7 @@ export default function MobileHeader() {
 
                 {/* Tagline */}
                 <p className="text-center text-brand-gray-medium text-xs mt-4 font-inter italic">
-                  &ldquo;Tu t&apos;occupes de rien, je m&apos;occupe de tout&rdquo;
+                  &ldquo;Acheter ou vendre autrement&rdquo;
                 </p>
               </div>
             </motion.nav>

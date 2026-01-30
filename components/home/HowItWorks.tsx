@@ -1,28 +1,29 @@
 "use client";
 
+import { Car, ClipboardCheck, Handshake, Sparkles } from "lucide-react";
 import FadeIn from "../ui/FadeIn";
 
 export default function HowItWork() {
   const steps = [
     {
-      number: "01",
-      title: "Contactez-nous",
-      description: "Décrivez-nous le véhicule de vos rêves ou celui que vous souhaitez vendre.",
+      icon: Car,
+      title: "Vous vendez ?",
+      description: "On s'occupe du reste, et vous avez l'esprit libéré.",
     },
     {
-      number: "02",
-      title: "Recherche & Expertise",
-      description: "On trouve le véhicule idéal ou on évalue le vôtre avec précision.",
-    },
-    {
-      number: "03",
-      title: "Vérification complète",
+      icon: ClipboardCheck,
+      title: "Expertise",
       description: "Contrôle technique, historique, essai routier. Rien n'est laissé au hasard.",
     },
     {
-      number: "04",
+      icon: Handshake,
+      title: "Accompagnement",
+      description: "Plus de soucis de vérification des paiements, Forever gère pour vous la transaction.",
+    },
+    {
+      icon: Sparkles,
       title: "Livraison",
-      description: "On s'occupe de toutes les démarches. Vous recevez votre véhicule clé en main.",
+      description: "Vous recevez votre véhicule clé en main, lustré et nettoyé.",
     },
   ];
 
@@ -40,11 +41,11 @@ export default function HowItWork() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <FadeIn key={step.number} delay={index * 0.15}>
+            <FadeIn key={step.title} delay={index * 0.15}>
               <div className="text-center">
-                <span className="font-orbitron text-5xl font-bold text-brand-orange">
-                  {step.number}
-                </span>
+                <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <step.icon className="w-8 h-8 text-brand-orange" />
+                </div>
                 <h3 className="font-orbitron text-xl font-semibold text-brand-white mt-4 mb-2">
                   {step.title}
                 </h3>

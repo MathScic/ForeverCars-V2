@@ -14,6 +14,7 @@ interface VehicleDetailPanelProps {
 
 export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPanelProps) {
   const [currentImage, setCurrentImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const router = useRouter();
 
   const handleInterest = () => {
@@ -25,11 +26,9 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
     router.push(`/contact?${params.toString()}`);
   };
 
-  // Utiliser toutes les images du véhicule (max 10), avec placeholders si < 3
   const getImages = () => {
     if (!vehicle) return [];
-    const realImages = vehicle.images.slice(0, 10); // Max 10 images
-    // Si moins de 3 images, ajouter des placeholders pour la démo
+    const realImages = vehicle.images.slice(0, 10);
     if (realImages.length < 3) {
       const placeholders = Array(3 - realImages.length).fill(null);
       return [...realImages, ...placeholders];
@@ -57,14 +56,14 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
           />
 
-          {/* Panel */}
+          {/* Panel - 50% de l'écran */}
           <motion.div
             key="panel"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-brand-gray-dark border-l border-brand-gray-medium/20 z-50 overflow-y-auto"
+            className="fixed top-0 right-0 h-full w-full md:w-1/2 bg-brand-gray-dark border-l border-brand-gray-medium/20 z-50 overflow-y-auto"
           >
             {/* Header */}
             <div className="sticky top-0 bg-brand-gray-dark/95 backdrop-blur-sm border-b border-brand-gray-medium/20 p-4 flex items-center justify-between z-10">
@@ -79,9 +78,11 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               </button>
             </div>
 
-            {/* Carousel */}
-            <div className="relative h-64 bg-brand-gray-medium">
-              {/* Image actuelle */}
+            {/* Carousel - Cliquable pour lightbox */}
+            <div
+              className="relative h-72 md:h-96 bg-brand-gray-medium cursor-pointer"
+              onClick={() => setLightboxOpen(true)}
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentImage}
@@ -108,22 +109,26 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 </motion.div>
               </AnimatePresence>
 
-              {/* Badge Nouveau */}
               {vehicle.isNew && (
                 <span className="absolute top-4 left-4 bg-brand-orange text-brand-black text-xs font-semibold px-3 py-1 rounded-full z-10">
                   Nouveau
                 </span>
               )}
 
+              {/* Hint pour cliquer */}
+              <span className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-brand-black/70 text-brand-white text-xs px-3 py-1 rounded-full z-10">
+                Cliquez pour agrandir
+              </span>
+
               {/* Flèches navigation */}
               <button
-                onClick={prevImage}
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
-                onClick={nextImage}
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
               >
                 <ChevronRight size={20} />
@@ -134,7 +139,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 {images.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => setCurrentImage(index)}
+                    onClick={(e) => { e.stopPropagation(); setCurrentImage(index); }}
                     className={`w-2 h-2 rounded-full transition-all ${
                       index === currentImage
                         ? "bg-brand-orange w-4"
@@ -207,6 +212,82 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               </button>
             </div>
           </motion.div>
+
+          {/* Lightbox - Plein écran */}
+          <AnimatePresence>
+            {lightboxOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
+                onClick={() => setLightboxOpen(false)}
+              >
+                {/* Bouton fermer */}
+                <button
+                  onClick={() => setLightboxOpen(false)}
+                  className="absolute top-4 right-4 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all z-10"
+                >
+                  <X size={28} />
+                </button>
+
+                {/* Image plein écran */}
+                <div className="relative w-full h-full flex items-center justify-center p-8">
+                  {images[currentImage] ? (
+                    <Image
+                      src={images[currentImage]}
+                      alt={`${vehicle.brand} ${vehicle.model}`}
+                      fill
+                      className="object-contain"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <span className="font-orbitron text-2xl text-brand-gray-medium">
+                        Photo {currentImage + 1}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Flèches navigation */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
+                >
+                  <ChevronRight size={32} />
+                </button>
+
+                {/* Indicateurs */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+                  {images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => { e.stopPropagation(); setCurrentImage(index); }}
+                      className={`w-3 h-3 rounded-full transition-all ${
+                        index === currentImage
+                          ? "bg-brand-orange w-6"
+                          : "bg-brand-white/50 hover:bg-brand-white/80"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Compteur */}
+                <div className="absolute top-4 left-4 bg-brand-gray-dark/80 px-4 py-2 rounded-full">
+                  <span className="font-orbitron text-sm text-brand-white">
+                    {currentImage + 1} / {images.length}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
     </AnimatePresence>

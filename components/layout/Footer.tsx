@@ -3,9 +3,8 @@ import Link from "next/link";
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/stock", label: "Notre Stock" },
-  { href: "/services", label: "Nos Services" },
+  { href: "/vendu", label: "Vendu" },
   { href: "/a-propos", label: "À Propos" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export default function Footer() {
@@ -21,7 +20,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="font-inter text-sm text-brand-gray-light mt-4 italic">
-              "Tu s'occupe de rien, je s'occupe de tout"
+              "Acheter ou vendre autrement"
             </p>
           </div>
 
@@ -48,9 +47,10 @@ export default function Footer() {
           <div>
             <h4 className="font-orbitron text-sm font-semibold text-brand-white mb-4">Contact</h4>
             <ul className="space-y-2 font-inter text-sm text-brand-gray-light">
-              <li>Loiret (45), France</li>
-              <li>contact@forevercars.fr</li>
-              <li>06 XX XX XX XX</li>
+              <li>Lot N23, 1695 rue de la Grand Cour</li>
+              <li>45760 Marigny-Les-Usages</li>
+              <li>c.forevercars@gmail.com</li>
+              <li>06.67.53.74.00</li>
             </ul>
           </div>
         </div>
