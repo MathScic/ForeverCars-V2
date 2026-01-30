@@ -20,6 +20,11 @@ export const metadata = {
   title: "ForeverCars | Achat & Revente de Véhicules",
   description:
     "ForeverCars - Agence d'achat et revente de véhicules dans le Loiret (45). Tu t'occupes de rien, je m'occupe de tout.",
+  icons: {
+    icon: "/images/Forever-CarsLogo.svg",
+    shortcut: "/images/Forever-CarsLogo.svg",
+    apple: "/images/Forever-CarsLogo.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
