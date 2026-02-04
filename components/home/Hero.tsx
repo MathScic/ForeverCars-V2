@@ -1,18 +1,18 @@
-"use client";
-
 import Link from "next/link";
 
 export default function Hero() {
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 overflow-hidden">
-      {/* Video Background */}
+      {/* Video Background - Server-rendered for immediate display */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        preload="auto"
+        className="absolute inset-0 w-full h-full object-cover bg-brand-black"
       >
+        <source src="/videos/hero-videos.webm" type="video/webm" />
         <source src="/videos/hero-videos.mp4" type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-black/70" />

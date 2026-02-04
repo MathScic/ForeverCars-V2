@@ -21,15 +21,19 @@ export const metadata = {
   description:
     "ForeverCars - Agence d'achat et revente de véhicules dans le Loiret (45). Tu t'occupes de rien, je m'occupe de tout.",
   icons: {
-    icon: "/images/Forever-CarsLogo.svg",
-    shortcut: "/images/Forever-CarsLogo.svg",
-    apple: "/images/Forever-CarsLogo.svg",
+    icon: "/images/Logo.svg",
+    shortcut: "/images/Logo.svg",
+    apple: "/images/Logo.svg",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        {/* Preload hero video for faster first frame */}
+        <link rel="preload" as="video" href="/videos/hero-videos.mp4" type="video/mp4" />
+      </head>
       <body
         className={`${inter.variable} ${orbitron.variable} font-inter min-h-screen flex flex-col bg-brand-black text-brand-white`}
       >
