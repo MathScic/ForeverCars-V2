@@ -13,7 +13,7 @@ const navLinks = [
 export default function Header() {
   return (
     <header className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -21,8 +21,8 @@ export default function Header() {
               <Image
                 src="/images/Forever-CarsLogo.svg"
                 alt="Forever Cars Logo"
-                width={80}
-                height={50}
+                width={130}
+                height={82}
               />
             </span>
           </Link>

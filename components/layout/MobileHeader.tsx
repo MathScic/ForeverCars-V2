@@ -22,15 +22,15 @@ export default function MobileHeader() {
   return (
     <header className="lg:hidden fixed top-0 left-0 right-0 z-50">
       {/* Top Bar */}
-      <div className="bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20 px-4 py-3">
+      <div className="bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20 px-4 py-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center" onClick={closeMenu}>
             <Image
               src="/images/Forever-CarsLogo.svg"
               alt="Forever Cars Logo"
-              width={80}
-              height={50}
+              width={110}
+              height={69}
             />
           </Link>
 
