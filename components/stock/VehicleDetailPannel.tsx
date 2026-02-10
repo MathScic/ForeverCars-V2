@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Vehicle } from "@/lib/types/vehicle";
+import { urlForImage } from "@/sanity/lib/image";
 
 interface VehicleDetailPanelProps {
   vehicle: Vehicle | null;
@@ -28,15 +29,14 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
   const getImages = () => {
     if (!vehicle) return [];
-    const realImages = vehicle.images.slice(0, 10);
-    if (realImages.length < 3) {
-      const placeholders = Array(3 - realImages.length).fill(null);
-      return [...realImages, ...placeholders];
-    }
-    return realImages;
+    return vehicle.images.slice(0, 10);
   };
 
   const images = getImages();
+
+  const getImageUrl = (img: (typeof images)[number], width = 800, height = 600) => {
+    return urlForImage(img).width(width).height(height).url();
+  };
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
@@ -94,7 +94,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 >
                   {images[currentImage] ? (
                     <Image
-                      src={images[currentImage]}
+                      src={getImageUrl(images[currentImage])}
                       alt={`${vehicle.brand} ${vehicle.model}`}
                       fill
                       className="object-cover"
@@ -121,18 +121,22 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               </span>
 
               {/* Flèches navigation */}
-              <button
-                onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
-              >
-                <ChevronRight size={20} />
-              </button>
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white transition-all z-10"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
 
               {/* Indicateurs (dots) */}
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
@@ -192,16 +196,18 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               </div>
 
               {/* Équipements */}
-              <div>
-                <h3 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Équipements</h3>
-                <div className="flex flex-wrap gap-2">
-                  {vehicle.features.map((feature) => (
-                    <span key={feature} className="px-3 py-1 bg-brand-black text-brand-gray-light font-inter text-sm rounded-full">
-                      {feature}
-                    </span>
-                  ))}
+              {vehicle.features && vehicle.features.length > 0 && (
+                <div>
+                  <h3 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Équipements</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {vehicle.features.map((feature) => (
+                      <span key={feature} className="px-3 py-1 bg-brand-black text-brand-gray-light font-inter text-sm rounded-full">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* CTA */}
               <button
@@ -235,7 +241,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 <div className="relative w-full h-full flex items-center justify-center p-8">
                   {images[currentImage] ? (
                     <Image
-                      src={images[currentImage]}
+                      src={getImageUrl(images[currentImage], 1400, 900)}
                       alt={`${vehicle.brand} ${vehicle.model}`}
                       fill
                       className="object-contain"
@@ -251,18 +257,22 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 </div>
 
                 {/* Flèches navigation */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
-                >
-                  <ChevronLeft size={32} />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
-                >
-                  <ChevronRight size={32} />
-                </button>
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
+                    >
+                      <ChevronLeft size={32} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 hover:bg-brand-gray-dark rounded-full text-brand-white transition-all"
+                    >
+                      <ChevronRight size={32} />
+                    </button>
+                  </>
+                )}
 
                 {/* Indicateurs */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">

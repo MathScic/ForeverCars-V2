@@ -1,38 +1,14 @@
-"use client";
-
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import FadeIn from "@/components/ui/FadeIn";
+import { client } from "@/sanity/client";
+import { soldVehiclesQuery } from "@/sanity/lib/queries";
+import { Vehicle } from "@/lib/types/vehicle";
+import { urlForImage } from "@/sanity/lib/image";
 
-// Véhicules vendus (à remplir avec les vraies ventes)
-const vehiculesVendus = [
-  {
-    id: "v1",
-    brand: "Peugeot",
-    model: "3008",
-    year: 2021,
-    image: "",
-    soldDate: "Janvier 2026",
-  },
-  {
-    id: "v2",
-    brand: "BMW",
-    model: "Série 3",
-    year: 2020,
-    image: "",
-    soldDate: "Janvier 2026",
-  },
-  {
-    id: "v3",
-    brand: "Renault",
-    model: "Mégane",
-    year: 2022,
-    image: "",
-    soldDate: "Décembre 2025",
-  },
-];
+export default async function VenduPage() {
+  const vehiculesVendus: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { next: { revalidate: 3600 } });
 
-export default function VenduPage() {
   return (
     <main className="bg-brand-black min-h-screen">
       {/* Hero */}
@@ -55,13 +31,13 @@ export default function VenduPage() {
           {vehiculesVendus.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {vehiculesVendus.map((vehicle, index) => (
-                <FadeIn key={vehicle.id} delay={index * 0.1}>
+                <FadeIn key={vehicle._id} delay={index * 0.1}>
                   <div className="bg-brand-gray-dark rounded-lg overflow-hidden border border-brand-gray-medium/20">
                     {/* Image */}
                     <div className="relative h-48 bg-brand-gray-medium">
-                      {vehicle.image ? (
+                      {vehicle.images?.[0] ? (
                         <Image
-                          src={vehicle.image}
+                          src={urlForImage(vehicle.images[0]).width(400).height(300).url()}
                           alt={`${vehicle.brand} ${vehicle.model}`}
                           fill
                           className="object-cover"
@@ -85,7 +61,10 @@ export default function VenduPage() {
                         {vehicle.brand} {vehicle.model}
                       </h3>
                       <p className="font-inter text-sm text-brand-gray-light mt-1">
-                        {vehicle.year} • Vendu en {vehicle.soldDate}
+                        {vehicle.year} • Vendu en{" "}
+                        {vehicle.soldDate
+                          ? new Date(vehicle.soldDate).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
+                          : "récemment"}
                       </p>
                     </div>
                   </div>
@@ -121,7 +100,7 @@ export default function VenduPage() {
               </div>
               <div>
                 <p className="font-orbitron text-3xl md:text-4xl font-bold text-brand-orange">45</p>
-                <p className="font-inter text-sm text-brand-gray-light mt-2">Loiret & environs</p>
+                <p className="font-inter text-sm text-brand-gray-light mt-2">Loiret &amp; environs</p>
               </div>
             </div>
           </FadeIn>

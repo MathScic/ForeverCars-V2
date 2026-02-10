@@ -1,7 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SanityImage = any;
+
 export interface Vehicle {
-  id: string;
+  _id: string;
   brand: string;
   model: string;
+  slug: string;
   year: number;
   price: number;
   mileage: number;
@@ -9,10 +13,12 @@ export interface Vehicle {
   transmission: "manuelle" | "automatique";
   type: "berline" | "suv" | "coupe" | "break" | "citadine" | "utilitaire";
   power: number;
-  images: string[];
+  images: SanityImage[];
   description: string;
   features: string[];
   isNew: boolean;
   isFeatured: boolean;
-  createdAt: Date;
+  status: "available" | "reserved" | "sold";
+  _createdAt: string;
+  soldDate?: string;
 }

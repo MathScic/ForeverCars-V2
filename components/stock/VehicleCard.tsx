@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Vehicle } from "@/lib/types/vehicle";
+import { urlForImage } from "@/sanity/lib/image";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -7,14 +8,18 @@ interface VehicleCardProps {
 }
 
 export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
+  const imageUrl = vehicle.images?.[0]
+    ? urlForImage(vehicle.images[0]).width(600).height(400).url()
+    : null;
+
   return (
     <div onClick={onClick} className="h-full cursor-pointer">
       <div className="h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border border-brand-gray-medium/20 hover:border-brand-orange/50 hover:scale-[1.02] transition-all duration-300">
         {/* Image */}
         <div className="relative h-48 bg-brand-gray-medium">
-          {vehicle.images[0] ? (
+          {imageUrl ? (
             <Image
-              src={vehicle.images[0]}
+              src={imageUrl}
               alt={`${vehicle.brand} ${vehicle.model}`}
               fill
               className="object-cover object-center"

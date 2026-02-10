@@ -13,27 +13,13 @@ export interface FilterState {
 
 interface FiltersProps {
   onFilterChange: (filters: FilterState) => void;
+  brands?: string[];
 }
 
-const brands = [
-  "Tous",
-  "Audi",
-  "BMW",
-  "Citroën",
-  "Ford",
-  "Hyundai",
-  "Kia",
-  "Mercedes",
-  "Peugeot",
-  "Renault",
-  "Skoda",
-  "Toyota",
-  "Volkswagen",
-];
 const fuels = ["Tous", "Essence", "Diesel", "Hybride", "Électrique"];
 const transmissions = ["Tous", "Manuelle", "Automatique"];
 
-export default function VehicleFilters({ onFilterChange }: FiltersProps) {
+export default function VehicleFilters({ onFilterChange, brands = ["Tous"] }: FiltersProps) {
   const [filters, setFilters] = useState<FilterState>({
     brand: "Tous",
     fuel: "Tous",
@@ -64,7 +50,6 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
 
   return (
     <div className="mb-8">
-      {/* Bannière cliquable */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between bg-brand-gray-dark p-4 rounded-lg border border-brand-gray-medium/20 hover:border-brand-orange/30 transition-all duration-300"
@@ -83,7 +68,6 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
         />
       </button>
 
-      {/* Filtres dépliables */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -94,7 +78,7 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
             className="overflow-hidden"
           >
             <div className="bg-brand-gray-dark p-6 rounded-b-lg border border-t-0 border-brand-gray-medium/20 space-y-6">
-              {/* Marque - Pills */}
+              {/* Marque */}
               <div>
                 <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
                   Marque
@@ -112,7 +96,7 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
                 </div>
               </div>
 
-              {/* Carburant - Pills */}
+              {/* Carburant */}
               <div>
                 <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
                   Carburant
@@ -132,7 +116,7 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
                 </div>
               </div>
 
-              {/* Transmission - Pills */}
+              {/* Transmission */}
               <div>
                 <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
                   Boîte de vitesse
@@ -152,7 +136,7 @@ export default function VehicleFilters({ onFilterChange }: FiltersProps) {
                 </div>
               </div>
 
-              {/* Prix - Slider */}
+              {/* Prix */}
               <div>
                 <label className="block font-inter text-xs text-brand-gray-light mb-2 uppercase tracking-wider">
                   Budget maximum
