@@ -34,7 +34,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
   const images = getImages();
 
-  const getImageUrl = (img: (typeof images)[number], width = 800, height = 600) => {
+  const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) => {
     return urlForImage(img).width(width).height(height).url();
   };
 
@@ -192,7 +192,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               {/* Description */}
               <div>
                 <h3 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Description</h3>
-                <p className="font-inter text-sm text-brand-gray-light leading-relaxed">{vehicle.description}</p>
+                <p className="font-inter text-sm text-brand-gray-light leading-relaxed whitespace-pre-line">{vehicle.description}</p>
               </div>
 
               {/* Équipements */}
@@ -241,7 +241,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 <div className="relative w-full h-full flex items-center justify-center p-8">
                   {images[currentImage] ? (
                     <Image
-                      src={getImageUrl(images[currentImage], 1400, 900)}
+                      src={getImageUrl(images[currentImage], 1920, 1440)}
                       alt={`${vehicle.brand} ${vehicle.model}`}
                       fill
                       className="object-contain"

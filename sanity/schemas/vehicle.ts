@@ -98,6 +98,9 @@ export default defineType({
       title: "Photos",
       type: "array",
       of: [{ type: "image", options: { hotspot: true } }],
+      options: {
+        layout: "grid",
+      },
       validation: (rule) => rule.required().min(1),
     }),
     defineField({
