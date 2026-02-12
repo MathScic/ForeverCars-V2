@@ -29,7 +29,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
   const getImages = () => {
     if (!vehicle) return [];
-    return vehicle.images.slice(0, 10);
+    return vehicle.images;
   };
 
   const images = getImages();
