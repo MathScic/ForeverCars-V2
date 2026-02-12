@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,11 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
   const [currentImage, setCurrentImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setCurrentImage(0);
+    setLightboxOpen(false);
+  }, [vehicle?._id]);
 
   const handleInterest = () => {
     if (!vehicle) return;
