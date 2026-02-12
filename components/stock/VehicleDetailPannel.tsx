@@ -23,6 +23,20 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
     setLightboxOpen(false);
   }, [vehicle?._id]);
 
+  // Gérer le bouton retour du navigateur pour fermer le panneau au lieu de quitter la page
+  useEffect(() => {
+    if (vehicle) {
+      window.history.pushState({ vehiclePanel: true }, "");
+      const handlePopState = () => {
+        onClose();
+      };
+      window.addEventListener("popstate", handlePopState);
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, [vehicle, onClose]);
+
   const handleInterest = () => {
     if (!vehicle) return;
     const params = new URLSearchParams({
@@ -40,7 +54,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
   const images = getImages();
 
   const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) => {
-    return urlForImage(img).width(width).height(height).url();
+    return urlForImage(img).width(width).height(height).quality(90).url();
   };
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
