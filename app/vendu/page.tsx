@@ -4,7 +4,7 @@ import { Vehicle } from "@/lib/types/vehicle";
 import VenduClient from "./VenduClient";
 
 export default async function VenduPage() {
-  const vehicles: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { next: { revalidate: 60 } });
+  const vehicles: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { cache: "no-store" });
 
   return <VenduClient vehicles={vehicles} />;
 }
