@@ -14,17 +14,18 @@ export interface FilterState {
 interface FiltersProps {
   onFilterChange: (filters: FilterState) => void;
   brands?: string[];
+  maxPriceLimit?: number;
 }
 
 const fuels = ["Tous", "Essence", "Diesel", "Hybride", "Électrique"];
 const transmissions = ["Tous", "Manuelle", "Automatique"];
 
-export default function VehicleFilters({ onFilterChange, brands = ["Tous"] }: FiltersProps) {
+export default function VehicleFilters({ onFilterChange, brands = ["Tous"], maxPriceLimit = 50000 }: FiltersProps) {
   const [filters, setFilters] = useState<FilterState>({
     brand: "Tous",
     fuel: "Tous",
     transmission: "Tous",
-    maxPrice: 50000,
+    maxPrice: maxPriceLimit,
   });
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -45,7 +46,7 @@ export default function VehicleFilters({ onFilterChange, brands = ["Tous"] }: Fi
     filters.brand !== "Tous",
     filters.fuel !== "Tous",
     filters.transmission !== "Tous",
-    filters.maxPrice < 50000,
+    filters.maxPrice < maxPriceLimit,
   ].filter(Boolean).length;
 
   return (
@@ -147,17 +148,17 @@ export default function VehicleFilters({ onFilterChange, brands = ["Tous"] }: Fi
                     <span className="font-orbitron text-lg font-bold text-brand-orange">
                       {filters.maxPrice.toLocaleString()} €
                     </span>
-                    <span className="font-inter text-sm text-brand-gray-light">50 000 €</span>
+                    <span className="font-inter text-sm text-brand-gray-light">{maxPriceLimit.toLocaleString()} €</span>
                   </div>
                   <div className="relative h-2 bg-brand-black rounded-full">
                     <div
                       className="absolute h-full bg-brand-orange rounded-full transition-all duration-150"
-                      style={{ width: `${((filters.maxPrice - 5000) / 45000) * 100}%` }}
+                      style={{ width: `${((filters.maxPrice - 5000) / (maxPriceLimit - 5000)) * 100}%` }}
                     />
                     <input
                       type="range"
                       min="5000"
-                      max="50000"
+                      max={maxPriceLimit}
                       step="1000"
                       value={filters.maxPrice}
                       onChange={(e) => handleChange("maxPrice", Number(e.target.value))}

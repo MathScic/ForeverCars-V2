@@ -14,11 +14,13 @@ interface Props {
 }
 
 export default function StockClient({ initialVehicles }: Props) {
+  const maxPriceLimit = Math.ceil(Math.max(...initialVehicles.map((v) => v.price), 50000) / 5000) * 5000;
+
   const [filters, setFilters] = useState<FilterState>({
     brand: "Tous",
     fuel: "Tous",
     transmission: "Tous",
-    maxPrice: 50000,
+    maxPrice: maxPriceLimit,
   });
 
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -62,7 +64,7 @@ export default function StockClient({ initialVehicles }: Props) {
             <p className="font-inter text-brand-gray-light">{getVehicleCountText()}</p>
           </div>
 
-          <VehicleFilters onFilterChange={handleFilterChange} brands={brands} />
+          <VehicleFilters onFilterChange={handleFilterChange} brands={brands} maxPriceLimit={maxPriceLimit} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
             {paginatedVehicles.map((vehicle) => (
