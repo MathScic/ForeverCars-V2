@@ -7,7 +7,7 @@ import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
 
 export default async function VenduPage() {
-  const vehiculesVendus: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { next: { revalidate: 3600 } });
+  const vehiculesVendus: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { next: { revalidate: 60 } });
 
   return (
     <main className="bg-brand-black min-h-screen">
@@ -37,7 +37,7 @@ export default async function VenduPage() {
                     <div className="relative h-48 bg-brand-gray-medium">
                       {vehicle.images?.[0] ? (
                         <Image
-                          src={urlForImage(vehicle.images[0]).width(400).height(300).url()}
+                          src={urlForImage(vehicle.images[0]).width(800).height(600).quality(90).url()}
                           alt={`${vehicle.brand} ${vehicle.model}`}
                           fill
                           className="object-cover"
