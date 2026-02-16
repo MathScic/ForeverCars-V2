@@ -72,12 +72,12 @@ export default function AProposPage() {
       <section className="py-16 px-4 bg-brand-gray-dark">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <FadeIn direction="left">
-            <div className="relative h-80 rounded-lg overflow-hidden bg-brand-gray-medium">
+            <div className="relative h-[28rem] rounded-lg overflow-hidden bg-brand-gray-medium">
               <Image
                 src="/images/Fondateur.png"
                 alt="Clément Scicluna - Fondateur ForeverCars"
                 fill
-                className="object-cover object-top"
+                className="object-cover object-[center_15%]"
                 priority
               />
             </div>
