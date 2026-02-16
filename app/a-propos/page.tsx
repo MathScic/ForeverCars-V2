@@ -77,7 +77,7 @@ export default function AProposPage() {
                 src="/images/Fondateur.png"
                 alt="Clément Scicluna - Fondateur ForeverCars"
                 fill
-                className="object-cover"
+                className="object-cover object-top"
                 priority
               />
             </div>
