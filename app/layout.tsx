@@ -118,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <Header />
           <MobileHeader />
-          <main className="flex-grow pt-16 lg:pt-20">{children}</main>
+          <main className="flex-grow pt-16 lg:pt-[5.5rem]">{children}</main>
         </ThemeProvider>
         <Footer />
       </body>

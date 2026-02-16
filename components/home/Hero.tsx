@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 overflow-hidden">
+    <section className="relative min-h-screen -mt-16 lg:-mt-[5.5rem] flex flex-col items-center justify-center px-4 overflow-hidden">
       {/* Video Background - Server-rendered for immediate display */}
       <video
         autoPlay
