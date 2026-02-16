@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Shield, Heart, Award, Users, Car, ClipboardCheck, FileText, Search, Truck } from "lucide-react";
 import FadeIn from "@/components/ui/FadeIn";
 
@@ -72,10 +73,17 @@ export default function AProposPage() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <FadeIn direction="left">
             <div className="relative h-80 rounded-lg overflow-hidden bg-brand-gray-medium">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-orbitron text-brand-gray-light">Photo fondateur</span>
-              </div>
+              <Image
+                src="/images/Fondateur.png"
+                alt="Clément Scicluna - Fondateur ForeverCars"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
+            <p className="font-inter text-sm text-brand-gray-light mt-3 text-center">
+              Clément Scicluna — Fondateur de ForeverCars
+            </p>
           </FadeIn>
 
           <FadeIn direction="right" delay={0.1}>
