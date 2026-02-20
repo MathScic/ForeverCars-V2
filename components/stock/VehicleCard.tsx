@@ -18,7 +18,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
     <div onClick={onClick} className="h-full cursor-pointer">
       <div className={`h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border transition-all duration-300 hover:scale-[1.02] ${
         isReserved
-          ? "border-yellow-500/40 hover:border-yellow-500/70"
+          ? "border-white/40 hover:border-white/70"
           : "border-brand-gray-medium/20 hover:border-brand-orange/50"
       }`}>
         {/* Image */}
@@ -39,7 +39,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           {/* Bandeau Réservé */}
           {isReserved && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-yellow-500 text-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
+              <div className="bg-white text-brand-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
                 RÉSERVÉ
               </div>
             </div>
@@ -54,7 +54,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             </span>
           )}
           {isReserved && (
-            <span className="inline-block bg-yellow-500 text-black text-xs font-semibold px-2 py-1 rounded mb-2 w-fit">
+            <span className="inline-block bg-white text-brand-black text-xs font-semibold px-2 py-1 rounded mb-2 w-fit">
               Réservé
             </span>
           )}
@@ -67,7 +67,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             {vehicle.year} • {vehicle.mileage.toLocaleString()} km • {vehicle.fuel}
           </p>
 
-          <p className={`font-orbitron text-xl font-bold mt-auto pt-3 ${isReserved ? "text-yellow-500" : "text-brand-orange"}`}>
+          <p className={`font-orbitron text-xl font-bold mt-auto pt-3 ${isReserved ? "text-white" : "text-brand-orange"}`}>
             {vehicle.price.toLocaleString()} €
           </p>
         </div>
