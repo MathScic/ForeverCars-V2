@@ -23,13 +23,13 @@ const vehicleProjection = groq`
 `;
 
 export const availableVehiclesQuery = groq`
-  *[_type == "vehicle" && status == "available"] | order(_createdAt desc) {
+  *[_type == "vehicle" && (status == "available" || status == "reserved")] | order(_createdAt desc) {
     ${vehicleProjection}
   }
 `;
 
 export const featuredVehiclesQuery = groq`
-  *[_type == "vehicle" && status == "available" && isFeatured == true] | order(_createdAt desc) [0...4] {
+  *[_type == "vehicle" && (status == "available" || status == "reserved") && isFeatured == true] | order(_createdAt desc) [0...4] {
     ${vehicleProjection}
   }
 `;

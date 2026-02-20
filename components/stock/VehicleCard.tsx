@@ -12,9 +12,15 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
     ? urlForImage(vehicle.images[0]).width(800).height(600).quality(90).url()
     : null;
 
+  const isReserved = vehicle.status === "reserved";
+
   return (
     <div onClick={onClick} className="h-full cursor-pointer">
-      <div className="h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border border-brand-gray-medium/20 hover:border-brand-orange/50 hover:scale-[1.02] transition-all duration-300">
+      <div className={`h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border transition-all duration-300 hover:scale-[1.02] ${
+        isReserved
+          ? "border-yellow-500/40 hover:border-yellow-500/70"
+          : "border-brand-gray-medium/20 hover:border-brand-orange/50"
+      }`}>
         {/* Image */}
         <div className="relative h-48 bg-brand-gray-medium">
           {imageUrl ? (
@@ -22,20 +28,34 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
               src={imageUrl}
               alt={`${vehicle.brand} ${vehicle.model}`}
               fill
-              className="object-cover object-center"
+              className={`object-cover object-center ${isReserved ? "brightness-75" : ""}`}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
               <span className="text-brand-gray-light">Image à venir</span>
             </div>
           )}
+
+          {/* Bandeau Réservé */}
+          {isReserved && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-yellow-500 text-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
+                RÉSERVÉ
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Contenu */}
         <div className="p-4 flex-1 flex flex-col">
-          {vehicle.isNew && (
+          {vehicle.isNew && !isReserved && (
             <span className="inline-block bg-brand-orange text-brand-black text-xs font-semibold px-2 py-1 rounded mb-2 w-fit">
               Nouveau
+            </span>
+          )}
+          {isReserved && (
+            <span className="inline-block bg-yellow-500 text-black text-xs font-semibold px-2 py-1 rounded mb-2 w-fit">
+              Réservé
             </span>
           )}
 
@@ -47,7 +67,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             {vehicle.year} • {vehicle.mileage.toLocaleString()} km • {vehicle.fuel}
           </p>
 
-          <p className="font-orbitron text-xl font-bold text-brand-orange mt-auto pt-3">
+          <p className={`font-orbitron text-xl font-bold mt-auto pt-3 ${isReserved ? "text-yellow-500" : "text-brand-orange"}`}>
             {vehicle.price.toLocaleString()} €
           </p>
         </div>
