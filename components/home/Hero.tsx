@@ -12,7 +12,7 @@ export default function Hero() {
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover bg-brand-black"
       >
-        <source src="/videos/hero-videos.mp4" type="video/mp4" />
+        <source src="/videos/hero-video.mp4" type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-black/70" />
       <div className="relative z-10 flex flex-col items-center">

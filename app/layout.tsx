@@ -77,7 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" suppressHydrationWarning>
       <head>
         {/* Preload hero video for faster first frame */}
-        <link rel="preload" as="video" href="/videos/hero-videos.mp4" type="video/mp4" />
+        <link rel="preload" as="video" href="/videos/hero-video.mp4" type="video/mp4" />
       </head>
       <body
         className={`${inter.variable} ${orbitron.variable} font-inter min-h-screen flex flex-col bg-brand-black text-brand-white`}
