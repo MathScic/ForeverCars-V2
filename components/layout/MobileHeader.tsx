@@ -28,7 +28,7 @@ export default function MobileHeader() {
           <Link href="/" className="flex items-center" onClick={closeMenu}>
             <Image
               src="/images/Forever-CarsLogo.svg"
-              alt="Forever Cars Logo"
+              alt="ForeverCars - Achat & Revente de Véhicules dans le Loiret"
               width={110}
               height={69}
             />

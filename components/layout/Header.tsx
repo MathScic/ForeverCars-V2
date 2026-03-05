@@ -20,7 +20,7 @@ export default function Header() {
             <span className="font-orbitron text-2xl font-bold text-brand-white">
               <Image
                 src="/images/Forever-CarsLogo.svg"
-                alt="Forever Cars Logo"
+                alt="ForeverCars - Achat & Revente de Véhicules dans le Loiret"
                 width={130}
                 height={82}
               />
