@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { mediaAssetSource } from "sanity-plugin-media";
 
 export default defineType({
   name: "vehicle",
@@ -97,7 +98,7 @@ export default defineType({
       name: "images",
       title: "Photos",
       type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
+      of: [{ type: "image", options: { hotspot: true, sources: [mediaAssetSource] } }],
       options: {
         layout: "grid",
       },
