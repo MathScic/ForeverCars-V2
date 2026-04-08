@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Link2, Check } from "lucide-react";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
 
@@ -16,7 +16,16 @@ interface VehicleDetailPanelProps {
 export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPanelProps) {
   const [currentImage, setCurrentImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
+
+  const handleCopyLink = () => {
+    if (!vehicle) return;
+    const url = `${window.location.origin}/stock/${vehicle.slug}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     setCurrentImage(0);
@@ -234,6 +243,15 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                 className="w-full font-orbitron text-sm font-semibold px-8 py-4 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
               >
                 Je suis intéressé
+              </button>
+
+              {/* Copier le lien */}
+              <button
+                onClick={handleCopyLink}
+                className="w-full flex items-center justify-center gap-2 font-inter text-sm px-8 py-3 border border-brand-gray-medium/40 text-brand-gray-light rounded-full hover:border-brand-orange/50 hover:text-brand-white transition-all duration-300"
+              >
+                {copied ? <Check size={16} className="text-green-400" /> : <Link2 size={16} />}
+                {copied ? "Lien copié !" : "Copier le lien de cette annonce"}
               </button>
             </div>
           </motion.div>

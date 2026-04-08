@@ -7,6 +7,9 @@ import FadeIn from "@/components/ui/FadeIn";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
 import VehicleDetailPanel from "@/components/stock/VehicleDetailPannel";
+import Pagination from "@/components/ui/Pagination";
+
+const VEHICLES_PER_PAGE = 6;
 
 interface Props {
   vehicles: Vehicle[];
@@ -14,6 +17,11 @@ interface Props {
 
 export default function VenduClient({ vehicles }: Props) {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(vehicles.length / VEHICLES_PER_PAGE);
+  const startIndex = (currentPage - 1) * VEHICLES_PER_PAGE;
+  const paginatedVehicles = vehicles.slice(startIndex, startIndex + VEHICLES_PER_PAGE);
 
   return (
     <>
@@ -37,7 +45,7 @@ export default function VenduClient({ vehicles }: Props) {
           <div className="max-w-6xl mx-auto">
             {vehicles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vehicles.map((vehicle, index) => (
+                {paginatedVehicles.map((vehicle, index) => (
                   <FadeIn key={vehicle._id} delay={index * 0.1}>
                     <div
                       className="bg-brand-gray-dark rounded-lg overflow-hidden border border-brand-gray-medium/20 hover:border-brand-orange/50 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
@@ -90,6 +98,11 @@ export default function VenduClient({ vehicles }: Props) {
                 </div>
               </FadeIn>
             )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </section>
 
