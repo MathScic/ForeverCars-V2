@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
 
@@ -15,14 +16,14 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
   const isReserved = vehicle.status === "reserved";
 
   return (
-    <div onClick={onClick} className="h-full cursor-pointer">
+    <div className="h-full">
       <div className={`h-full flex flex-col bg-brand-gray-dark rounded-lg overflow-hidden border transition-all duration-300 hover:scale-[1.02] ${
         isReserved
           ? "border-white/40 hover:border-white/70"
           : "border-brand-gray-medium/20 hover:border-brand-orange/50"
       }`}>
-        {/* Image */}
-        <div className="relative h-48 bg-brand-gray-medium">
+        {/* Image cliquable → ouvre le panneau */}
+        <div className="relative h-48 bg-brand-gray-medium cursor-pointer" onClick={onClick}>
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -59,7 +60,7 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             </span>
           )}
 
-          <h3 className="font-orbitron text-lg font-semibold text-brand-white">
+          <h3 className="font-orbitron text-lg font-semibold text-brand-white cursor-pointer" onClick={onClick}>
             {vehicle.brand} {vehicle.model}
           </h3>
 
@@ -67,9 +68,18 @@ export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             {vehicle.year} • {vehicle.mileage.toLocaleString()} km • {vehicle.fuel}
           </p>
 
-          <p className={`font-orbitron text-xl font-bold mt-auto pt-3 ${isReserved ? "text-white" : "text-brand-orange"}`}>
-            {vehicle.price.toLocaleString()} €
-          </p>
+          <div className="flex items-center justify-between mt-auto pt-3">
+            <p className={`font-orbitron text-xl font-bold ${isReserved ? "text-white" : "text-brand-orange"}`}>
+              {vehicle.price.toLocaleString()} €
+            </p>
+            <Link
+              href={`/stock/${vehicle.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-inter text-xs text-brand-gray-light hover:text-brand-orange underline underline-offset-2 transition-colors duration-200"
+            >
+              Voir la fiche →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
