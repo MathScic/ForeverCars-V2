@@ -1,26 +1,27 @@
 "use client";
 
+import { Wrench, ShieldCheck, HandHelping } from "lucide-react";
 import FadeIn from "../ui/FadeIn";
 
+const pillars = [
+  {
+    title: "Expertise",
+    description: "Des années d'expérience dans l'automobile pour vous garantir les meilleurs véhicules.",
+    icon: Wrench,
+  },
+  {
+    title: "Transparence",
+    description: "Historique complet, rapport d'inspection détaillé. Aucune mauvaise surprise.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Accompagnement",
+    description: "De la recherche à l'immatriculation, on s'occupe de tout pour vous.",
+    icon: HandHelping,
+  },
+];
+
 export default function ValueProposition() {
-  const pillars = [
-    {
-      title: "Expertise",
-      description:
-        "Des années d'expérience dans l'automobile pour vous garantir les meilleurs véhicules.",
-      icon: "🔧",
-    },
-    {
-      title: "Transparence",
-      description: "Historique complet, rapport d'inspection détaillé. Aucune mauvaise surprise.",
-      icon: "📋",
-    },
-    {
-      title: "Accompagnement",
-      description: "De la recherche à l'immatriculation, on s'occupe de tout pour vous.",
-      icon: "🤝",
-    },
-  ];
   return (
     <section className="py-20 px-4 bg-brand-black">
       <div className="max-w-6xl mx-auto">
@@ -34,7 +35,9 @@ export default function ValueProposition() {
           {pillars.map((pillar, index) => (
             <FadeIn key={pillar.title} delay={index * 0.15}>
               <div className="bg-brand-gray-dark p-8 rounded-lg border border-brand-gray-medium/20 text-center h-full">
-                <span className="text-4xl mb-4 block">{pillar.icon}</span>
+                <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <pillar.icon className="w-8 h-8 text-brand-orange" />
+                </div>
                 <h3 className="font-orbitron text-xl font-semibold text-brand-orange mb-4">
                   {pillar.title}
                 </h3>
