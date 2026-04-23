@@ -108,7 +108,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
             {/* Carousel - Cliquable pour lightbox */}
             <div
-              className="relative h-72 md:h-96 bg-brand-gray-medium cursor-pointer"
+              className="relative h-72 md:h-96 bg-brand-black cursor-pointer"
               onClick={() => setLightboxOpen(true)}
             >
               <AnimatePresence mode="wait">
@@ -125,7 +125,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                       src={getImageUrl(images[currentImage])}
                       alt={`${vehicle.brand} ${vehicle.model}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-brand-black">

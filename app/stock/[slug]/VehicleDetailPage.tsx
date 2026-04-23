@@ -58,7 +58,7 @@ export default function VehicleDetailPage({ vehicle }: Props) {
         {/* Galerie */}
         <div className="space-y-4">
           <div
-            className="relative h-80 md:h-[480px] bg-brand-gray-medium rounded-lg overflow-hidden cursor-pointer"
+            className="relative h-80 md:h-[480px] bg-brand-black rounded-lg overflow-hidden cursor-pointer"
             onClick={() => setLightboxOpen(true)}
           >
             {images[currentImage] && (
@@ -66,7 +66,7 @@ export default function VehicleDetailPage({ vehicle }: Props) {
                 src={getImageUrl(images[currentImage])}
                 alt={`${vehicle.brand} ${vehicle.model}`}
                 fill
-                className="object-cover"
+                className="object-contain"
                 priority
               />
             )}
