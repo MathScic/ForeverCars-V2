@@ -12,7 +12,7 @@ const vehicleProjection = groq`
   transmission,
   type,
   power,
-  images,
+  "images": images[]{..., "dimensions": asset->metadata.dimensions},
   description,
   features,
   status,

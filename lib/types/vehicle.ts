@@ -1,5 +1,17 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SanityImage = any;
+export type SanityImage = {
+  _key?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  asset?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  hotspot?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  crop?: any;
+  dimensions?: {
+    width: number;
+    height: number;
+    aspectRatio: number;
+  };
+};
 
 export interface Vehicle {
   _id: string;

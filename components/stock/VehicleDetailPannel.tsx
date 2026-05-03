@@ -62,8 +62,14 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
   const images = getImages();
 
-  const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) => {
-    return urlForImage(img).width(width).height(height).quality(90).url();
+  const getImageUrl = (img: (typeof images)[number], width = 1200) => {
+    return urlForImage(img).width(width).quality(90).url();
+  };
+
+  const getImageDimensions = (img: (typeof images)[number]) => {
+    const w = img?.dimensions?.width || 1200;
+    const h = img?.dimensions?.height || 900;
+    return { width: w, height: h, aspectRatio: w / h };
   };
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
@@ -108,33 +114,44 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
             {/* Carousel - Cliquable pour lightbox */}
             <div
-              className="relative w-full aspect-video bg-brand-black cursor-pointer"
+              className="relative w-full bg-brand-black cursor-pointer overflow-hidden"
               onClick={() => setLightboxOpen(true)}
             >
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentImage}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0"
-                >
-                  {images[currentImage] ? (
-                    <Image
-                      src={getImageUrl(images[currentImage])}
-                      alt={`${vehicle.brand} ${vehicle.model}`}
-                      fill
-                      className="object-contain"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full bg-brand-black">
-                      <span className="font-orbitron text-brand-gray-medium">
-                        Photo {currentImage + 1}
-                      </span>
-                    </div>
-                  )}
-                </motion.div>
+                {images[currentImage] ? (() => {
+                  const dims = getImageDimensions(images[currentImage]);
+                  return (
+                    <motion.div
+                      key={currentImage}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-full flex items-center justify-center"
+                    >
+                      <Image
+                        src={getImageUrl(images[currentImage])}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        width={dims.width}
+                        height={dims.height}
+                        style={{ width: "100%", height: "auto", maxHeight: "70vh", objectFit: "contain" }}
+                      />
+                    </motion.div>
+                  );
+                })() : (
+                  <motion.div
+                    key={currentImage}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full aspect-video flex items-center justify-center bg-brand-black"
+                  >
+                    <span className="font-orbitron text-brand-gray-medium">
+                      Photo {currentImage + 1}
+                    </span>
+                  </motion.div>
+                )}
               </AnimatePresence>
 
               {vehicle.isNew && (
@@ -276,15 +293,19 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
                 {/* Image plein écran */}
                 <div className="relative w-full h-full flex items-center justify-center p-8">
-                  {images[currentImage] ? (
-                    <Image
-                      src={getImageUrl(images[currentImage], 1920, 1440)}
-                      alt={`${vehicle.brand} ${vehicle.model}`}
-                      fill
-                      className="object-contain"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
+                  {images[currentImage] ? (() => {
+                    const dims = getImageDimensions(images[currentImage]);
+                    return (
+                      <Image
+                        src={getImageUrl(images[currentImage], 1920)}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        width={dims.width}
+                        height={dims.height}
+                        style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    );
+                  })() : (
                     <div className="flex items-center justify-center">
                       <span className="font-orbitron text-2xl text-brand-gray-medium">
                         Photo {currentImage + 1}

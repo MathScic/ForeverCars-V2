@@ -20,8 +20,14 @@ export default function VehicleDetailPage({ vehicle }: Props) {
 
   const images = vehicle.images || [];
 
-  const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) =>
-    urlForImage(img).width(width).height(height).quality(90).url();
+  const getImageUrl = (img: (typeof images)[number], width = 1200) =>
+    urlForImage(img).width(width).quality(90).url();
+
+  const getImageDimensions = (img: (typeof images)[number]) => {
+    const w = img?.dimensions?.width || 1200;
+    const h = img?.dimensions?.height || 900;
+    return { width: w, height: h };
+  };
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
@@ -58,18 +64,22 @@ export default function VehicleDetailPage({ vehicle }: Props) {
         {/* Galerie */}
         <div className="space-y-4">
           <div
-            className="relative w-full aspect-video bg-brand-black rounded-lg overflow-hidden cursor-pointer"
+            className="relative w-full bg-brand-black rounded-lg overflow-hidden cursor-pointer"
             onClick={() => setLightboxOpen(true)}
           >
-            {images[currentImage] && (
-              <Image
-                src={getImageUrl(images[currentImage])}
-                alt={`${vehicle.brand} ${vehicle.model}`}
-                fill
-                className="object-contain"
-                priority
-              />
-            )}
+            {images[currentImage] && (() => {
+              const dims = getImageDimensions(images[currentImage]);
+              return (
+                <Image
+                  src={getImageUrl(images[currentImage])}
+                  alt={`${vehicle.brand} ${vehicle.model}`}
+                  width={dims.width}
+                  height={dims.height}
+                  style={{ width: "100%", height: "auto", maxHeight: "70vh", objectFit: "contain" }}
+                  priority
+                />
+              );
+            })()}
             {vehicle.status === "reserved" && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-white text-brand-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
@@ -104,7 +114,7 @@ export default function VehicleDetailPage({ vehicle }: Props) {
                   onClick={() => setCurrentImage(index)}
                   className={`relative flex-shrink-0 w-20 h-16 rounded overflow-hidden border-2 transition-all ${index === currentImage ? "border-brand-orange" : "border-transparent opacity-60 hover:opacity-100"}`}
                 >
-                  <Image src={getImageUrl(img, 160, 120)} alt="" fill className="object-cover" />
+                  <Image src={getImageUrl(img, 160)} alt="" fill className="object-cover" />
                 </button>
               ))}
             </div>
@@ -192,15 +202,19 @@ export default function VehicleDetailPage({ vehicle }: Props) {
             <X size={28} />
           </button>
           <div className="relative w-full h-full flex items-center justify-center p-8">
-            {images[currentImage] && (
-              <Image
-                src={getImageUrl(images[currentImage], 1920, 1440)}
-                alt={`${vehicle.brand} ${vehicle.model}`}
-                fill
-                className="object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
-            )}
+            {images[currentImage] && (() => {
+              const dims = getImageDimensions(images[currentImage]);
+              return (
+                <Image
+                  src={getImageUrl(images[currentImage], 1920)}
+                  alt={`${vehicle.brand} ${vehicle.model}`}
+                  width={dims.width}
+                  height={dims.height}
+                  style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              );
+            })()}
           </div>
           {images.length > 1 && (
             <>
