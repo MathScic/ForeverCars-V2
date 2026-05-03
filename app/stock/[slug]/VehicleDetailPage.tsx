@@ -58,7 +58,7 @@ export default function VehicleDetailPage({ vehicle }: Props) {
         {/* Galerie */}
         <div className="space-y-4">
           <div
-            className="relative h-80 md:h-[480px] bg-brand-black rounded-lg overflow-hidden cursor-pointer"
+            className="relative w-full aspect-video bg-brand-black rounded-lg overflow-hidden cursor-pointer"
             onClick={() => setLightboxOpen(true)}
           >
             {images[currentImage] && (

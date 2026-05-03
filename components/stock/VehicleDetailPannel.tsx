@@ -108,7 +108,7 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
             {/* Carousel - Cliquable pour lightbox */}
             <div
-              className="relative h-72 md:h-96 bg-brand-black cursor-pointer"
+              className="relative w-full aspect-video bg-brand-black cursor-pointer"
               onClick={() => setLightboxOpen(true)}
             >
               <AnimatePresence mode="wait">
