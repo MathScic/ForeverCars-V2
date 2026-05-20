@@ -53,18 +53,22 @@ export default function VenduClient({ vehicles }: Props) {
                     >
                       {/* Image */}
                       <div className="relative h-48 bg-brand-gray-medium">
-                        {vehicle.images?.[0] ? (
-                          <Image
-                            src={urlForImage(vehicle.images[0]).width(800).height(600).quality(90).url()}
-                            alt={`${vehicle.brand} ${vehicle.model}`}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center h-full">
-                            <span className="text-brand-gray-light font-inter text-sm">Photo à venir</span>
-                          </div>
-                        )}
+                        {(() => {
+                          const b = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
+                          const url = b ? b.width(800).quality(90).url() : null;
+                          return url ? (
+                            <Image
+                              src={url}
+                              alt={`${vehicle.brand} ${vehicle.model}`}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <span className="text-brand-gray-light font-inter text-sm">Photo à venir</span>
+                            </div>
+                          );
+                        })()}
 
                         {/* Badge Vendu */}
                         <div className="absolute top-3 right-3 bg-brand-orange text-brand-black px-3 py-1 rounded-full flex items-center gap-1">

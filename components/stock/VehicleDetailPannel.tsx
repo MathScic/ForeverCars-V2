@@ -62,12 +62,24 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
 
   const images = getImages();
 
-  const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) => {
-    return urlForImage(img).width(width).height(height).quality(90).url();
+  const getImageUrl = (img: (typeof images)[number], width = 1200): string | null => {
+    const b = urlForImage(img);
+    if (!b) return null;
+    return b.width(width).quality(90).url();
   };
+
+  const getImageDimensions = (img: (typeof images)[number]) => ({
+    width: img?.asset?.metadata?.dimensions?.width || 1200,
+    height: img?.asset?.metadata?.dimensions?.height || 900,
+  });
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+  const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (info.offset.x < -50 || info.velocity.x < -400) nextImage();
+    else if (info.offset.x > 50 || info.velocity.x > 400) prevImage();
+  };
 
   return (
     <AnimatePresence>
@@ -106,34 +118,47 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
               </button>
             </div>
 
-            {/* Carousel - Cliquable pour lightbox */}
-            <div
-              className="relative w-full aspect-video bg-brand-black cursor-pointer"
-              onClick={() => setLightboxOpen(true)}
-            >
+            {/* Carousel - Cliquable pour lightbox, swipeable sur mobile */}
+            <div className="relative w-full bg-brand-black overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentImage}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0"
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.25 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => setLightboxOpen(true)}
+                  className="w-full flex items-center justify-center cursor-pointer select-none"
+                  style={{ touchAction: "pan-y" }}
                 >
-                  {images[currentImage] ? (
-                    <Image
-                      src={getImageUrl(images[currentImage])}
-                      alt={`${vehicle.brand} ${vehicle.model}`}
-                      fill
-                      className="object-contain"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full bg-brand-black">
-                      <span className="font-orbitron text-brand-gray-medium">
-                        Photo {currentImage + 1}
-                      </span>
-                    </div>
-                  )}
+                  {(() => {
+                    const img = images[currentImage];
+                    const url = img ? getImageUrl(img) : null;
+                    const dims = img ? getImageDimensions(img) : null;
+                    const lqip = img?.asset?.metadata?.lqip;
+                    return url && dims ? (
+                      <Image
+                        src={url}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        width={dims.width}
+                        height={dims.height}
+                        placeholder={lqip ? "blur" : "empty"}
+                        blurDataURL={lqip}
+                        draggable={false}
+                        style={{ width: "100%", height: "auto", maxHeight: "70vh", objectFit: "contain", pointerEvents: "none" }}
+                      />
+                    ) : (
+                      <div className="w-full aspect-video flex items-center justify-center bg-brand-black">
+                        <span className="font-orbitron text-brand-gray-medium">
+                          Photo {currentImage + 1}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </motion.div>
               </AnimatePresence>
 
@@ -274,24 +299,41 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
                   <X size={28} />
                 </button>
 
-                {/* Image plein écran */}
-                <div className="relative w-full h-full flex items-center justify-center p-8">
-                  {images[currentImage] ? (
-                    <Image
-                      src={getImageUrl(images[currentImage], 1920, 1440)}
-                      alt={`${vehicle.brand} ${vehicle.model}`}
-                      fill
-                      className="object-contain"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <span className="font-orbitron text-2xl text-brand-gray-medium">
-                        Photo {currentImage + 1}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                {/* Image plein écran — swipeable */}
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.1}
+                  onDragEnd={handleDragEnd}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute inset-0 flex items-center justify-center p-8 select-none"
+                  style={{ touchAction: "pan-y" }}
+                >
+                  {(() => {
+                    const img = images[currentImage];
+                    const url = img ? getImageUrl(img, 1920) : null;
+                    const dims = img ? getImageDimensions(img) : null;
+                    const lqip = img?.asset?.metadata?.lqip;
+                    return url && dims ? (
+                      <Image
+                        src={url}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        width={dims.width}
+                        height={dims.height}
+                        placeholder={lqip ? "blur" : "empty"}
+                        blurDataURL={lqip}
+                        draggable={false}
+                        style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain", pointerEvents: "none" }}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        <span className="font-orbitron text-2xl text-brand-gray-medium">
+                          Photo {currentImage + 1}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </motion.div>
 
                 {/* Flèches navigation */}
                 {images.length > 1 && (

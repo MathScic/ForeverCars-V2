@@ -20,8 +20,16 @@ export default function VehicleDetailPage({ vehicle }: Props) {
 
   const images = vehicle.images || [];
 
-  const getImageUrl = (img: (typeof images)[number], width = 1200, height = 900) =>
-    urlForImage(img).width(width).height(height).quality(90).url();
+  const getImageUrl = (img: (typeof images)[number], width = 1200): string | null => {
+    const b = urlForImage(img);
+    if (!b) return null;
+    return b.width(width).quality(90).url();
+  };
+
+  const getImageDimensions = (img: (typeof images)[number]) => ({
+    width: img?.asset?.metadata?.dimensions?.width || 1200,
+    height: img?.asset?.metadata?.dimensions?.height || 900,
+  });
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
@@ -58,18 +66,27 @@ export default function VehicleDetailPage({ vehicle }: Props) {
         {/* Galerie */}
         <div className="space-y-4">
           <div
-            className="relative w-full aspect-video bg-brand-black rounded-lg overflow-hidden cursor-pointer"
+            className="relative w-full bg-brand-black rounded-lg overflow-hidden cursor-pointer"
             onClick={() => setLightboxOpen(true)}
           >
-            {images[currentImage] && (
-              <Image
-                src={getImageUrl(images[currentImage])}
-                alt={`${vehicle.brand} ${vehicle.model}`}
-                fill
-                className="object-contain"
-                priority
-              />
-            )}
+            {(() => {
+              const img = images[currentImage];
+              const url = img ? getImageUrl(img) : null;
+              const dims = img ? getImageDimensions(img) : null;
+              const lqip = img?.asset?.metadata?.lqip;
+              return url && dims ? (
+                <Image
+                  src={url}
+                  alt={`${vehicle.brand} ${vehicle.model}`}
+                  width={dims.width}
+                  height={dims.height}
+                  placeholder={lqip ? "blur" : "empty"}
+                  blurDataURL={lqip}
+                  priority
+                  style={{ width: "100%", height: "auto", maxHeight: "70vh", objectFit: "contain" }}
+                />
+              ) : null;
+            })()}
             {vehicle.status === "reserved" && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-white text-brand-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
@@ -98,15 +115,19 @@ export default function VehicleDetailPage({ vehicle }: Props) {
           {/* Miniatures */}
           {images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {images.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImage(index)}
-                  className={`relative flex-shrink-0 w-20 h-16 rounded overflow-hidden border-2 transition-all ${index === currentImage ? "border-brand-orange" : "border-transparent opacity-60 hover:opacity-100"}`}
-                >
-                  <Image src={getImageUrl(img, 160, 120)} alt="" fill className="object-cover" />
-                </button>
-              ))}
+              {images.map((img, index) => {
+                const url = getImageUrl(img, 160);
+                if (!url) return null;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImage(index)}
+                    className={`relative flex-shrink-0 w-20 h-16 rounded overflow-hidden border-2 transition-all ${index === currentImage ? "border-brand-orange" : "border-transparent opacity-60 hover:opacity-100"}`}
+                  >
+                    <Image src={url} alt="" fill className="object-cover" />
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -192,15 +213,24 @@ export default function VehicleDetailPage({ vehicle }: Props) {
             <X size={28} />
           </button>
           <div className="relative w-full h-full flex items-center justify-center p-8">
-            {images[currentImage] && (
-              <Image
-                src={getImageUrl(images[currentImage], 1920, 1440)}
-                alt={`${vehicle.brand} ${vehicle.model}`}
-                fill
-                className="object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
-            )}
+            {(() => {
+              const img = images[currentImage];
+              const url = img ? getImageUrl(img, 1920) : null;
+              const dims = img ? getImageDimensions(img) : null;
+              const lqip = img?.asset?.metadata?.lqip;
+              return url && dims ? (
+                <Image
+                  src={url}
+                  alt={`${vehicle.brand} ${vehicle.model}`}
+                  width={dims.width}
+                  height={dims.height}
+                  placeholder={lqip ? "blur" : "empty"}
+                  blurDataURL={lqip}
+                  style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : null;
+            })()}
           </div>
           {images.length > 1 && (
             <>

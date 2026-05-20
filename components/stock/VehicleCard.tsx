@@ -9,9 +9,8 @@ interface VehicleCardProps {
 }
 
 export default function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
-  const imageUrl = vehicle.images?.[0]
-    ? urlForImage(vehicle.images[0]).width(800).height(600).quality(90).url()
-    : null;
+  const imageBuilder = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
+  const imageUrl = imageBuilder ? imageBuilder.width(800).height(600).quality(90).url() : null;
 
   const isReserved = vehicle.status === "reserved";
 

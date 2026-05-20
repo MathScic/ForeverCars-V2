@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { mediaAssetSource } from "sanity-plugin-media";
+import { MultiImageUpload } from "../components/MultiImageUpload";
 
 export default defineType({
   name: "vehicle",
@@ -101,6 +102,9 @@ export default defineType({
       of: [{ type: "image", options: { hotspot: true, sources: [mediaAssetSource] } }],
       options: {
         layout: "grid",
+      },
+      components: {
+        input: MultiImageUpload,
       },
       validation: (rule) => rule.required().min(1),
     }),
