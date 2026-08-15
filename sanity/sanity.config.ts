@@ -3,6 +3,7 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { media } from "sanity-plugin-media";
 import { schemaTypes } from "./schemas";
+import { structure } from "./structure";
 import { apiVersion, dataset, projectId } from "./env";
 
 export default defineConfig({
@@ -11,7 +12,7 @@ export default defineConfig({
   projectId,
   dataset,
   basePath: "/studio",
-  plugins: [structureTool(), visionTool({ defaultApiVersion: apiVersion }), media()],
+  plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion }), media()],
   schema: {
     types: schemaTypes,
   },
