@@ -24,9 +24,8 @@ function CarouselCard({
   onClick: () => void;
   hidden?: boolean;
 }) {
-  const imageUrl = vehicle.images?.[0]?.asset?._ref
-    ? urlForImage(vehicle.images[0]).width(960).height(600).quality(85).url()
-    : null;
+  const imageBuilder = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
+  const imageUrl = imageBuilder ? imageBuilder.width(960).height(600).quality(85).url() : null;
   const isReserved = vehicle.status === "reserved";
 
   return (
