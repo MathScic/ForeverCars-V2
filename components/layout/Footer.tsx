@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import SocialIcon from "@/components/ui/SocialIcon";
+import { socialLinks } from "@/lib/social";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -24,7 +26,7 @@ export default function Footer() {
               />
             </Link>
             <p className="font-inter text-sm text-brand-gray-light mt-4 italic">
-              "Acheter ou vendre autrement"
+              &ldquo;Acheter ou vendre autrement&rdquo;
             </p>
           </div>
 
@@ -56,6 +58,20 @@ export default function Footer() {
               <li>c.forevercars@gmail.com</li>
               <li>06.67.53.74.00</li>
             </ul>
+            <div className="flex gap-3 mt-6">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="w-10 h-10 rounded-full border border-brand-gray-medium/40 flex items-center justify-center text-brand-gray-light hover:border-brand-orange hover:text-brand-orange transition-colors duration-300"
+                >
+                  <SocialIcon name={social.name} className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 

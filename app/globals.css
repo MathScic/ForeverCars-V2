@@ -130,3 +130,36 @@
     max-width: 100%;
   }
 }
+
+/* Carrousel infini (véhicules en vedette) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+
+.marquee-track:hover,
+.marquee-track:focus-within,
+.marquee-track.is-paused {
+  animation-play-state: paused;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  .marquee-mask {
+    overflow-x: auto;
+  }
+}

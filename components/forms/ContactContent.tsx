@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import FadeIn from "@/components/ui/FadeIn";
+import SocialIcon from "@/components/ui/SocialIcon";
+import { socialLinks } from "@/lib/social";
 
 const sujets = [
   { value: "general", label: "Question générale" },
@@ -238,12 +240,53 @@ export default function ContactContent() {
                   </li>
                   <li>
                     <span className="text-brand-white block">Téléphone</span>
-                    06.67.53.74.00
+                    <a href="tel:+33667537400" className="hover:text-brand-orange transition-colors">
+                      06.67.53.74.00
+                    </a>
                   </li>
                   <li>
                     <span className="text-brand-white block">Email</span>
-                    c.forevercars@gmail.com
+                    <a
+                      href="mailto:c.forevercars@gmail.com"
+                      className="hover:text-brand-orange transition-colors"
+                    >
+                      c.forevercars@gmail.com
+                    </a>
                   </li>
+                </ul>
+              </div>
+
+              <div className="bg-brand-gray-dark p-6 rounded-lg border border-brand-gray-medium/20">
+                <h3 className="font-orbitron text-lg font-semibold text-brand-orange mb-2">
+                  Suivez-nous
+                </h3>
+                <p className="font-inter text-sm text-brand-gray-light mb-4">
+                  Arrivages, coulisses et véhicules vendus en avant-première.
+                </p>
+                <ul className="space-y-3">
+                  {socialLinks.map((social) => (
+                    <li key={social.name}>
+                      <a
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-4 p-3 rounded-lg bg-brand-black border border-brand-gray-medium/20 hover:border-brand-orange/50 transition-all duration-300"
+                      >
+                        <span className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-brand-black transition-colors duration-300">
+                          <SocialIcon name={social.name} />
+                        </span>
+                        <span className="flex-1">
+                          <span className="block font-inter text-sm font-medium text-brand-white">
+                            {social.name}
+                          </span>
+                          <span className="block font-inter text-xs text-brand-gray-light">
+                            {social.handle}
+                          </span>
+                        </span>
+                        <ArrowUpRight className="w-4 h-4 text-brand-gray-light group-hover:text-brand-orange group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
 

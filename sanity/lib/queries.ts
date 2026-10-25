@@ -37,7 +37,7 @@ export const availableVehiclesQuery = groq`
 `;
 
 export const featuredVehiclesQuery = groq`
-  *[_type == "vehicle" && (status == "available" || status == "reserved") && isFeatured == true] | order(_createdAt desc) [0...4] {
+  *[_type == "vehicle" && (status == "available" || status == "reserved") && isFeatured == true] | order(_createdAt desc) [0...12] {
     ${vehicleProjection}
   }
 `;
