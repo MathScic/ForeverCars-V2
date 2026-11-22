@@ -1,3 +1,5 @@
+@docs/backoffice-regles.md
+
 # 🚗 FOREVERCARS - Documentation Projet
 
 > **Agence d'achat et revente de véhicules - Zone géographique : Loiret (45)**  
