@@ -1,6 +1,6 @@
 # Phase 1 — Migration en monorepo : plan d'exécution
 
-> **Mode d'exécution (imposé)** : pas de sous-agent qui écrit le code. Claude donne la config et le boilerplate **en bloc à coller**, l'utilisateur tape la logique. Après chaque étape : commande de vérification + résultat attendu, puis attente du « OK ». Aucune action sur Vercel ni push sans accord. Règles : `docs/backoffice-regles.md`.
+> **Mode d'exécution (imposé)** : pas de sous-agent qui écrit le code. Claude code lui-même toute cette phase (config, boilerplate, CI, route de santé). À la fin de chaque tâche : diff + quoi tester, puis attente du « OK » avant le commit. Aucune action sur Vercel ni push sans accord. Règles : `docs/backoffice-regles.md`.
 
 **Objectif :** le site Next.js vit dans `apps/site` d'un monorepo pnpm, avec un fonctionnement strictement identique.
 
@@ -50,7 +50,7 @@ forevercars/
 
 Le `useEffect` qui remet la galerie à zéro quand le véhicule change déclenche `react-hooks/set-state-in-effect`. **Pas de `key` côté parent** : la clé passerait à `undefined` à la fermeture et casserait l'animation de sortie.
 
-- [ ] **Étape 1 : remplacer l'effet par un ajustement pendant le rendu (logique tapée par l'utilisateur).** Garder l'id précédent dans un état `prevVehicleId`. Si `vehicle?._id !== prevVehicleId` : mettre à jour `prevVehicleId`, `setCurrentImage(0)`, `setLightboxOpen(false)`. Supprimer l'ancien `useEffect` (garder celui du `popstate`).
+- [ ] **Étape 1 : remplacer l'effet par un ajustement pendant le rendu.** Garder l'id précédent dans un état `prevVehicleId`. Si `vehicle?._id !== prevVehicleId` : mettre à jour `prevVehicleId`, `setCurrentImage(0)`, `setLightboxOpen(false)`. Supprimer l'ancien `useEffect` (garder celui du `popstate`).
 - [ ] **Étape 2 : vérifier.** `npx eslint . --quiet` → aucune sortie. `npx tsc --noEmit` → code 0.
 - [ ] **Étape 3 : test manuel.** `npm run dev` → `/stock` : ouvrir le véhicule A, aller sur la photo 3, fermer, ouvrir le véhicule B → photo 1 affichée. La sortie du panneau reste animée.
 - [ ] **Étape 4 : commit.** `fix(lint): réinitialiser la galerie sans setState dans un effet`
@@ -102,7 +102,7 @@ Le `useEffect` qui remet la galerie à zéro quand le véhicule change déclench
 - `GET /api/health` → `200` avec le JSON `{ "ok": true }`, **et rien d'autre** : ni variable d'environnement ni version. La réponse vient de `healthStatus()`, ce qui prouve que l'import est résolu au runtime, pas seulement au typecheck. À la fin du chantier, on décide de retirer la route ou de la garder comme sonde.
 
 - [ ] **Étape 1 : coller le boilerplate du paquet** (blocs fournis), puis `pnpm install`.
-- [ ] **Étape 2 : écrire `healthStatus()` et `route.ts` (logique tapée par l'utilisateur)** : un `GET` qui renvoie `Response.json(healthStatus())`.
+- [ ] **Étape 2 : écrire `healthStatus()` et `route.ts`** : un `GET` qui renvoie `Response.json(healthStatus())`.
 - [ ] **Étape 3 : vérifier.** `pnpm typecheck && pnpm lint && pnpm build` → 0 erreur, `/api/health` listée dans les routes. `pnpm dev` puis `curl http://localhost:3000/api/health` → exactement `{"ok":true}`.
 - [ ] **Étape 4 : commit.** `feat(shared): paquet partagé vide branché au site`
 

@@ -6,12 +6,12 @@ Le plan détaillé du back-office se trouve dans `docs/plan-backoffice.md`.
 ## Langue et façon de travailler
 
 - Réponds toujours en **français**.
-- Tu es mon **tech lead** : je tape la logique moi-même.
-  - Avant le code : le **pourquoi**, puis un **schéma fléché** court (très peu de texte).
-  - Code livré **par morceaux de 30 à 40 lignes**. Après chaque morceau, tu t'arrêtes et tu me dis **quoi vérifier** (commande + résultat attendu), puis tu attends mon « OK ».
+- Tu es mon **tech lead**. Répartition du code :
+  - **Tu codes toi-même** : config, boilerplate, interface, tests et packaging.
+  - **Je tape moi-même** : la RLS et les rôles, le moteur de synchronisation et la logique de publication. Pour ces parties, tu me donnes le **pourquoi**, un **schéma fléché** court, et tu découpes en étapes, avec **quoi vérifier** après chacune (commande + résultat attendu).
+  - **À la fin de chaque tâche**, tu me montres le **diff** et tu me dis **quoi tester**, puis tu attends mon « OK » avant de commiter.
   - **Fichiers et composants ≤ 100 lignes.** Au-delà, propose un découpage.
   - **Backend d'abord** (base, sécurité, logique), interface ensuite.
-  - **Boilerplate et données répétitives** (config, `package.json`, tsconfig, seed, CI, migrations de structure) : donne-les **en bloc complet à coller**.
 - Réponses courtes et directes. Pas de longues listes.
 - Si une décision n'est pas couverte ici ou dans le plan : **pose-moi la question**, ne choisis pas à ma place.
 - Ne lance jamais de commande destructrice (`rm -rf`, `git push --force`, `supabase db reset` sur la base distante, suppression de bucket) sans mon accord explicite.
