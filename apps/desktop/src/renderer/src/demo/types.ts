@@ -12,7 +12,10 @@ export interface Photo {
 
 export interface DemoVehicle {
   id: string;
+  /** Numéro de dossier interne (FC-2026-0007) : identifie le véhicule, plaque ou pas. */
+  fileNumber: string;
   slug: string;
+  /** Facultative : souvent masquée par une plaque « ForeverCars ». Sert à pré-remplir la fiche. */
   plate: string;
   brand: string;
   model: string;
@@ -22,11 +25,18 @@ export interface DemoVehicle {
   gearbox: Gearbox;
   powerHp: number;
   mileage: number;
+  color: string;
+  owners: number;
+  warrantyMonths: number;
   price: number;
   description: string;
+  /** true tant que la description suit les équipements ; false dès qu'on la retouche à la main. */
+  descriptionIsAuto: boolean;
   equipment: string[];
   status: VehicleStatus;
   isFeatured: boolean;
+  exportLeboncoin: boolean;
+  exportLaCentrale: boolean;
   /** Ordre d'affichage ; la première photo est la couverture. */
   photos: Photo[];
   /** Données internes, réservées à l'admin (future table vehicle_costs). */

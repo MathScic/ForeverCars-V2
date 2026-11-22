@@ -1,51 +1,37 @@
-import { formatMileage, formatPrice } from "@forevercars/shared";
-import Card from "../ui/Card";
-import { FeaturedBadge, StatusBadge } from "../ui/Badge";
+import { Printer } from "lucide-react";
+import PublishChecklist from "./preview/PublishChecklist";
+import VitrineSheet from "./preview/VitrineSheet";
 import SitePreviewCard from "./SitePreviewCard";
 import type { StepProps } from "./Wizard";
 
-const gearboxLabel = { manuelle: "Manuelle", automatique: "Automatique" } as const;
+const caption = "text-xs uppercase tracking-wider text-brand-gray-light/70 mb-3";
 
-export default function StepPreview({ vehicle: v }: StepProps) {
-  const rows: [string, string][] = [
-    ["Plaque", v.plate || "—"],
-    ["Version", v.version || "—"],
-    ["Année", String(v.year)],
-    ["Kilométrage", formatMileage(v.mileage)],
-    ["Carburant", v.fuel],
-    ["Boîte", gearboxLabel[v.gearbox]],
-    ["Puissance", `${v.powerHp} ch`],
-    ["Prix", formatPrice(v.price)],
-    ["Photos", String(v.photos.length)],
-    ["Équipements", v.equipment.join(", ") || "—"],
-  ];
-
+export default function StepPreview({ vehicle: v, onPublish }: StepProps) {
   return (
-    <div className="grid grid-cols-[340px_1fr] gap-8 items-start">
-      <div>
-        <p className="text-xs uppercase tracking-wider text-brand-gray-light/70 mb-3">
-          Aperçu sur forevercars.fr
-        </p>
-        <SitePreviewCard vehicle={v} />
-      </div>
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <StatusBadge status={v.status} />
-          {v.isFeatured && <FeaturedBadge />}
-        </div>
-        <dl className="grid grid-cols-[140px_1fr] gap-y-2.5 text-sm">
-          {rows.map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-brand-gray-light/70">{label}</dt>
-              <dd className="text-brand-white first-letter:uppercase">{value}</dd>
+    <div className="space-y-6">
+      <div className="grid grid-cols-[1fr_340px] gap-8 items-start">
+        <div className="space-y-6">
+          <div>
+            <p className={caption}>Aperçu sur forevercars.fr</p>
+            <div className="max-w-sm">
+              <SitePreviewCard vehicle={v} />
             </div>
-          ))}
-        </dl>
-        <div className="mt-6 pt-5 border-t border-brand-gray-medium/20">
-          <p className="text-xs uppercase tracking-wider text-brand-orange mb-2">Description</p>
-          <p className="text-sm text-brand-gray-light leading-relaxed whitespace-pre-line">{v.description}</p>
+          </div>
+          <PublishChecklist vehicle={v} onPublish={onPublish} />
         </div>
-      </Card>
+        <div>
+          <p className={caption}>Fiche vitrine · A4 pare-brise</p>
+          <VitrineSheet vehicle={v} />
+          <button
+            type="button"
+            // Ouvre la boîte d'impression de Windows ; seule la fiche est imprimée (voir styles.css).
+            onClick={() => window.print()}
+            className="mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-orange text-brand-orange text-sm font-semibold hover:bg-brand-orange hover:text-brand-black transition-colors"
+          >
+            <Printer size={16} /> Imprimer la fiche
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

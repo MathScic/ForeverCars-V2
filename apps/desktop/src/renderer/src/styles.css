@@ -47,9 +47,53 @@
   ::selection {
     background: rgb(255 140 66 / 0.35);
   }
+  /* Tailwind v4 remet cursor: default sur les boutons : on rétablit la main. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="switch"],
+  [role="radio"],
+  label:has(input[type="file"]),
+  label:has(input[type="checkbox"]),
+  select,
+  summary {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
   :focus-visible {
     outline: 2px solid var(--color-brand-orange);
     outline-offset: 2px;
+  }
+}
+
+/* Impression : seule la fiche vitrine sort, mise à l'échelle sur une page A4. */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .print-area {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 340px !important;
+    zoom: 2.33; /* 340 px → 210 mm */
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 }
 

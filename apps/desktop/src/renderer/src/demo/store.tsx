@@ -4,7 +4,8 @@ import { createSeedState } from "./seed";
 import type { DemoState } from "./types";
 
 // Les données de démo sont conservées localement entre deux lancements.
-const STORAGE_KEY = "forevercars-demo-v1";
+// v2 : ajout du numéro de dossier, de la couleur, de la garantie et des exports.
+const STORAGE_KEY = "forevercars-demo-v2";
 
 function load(): DemoState {
   try {

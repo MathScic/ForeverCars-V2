@@ -1,13 +1,19 @@
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { session, shell, type WebContents } from "electron";
 
 // Seuls ces domaines peuvent être ouverts dans le navigateur par défaut.
 const EXTERNAL_HOSTS = new Set(["forevercars.fr", "www.forevercars.fr"]);
 
-/** L'URL appartient-elle à l'application (serveur de dev ou fichiers locaux) ? */
+// Page de l'app une fois construite. Seul CE fichier est autorisé, pas tout file://
+// (sinon une image lâchée dans la fenêtre remplacerait l'application).
+const RENDERER_FILE = pathToFileURL(join(__dirname, "../renderer/index.html")).href;
+
+/** L'URL appartient-elle à l'application (serveur de dev ou page construite) ? */
 export function isAppUrl(url: string): boolean {
   const devUrl = process.env.ELECTRON_RENDERER_URL;
   if (devUrl && url.startsWith(devUrl)) return true;
-  return url.startsWith("file://");
+  return url === RENDERER_FILE || url.startsWith(`${RENDERER_FILE}#`);
 }
 
 function openExternalIfAllowed(url: string): void {

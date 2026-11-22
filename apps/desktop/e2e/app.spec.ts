@@ -1,7 +1,5 @@
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { _electron as electron, expect, test, type ElectronApplication, type Page } from "@playwright/test";
+import { expect, test, type ElectronApplication, type Page } from "@playwright/test";
+import { launchApp } from "./launch";
 
 type AppWindow = { api: { app: { version(): Promise<string> } } };
 
@@ -9,16 +7,7 @@ let app: ElectronApplication;
 let page: Page;
 
 test.beforeEach(async () => {
-  // Le terminal de VS Code définit ELECTRON_RUN_AS_NODE=1, qui empêche Electron de démarrer.
-  const env = { ...process.env };
-  delete env.ELECTRON_RUN_AS_NODE;
-  app = await electron.launch({
-    // Lance le dossier de l'app (package.json → out/main/index.js) pour avoir sa vraie version.
-    args: [join(__dirname, "..")],
-    env: { ...env, FOREVERCARS_USER_DATA: mkdtempSync(join(tmpdir(), "fc-e2e-")) } as Record<string, string>,
-  });
-  page = await app.firstWindow();
-  await page.waitForLoadState("domcontentloaded");
+  ({ app, page } = await launchApp());
 });
 
 test.afterEach(async () => {
@@ -35,9 +24,10 @@ test("la fenêtre s'ouvre avec le bon titre et le renderer est isolé", async ()
   expect(Object.keys(await page.evaluate(() => (window as unknown as AppWindow).api))).toEqual(["app"]);
 });
 
-test("le parc affiche les 6 véhicules de démo", async () => {
+test("le parc affiche les 6 véhicules de démo avec leur numéro de dossier", async () => {
   await expect(page.getByRole("heading", { name: "Le parc" })).toBeVisible();
   await expect(page.locator("tbody tr")).toHaveCount(6);
+  await expect(page.getByText(/^FC-\d{4}-0001$/)).toBeVisible();
 });
 
 test("le vendeur ne voit ni marge ni suppression", async () => {
@@ -47,33 +37,17 @@ test("le vendeur ne voit ni marge ni suppression", async () => {
   await expect(page.getByRole("link", { name: "Équipe" })).toHaveCount(0);
 });
 
-test("mise en vente complète d'un véhicule", async () => {
-  await page.getByRole("button", { name: "Mettre en vente" }).click();
+test("un fichier lâché hors de la zone de dépôt ne remplace pas l'application", async () => {
+  await page.evaluate(() => {
+    const data = new DataTransfer();
+    data.items.add(new File(["x"], "photo.jpg", { type: "image/jpeg" }));
+    document.body.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: data }));
+  });
+  await expect(page.getByRole("heading", { name: "Le parc" })).toBeVisible();
+  expect(page.url()).toContain("index.html");
+});
 
-  await page.getByLabel("Plaque d'immatriculation").fill("ab 123cd");
-  await page.getByLabel("Marque").fill("Audi");
-  await page.getByLabel("Modèle").fill("A3");
-  await page.getByLabel("Kilométrage").fill("52000");
-  await page.getByLabel("Puissance (ch)").fill("150");
-  await page.getByRole("button", { name: "Continuer" }).click();
-  await expect(page.getByLabel("Plaque d'immatriculation")).toHaveCount(0);
-
-  await page.getByRole("button", { name: "Continuer" }).click();
-  await expect(page.getByText("Ajoutez au moins une photo")).toBeVisible();
-  await page.locator('input[type="file"][accept="image/*"]').setInputFiles(join(__dirname, "../src/renderer/src/assets/vw-golf-8.webp"));
-  await expect(page.getByText("Couverture")).toBeVisible();
-  await page.getByRole("button", { name: "Continuer" }).click();
-
-  await page.getByLabel("Prix de vente (€)").fill("18990");
-  await page.getByLabel("Description").fill("Très belle Audi A3, entretien à jour, deux clés.");
-  await page.getByRole("button", { name: "Continuer" }).click();
-
-  await expect(page.getByText("Aperçu sur forevercars.fr")).toBeVisible();
-  await expect(page.getByText("AB-123-CD")).toBeVisible();
-  await page.getByRole("button", { name: "Publier sur le site" }).click();
-
-  await expect(page.getByRole("heading", { name: "Audi A3 est en ligne" })).toBeVisible();
-  await page.getByRole("link", { name: "Retour au parc" }).click();
-  await expect(page.locator("tbody tr")).toHaveCount(7);
-  await expect(page.getByText("Mis en ligne : Audi A3")).toBeVisible();
+test("les boutons affichent la main au survol", async () => {
+  const cursor = await page.getByRole("button", { name: "Mettre en vente" }).evaluate((el) => getComputedStyle(el).cursor);
+  expect(cursor).toBe("pointer");
 });

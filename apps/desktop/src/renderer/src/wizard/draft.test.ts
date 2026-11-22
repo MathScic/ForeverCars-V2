@@ -3,7 +3,7 @@ import { emptyVehicle, finalize, normalizePlate, validateStep } from "./draft";
 
 const now = "2026-11-22T10:00:00.000Z";
 const filled = () => ({
-  ...emptyVehicle("v1", now),
+  ...emptyVehicle("v1", now, "FC-2026-0001"),
   plate: "FX-482-KM",
   brand: "Peugeot",
   model: "2008",
@@ -25,8 +25,11 @@ describe("normalizePlate", () => {
 
 describe("validateStep", () => {
   it("étape Véhicule : marque, modèle et puissance obligatoires", () => {
-    const errors = validateStep(0, emptyVehicle("v1", now), new Date(now));
+    const errors = validateStep(0, emptyVehicle("v1", now, "FC-2026-0001"), new Date(now));
     expect(Object.keys(errors).sort()).toEqual(["brand", "model", "powerHp"]);
+  });
+  it("étape Identification : numéro de dossier obligatoire", () => {
+    expect(validateStep(0, { ...filled(), fileNumber: " " }, new Date(now)).fileNumber).toBeDefined();
   });
   it("étape Véhicule : plaque mal formée refusée, plaque vide acceptée", () => {
     expect(validateStep(0, { ...filled(), plate: "123" }, new Date(now)).plate).toBeDefined();
@@ -47,7 +50,7 @@ describe("validateStep", () => {
     expect(Object.keys(errors).sort()).toEqual(["description", "price"]);
   });
   it("étape Aperçu : rien à valider", () => {
-    expect(validateStep(3, emptyVehicle("v1", now))).toEqual({});
+    expect(validateStep(3, emptyVehicle("v1", now, "FC-2026-0001"))).toEqual({});
   });
 });
 

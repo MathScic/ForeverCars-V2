@@ -1,13 +1,14 @@
 import { slugify } from "@forevercars/shared";
 import type { DemoVehicle } from "../demo/types";
 
-export const STEPS = ["Véhicule", "Photos", "Prix & description", "Aperçu"] as const;
+export const STEPS = ["Identification", "Photos", "Prix & annonce", "Aperçu & publication"] as const;
 export type StepIndex = 0 | 1 | 2 | 3;
 export type Errors = Partial<Record<keyof DemoVehicle, string>>;
 
-export function emptyVehicle(id: string, now: string): DemoVehicle {
+export function emptyVehicle(id: string, now: string, fileNumber: string): DemoVehicle {
   return {
     id,
+    fileNumber,
     slug: "",
     plate: "",
     brand: "",
@@ -18,11 +19,17 @@ export function emptyVehicle(id: string, now: string): DemoVehicle {
     gearbox: "manuelle",
     powerHp: 0,
     mileage: 0,
+    color: "",
+    owners: 1,
+    warrantyMonths: 12,
     price: 0,
     description: "",
+    descriptionIsAuto: true,
     equipment: [],
     status: "draft",
     isFeatured: false,
+    exportLeboncoin: false,
+    exportLaCentrale: false,
     photos: [],
     createdAt: now,
     updatedAt: now,
@@ -42,6 +49,7 @@ const PLATE = /^[A-Z]{2}-\d{3}-[A-Z]{2}$/;
 export function validateStep(step: StepIndex, v: DemoVehicle, now = new Date()): Errors {
   const e: Errors = {};
   if (step === 0) {
+    if (!v.fileNumber.trim()) e.fileNumber = "Le numéro de dossier est obligatoire";
     if (v.plate && !PLATE.test(v.plate)) e.plate = "Format attendu : AA-123-AA";
     if (!v.brand.trim()) e.brand = "La marque est obligatoire";
     if (!v.model.trim()) e.model = "Le modèle est obligatoire";

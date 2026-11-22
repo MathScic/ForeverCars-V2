@@ -10,7 +10,7 @@ Application Electron du garage. **Ébauche avec données de démo** : rien n'est
 ## Ce qui marche déjà
 
 - Tableau de bord du parc : indicateurs, filtres par statut, recherche, coup de cœur, publier, marquer vendu, supprimer (admin), journal d'activité.
-- Assistant de mise en vente en 4 étapes (fiche, photos, prix et description, aperçu de la carte du site) avec brouillon enregistré à chaque étape.
+- Assistant de mise en vente en 4 étapes : identification (n° de dossier auto, plaque facultative pour pré-remplir), photos (glisser-déposer de fichiers ou d'un dossier, couverture, ordre), prix et annonce (estimation, marge, équipements en un clic, description générée), aperçu (carte du site, fiche vitrine A4 imprimable avec QR code). Brouillon enregistré à chaque étape.
 - Rôle simulé admin / vendeur : le vendeur ne voit ni coûts ni marge et ne peut pas supprimer.
 - Fenêtre sécurisée : `contextIsolation`, `sandbox`, pas de Node dans l'interface, CSP stricte, canaux IPC sur liste blanche validés par Zod.
 
@@ -22,6 +22,10 @@ Application Electron du garage. **Ébauche avec données de démo** : rien n'est
 | Sélecteur de rôle | Connexion Supabase Auth + RLS (phases 2 et 6) |
 | « Publier » change seulement le statut | Logique de publication + revalidation du site (phases 7 et 9) |
 | Photos gardées en mémoire | Pipeline sharp dans le process main (phase 7) |
+| Recherche par plaque sur 3 plaques de démo | Module SIV (interface `PlateLookup`) |
+| Estimation de marché par formule | Module d'estimation sur annonces réelles |
+| Description par modèle de texte local | IA via Edge Function Supabase, la clé reste côté serveur (phase 8) |
+| Exports Leboncoin / La Centrale : simple option | Texte + photos préparés, publication manuelle (phase 8) |
 | Carte d'aperçu recopiée du site | Vrai composant partagé (phase 7) |
 
 ## Commandes

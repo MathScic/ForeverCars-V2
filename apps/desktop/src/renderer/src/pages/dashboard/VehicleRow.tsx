@@ -40,7 +40,7 @@ export default function VehicleRow({ vehicle: v, isAdmin }: Props) {
           </div>
         </div>
       </td>
-      <td className="px-4 text-sm text-brand-gray-light font-mono">{v.plate || "—"}</td>
+      <td className="px-4 text-sm text-brand-gray-light font-mono">{v.fileNumber}</td>
       <td className="px-4 text-sm text-brand-gray-light tabular-nums">
         {v.year} · {formatMileage(v.mileage)}
       </td>

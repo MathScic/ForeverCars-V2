@@ -25,7 +25,7 @@ export default function Dashboard() {
     const q = query.trim().toLowerCase();
     return state.vehicles
       .filter((v) => status === "all" || v.status === status)
-      .filter((v) => !q || `${v.brand} ${v.model} ${v.version} ${v.plate}`.toLowerCase().includes(q))
+      .filter((v) => !q || `${v.brand} ${v.model} ${v.version} ${v.plate} ${v.fileNumber}`.toLowerCase().includes(q))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }, [state.vehicles, status, query]);
 
@@ -52,7 +52,7 @@ export default function Dashboard() {
               <thead className="text-left text-xs uppercase tracking-wider text-brand-gray-light/60">
                 <tr>
                   <th className="py-3 pl-5 pr-4 font-medium">Véhicule</th>
-                  <th className="px-4 font-medium">Plaque</th>
+                  <th className="px-4 font-medium">Dossier</th>
                   <th className="px-4 font-medium">Année · km</th>
                   <th className="px-4 font-medium text-right">Prix</th>
                   <th className="pr-3">

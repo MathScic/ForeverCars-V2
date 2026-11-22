@@ -1,39 +1,30 @@
-import { ArrowLeft, ArrowRight, Save, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 import Button from "../ui/Button";
 import type { StepIndex } from "./draft";
 
 interface Props {
   step: StepIndex;
-  isOnline: boolean;
   onBack: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
-  onPublish: () => void;
 }
 
-export default function WizardFooter({ step, isOnline, onBack, onNext, onSaveDraft, onPublish }: Props) {
-  const last = step === 3;
+// À la dernière étape, la publication se fait depuis le bloc « Prêt à publier ».
+export default function WizardFooter({ step, onBack, onNext, onSaveDraft }: Props) {
   return (
     <div className="flex items-center justify-between gap-4 pt-6 border-t border-brand-gray-medium/20">
       <Button variant="ghost" onClick={onBack}>
-        <ArrowLeft size={16} /> {step === 0 ? "Retour au parc" : "Étape précédente"}
+        <ArrowLeft size={16} /> {step === 0 ? "Retour au parc" : "Précédent"}
       </Button>
-      <div className="flex items-center gap-3">
-        {last ? (
-          <>
-            <Button variant="outline" onClick={onSaveDraft}>
-              <Save size={16} /> {isOnline ? "Enregistrer" : "Garder en brouillon"}
-            </Button>
-            <Button size="lg" onClick={onPublish}>
-              <Send size={16} /> {isOnline ? "Mettre à jour sur le site" : "Publier sur le site"}
-            </Button>
-          </>
-        ) : (
-          <Button size="lg" onClick={onNext}>
-            Continuer <ArrowRight size={16} />
-          </Button>
-        )}
-      </div>
+      {step === 3 ? (
+        <Button variant="outline" onClick={onSaveDraft}>
+          <Save size={16} /> Garder en brouillon
+        </Button>
+      ) : (
+        <Button size="lg" onClick={onNext}>
+          Suivant <ArrowRight size={16} />
+        </Button>
+      )}
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default function Filters({ status, onStatus, query, onQuery, counts }: Pr
           type="search"
           value={query}
           onChange={(e) => onQuery(e.target.value)}
-          placeholder="Marque, modèle, plaque…"
+          placeholder="Marque, modèle, n° de dossier…"
           className="w-full h-11 pl-11 pr-4 rounded-full bg-brand-black border border-brand-gray-medium/40 text-sm placeholder:text-brand-gray-light/40 focus:border-brand-orange focus:outline-none"
         />
       </label>
