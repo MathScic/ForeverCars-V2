@@ -1,0 +1,37 @@
+import { session, shell, type WebContents } from "electron";
+
+// Seuls ces domaines peuvent être ouverts dans le navigateur par défaut.
+const EXTERNAL_HOSTS = new Set(["forevercars.fr", "www.forevercars.fr"]);
+
+/** L'URL appartient-elle à l'application (serveur de dev ou fichiers locaux) ? */
+export function isAppUrl(url: string): boolean {
+  const devUrl = process.env.ELECTRON_RENDERER_URL;
+  if (devUrl && url.startsWith(devUrl)) return true;
+  return url.startsWith("file://");
+}
+
+function openExternalIfAllowed(url: string): void {
+  try {
+    const { protocol, hostname } = new URL(url);
+    if (protocol === "https:" && EXTERNAL_HOSTS.has(hostname)) void shell.openExternal(url);
+  } catch {
+    // URL invalide : ignorée
+  }
+}
+
+/** Bloque navigation, nouvelles fenêtres et demandes de permission (caméra, micro…). */
+export function hardenWebContents(contents: WebContents): void {
+  contents.setWindowOpenHandler(({ url }) => {
+    openExternalIfAllowed(url);
+    return { action: "deny" };
+  });
+  contents.on("will-navigate", (event, url) => {
+    if (isAppUrl(url)) return;
+    event.preventDefault();
+    openExternalIfAllowed(url);
+  });
+}
+
+export function denyAllPermissions(): void {
+  session.defaultSession.setPermissionRequestHandler((_wc, _perm, callback) => callback(false));
+}

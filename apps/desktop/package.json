@@ -1,0 +1,43 @@
+{
+  "name": "desktop",
+  "productName": "ForeverCars Back-Office",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Back-office ForeverCars (ébauche avec données de démo)",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "node scripts/without-node-mode.mjs electron-vite dev",
+    "build": "electron-vite build",
+    "start": "node scripts/without-node-mode.mjs electron-vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json && tsc -p tsconfig.e2e.json",
+    "test": "vitest run",
+    "e2e": "electron-vite build && playwright test"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@forevercars/shared": "workspace:*",
+    "lucide-react": "^0.548.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^7.18.6",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^45.4.1",
+    "electron-vite": "^5.0.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.73.0",
+    "vite": "^7.3.8",
+    "vitest": "^5.1.1"
+  }
+}

@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Tokens ForeverCars — relevés dans le CSS compilé de apps/site
+   (globals.css @theme). Provisoire : ils migreront dans
+   packages/design en phase 1 bis.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-brand-black: #0a0a0a;
+  --color-brand-orange: #ff8c42;
+  --color-brand-white: #ffffff;
+  --color-brand-gray-dark: #1a1a1a;
+  --color-brand-gray-medium: #404040;
+  --color-brand-gray-light: #e5e5e5;
+  /* Vert déjà utilisé par le site pour les confirmations (green-400) */
+  --color-brand-success: #4ade80;
+  /* Rouge des messages d'erreur du site (red-500) */
+  --color-brand-danger: #ef4444;
+
+  /* Le site en ligne affiche tout en Inter (la classe font-orbitron n'y génère
+     aucun CSS). Pour passer les titres en Orbitron : changer --font-display. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Rayons du site (--radius: 0.625rem) */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+}
+
+@layer base {
+  * {
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background-color: var(--color-brand-black);
+    color: var(--color-brand-white);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: rgb(255 140 66 / 0.35);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
