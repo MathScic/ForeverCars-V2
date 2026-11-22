@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Statistiques · Back-office</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <link rel="stylesheet" href="bo.css" />
+    <style>
+      main { padding: 48px 40px 140px; display: grid; gap: 40px; align-content: start; }
+      .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+      .seg { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 999px; }
+      .seg button { height: 40px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: var(--silver); font-size: 13px; transition: all 300ms var(--ease-out); }
+      .seg button[aria-pressed="true"] { background: var(--ivory); color: var(--carbon); font-weight: 600; }
+      .kpis { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0; }
+      .kpi { padding: 28px 24px; border-right: 1px solid var(--line); }
+      .kpi:last-child { border-right: 0; }
+      .kpi dt { font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.24em; text-transform: uppercase; color: var(--silver); }
+      .kpi dd { margin: 16px 0 0; font: 600 34px/1 var(--font-display); font-stretch: 125%; font-variant-numeric: tabular-nums; }
+      .kpi small { display: block; margin-top: 10px; font: 400 12px/1.4 var(--font-body); color: var(--silver); }
+      .grid2 { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+      .card2 { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); padding: 28px; display: grid; gap: 22px; align-content: start; }
+      .chart { display: flex; align-items: end; gap: 10px; height: 220px; padding-top: 10px; }
+      .chart .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; height: 100%; }
+      .chart .bar { flex: none; }
+      .chart .bar { width: 100%; max-width: 34px; background: var(--line-strong); border-radius: 2px 2px 0 0; transform-origin: bottom; transform: scaleY(0); transition: transform 1100ms var(--ease-spring); transition-delay: var(--d); position: relative; }
+      .chart.in .bar { transform: scaleY(1); }
+      .chart .bar.max { background: var(--orange); box-shadow: 0 0 18px rgb(255 140 66 / 0.45); }
+      .chart .bar span { position: absolute; top: -20px; left: 50%; translate: -50% 0; font-size: 11px; color: var(--ivory); }
+      .chart .m { font-size: 10px; color: var(--silver); letter-spacing: 0.08em; text-transform: uppercase; }
+      .hbar { display: grid; grid-template-columns: 120px 1fr 44px; gap: 14px; align-items: center; font-size: 13px; }
+      .hbar .track { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+      .hbar .fill { height: 100%; background: var(--ivory); border-radius: 99px; transform-origin: left; transform: scaleX(0); transition: transform 1100ms var(--ease-spring); }
+      .in .hbar .fill { transform: scaleX(1); }
+      .hbar.warn .fill { background: var(--orange); box-shadow: 0 0 12px rgb(255 140 66 / 0.5); }
+      .note { font-size: 12px; color: var(--silver); }
+      @media (max-width: 760px) { .head { flex-wrap: nowrap !important; } main > *, .grid2 > *, .chart .col { min-width: 0; } .chart .m { font-size: 9px; letter-spacing: 0; } .card2 { padding: 20px; } .seg { display: flex; width: 100%; } .seg button { flex: 1; padding: 0 6px; font-size: 12px; } .kpis { grid-template-columns: 1fr 1fr; } .kpi { border-bottom: 1px solid var(--line); } .kpi:nth-child(2n) { border-right: 0; } .kpi dd { font-size: 24px; } .grid2 { grid-template-columns: 1fr; } .chart { gap: 4px; } .hbar { grid-template-columns: 84px 1fr 32px; } }
+      @media (max-width: 1024px) and (min-width: 761px) { .grid2 { grid-template-columns: 1fr; } }
+      .margin-box { border: 1px dashed var(--line-strong); border-radius: var(--r-sm); padding: 18px; display: grid; gap: 6px; }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="side"></div>
+    <div>
+      <div class="top"><span>Maquette : ventes, chiffre d'affaires, délais et ancienneté calculés sur le vrai stock Sanity.</span><span class="pill">En ligne</span></div>
+      <main>
+        <div class="head reveal">
+          <div><span class="eyebrow">Statistiques</span><h1 class="h2" style="margin-top:18px">Les chiffres du garage</h1></div>
+          <div class="seg" role="group" aria-label="Période" id="period">
+            <button data-p="1">Ce mois</button><button data-p="3">3 mois</button><button data-p="12" aria-pressed="true">12 mois</button><button data-p="0">Tout</button>
+          </div>
+        </div>
+        <dl class="kpis reveal" id="kpis"></dl>
+        <div class="grid2">
+          <section class="card2 reveal" aria-labelledby="t-ventes">
+            <div style="display:flex;justify-content:space-between;align-items:end"><h2 class="h3" id="t-ventes">Ventes par mois</h2><span class="note">12 derniers mois</span></div>
+            <div class="chart" id="chart"></div>
+          </section>
+          <section class="card2 reveal" style="--d:150ms" aria-labelledby="t-age">
+            <h2 class="h3" id="t-age">Ancienneté du stock</h2>
+            <div id="ages" style="display:grid;gap:14px"></div>
+            <p class="note" style="margin:0">Au-delà de 60 jours, l'app propose une baisse de prix sur la fiche.</p>
+          </section>
+          <section class="card2 reveal" aria-labelledby="t-marques">
+            <h2 class="h3" id="t-marques">Marques les plus vendues</h2>
+            <div id="brands" style="display:grid;gap:14px"></div>
+          </section>
+          <section class="card2 reveal" style="--d:150ms" aria-labelledby="t-marge">
+            <h2 class="h3" id="t-marge">Marge</h2>
+            <div class="margin-box"><strong style="font:600 30px/1 var(--font-display);font-stretch:125%;color:var(--orange)">≈ 14 %</strong>
+              <span class="note">Exemple. La vraie marge s'affichera dès que les prix d'achat et frais seront saisis dans l'app (données internes, admin uniquement).</span></div>
+            <div class="hbar"><span>Marge totale</span><div class="track"><div class="fill" style="width:72%"></div></div><span>exemple</span></div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="switch"></div>
+    <script src="data.js"></script>
+    <script src="sold.js"></script>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("side").outerHTML = boSide("Statistiques");
+      document.getElementById("switch").outerHTML = mockSwitch("Stats");
+      const DAY = 86400000;
+      const now = new Date();
+      const sold = SOLD.filter((v) => v.soldDate);
+      const monthKey = (d) => `${d.getFullYear()}-${d.getMonth()}`;
+
+      function draw(months) {
+        const from = months ? new Date(now.getFullYear(), now.getMonth() - (months - 1), 1) : new Date(0);
+        const inPeriod = sold.filter((v) => new Date(v.soldDate) >= from);
+        const ca = inPeriod.reduce((s, v) => s + (v.price || 0), 0);
+        const delays = inPeriod.map((v) => (Date.parse(v.soldDate) - Date.parse(v.createdAt)) / DAY).filter((d) => d >= 0);
+        const delay = delays.length ? Math.round(delays.reduce((a, b) => a + b, 0) / delays.length) : 0;
+        document.getElementById("kpis").innerHTML = [
+          ["Ventes", inPeriod.length, "véhicules vendus sur la période"],
+          ["Chiffre d'affaires", fmtPrice(ca), "somme des prix affichés"],
+          ["Délai moyen de vente", `${delay} j`, "de la mise en ligne à la vente"],
+          ["En stock", STOCK.length, `valeur ${fmtPrice(STOCK.reduce((s, v) => s + v.price, 0))}`],
+        ].map(([l, val, sub]) => `<div class="kpi"><dt>${l}</dt><dd>${val}</dd><small>${sub}</small></div>`).join("");
+
+        const brands = {};
+        inPeriod.forEach((v) => (brands[brandOf(v)] = (brands[brandOf(v)] || 0) + 1));
+        const top = Object.entries(brands).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const max = top[0]?.[1] || 1;
+        document.getElementById("brands").innerHTML = top.map(([b, n]) => `<div class="hbar"><span>${b}</span><div class="track"><div class="fill" style="width:${(n / max) * 100}%"></div></div><span>${n}</span></div>`).join("") || '<p class="note">Aucune vente sur la période.</p>';
+      }
+
+      // Ventes des 12 derniers mois (indépendant de la période)
+      const months = Array.from({ length: 12 }, (_, k) => new Date(now.getFullYear(), now.getMonth() - 11 + k, 1));
+      const counts = months.map((m) => sold.filter((v) => monthKey(new Date(v.soldDate)) === monthKey(m)).length);
+      const peak = Math.max(...counts, 1); // « top » est réservé par le navigateur (window.top)
+      document.getElementById("chart").innerHTML = months.map((m, k) =>
+        `<div class="col"><div class="bar ${counts[k] === peak ? "max" : ""}" style="height:${Math.max(3, (counts[k] / peak) * 100)}%;--d:${k * 60}ms"><span>${counts[k] || ""}</span></div><span class="m">${m.toLocaleDateString("fr-FR", { month: "short" }).replace(".", "")}</span></div>`).join("");
+      document.getElementById("chart").classList.add("reveal");
+
+      // Ancienneté réelle du stock en ligne
+      const ages = STOCK.map((v) => (now - Date.parse(v.createdAt)) / DAY);
+      const buckets = [["0 – 30 j", (d) => d <= 30], ["31 – 60 j", (d) => d > 30 && d <= 60], ["61 – 90 j", (d) => d > 60 && d <= 90], ["+ 90 j", (d) => d > 90]];
+      document.getElementById("ages").innerHTML = buckets.map(([l, f], k) => {
+        const n = ages.filter(f).length;
+        return `<div class="hbar ${k >= 2 ? "warn" : ""}"><span>${l}</span><div class="track"><div class="fill" style="width:${(n / STOCK.length) * 100}%"></div></div><span>${n}</span></div>`;
+      }).join("");
+
+      document.getElementById("period").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-p]"); if (!b) return;
+        document.querySelectorAll("#period button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+        draw(Number(b.dataset.p));
+      });
+      draw(12);
+      animate();
+    </script>
+  </body>
+</html>

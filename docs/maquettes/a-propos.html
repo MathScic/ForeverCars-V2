@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — À propos · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      section { padding-top: 140px; }
+      .story { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: center; }
+      .portrait { position: relative; aspect-ratio: 4 / 5; overflow: hidden; }
+      .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; filter: grayscale(0.4) brightness(0.82) contrast(1.08); }
+      .portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(10 10 11 / 0.85), transparent 45%); }
+      .portrait figcaption { position: absolute; inset: auto 0 0; z-index: 1; padding: 24px; font-size: 13px; color: var(--silver); }
+      .motto { margin: 32px 0; padding-left: 24px; border-left: 1px solid var(--orange); font: 600 26px/1.2 var(--font-display); font-stretch: 125%; }
+      .head { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 48px; }
+      .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+      .block { padding: 0; }
+      .final { margin-top: 140px; text-align: center; padding: 96px 24px; }
+      /* Sans contours : pas de cases ni de cadres, de l'air et des numéros néon */
+      .tiles, .tiles > div, .stats, .stats > div { border: 0 !important; }
+      .tiles { gap: 56px 64px; }
+      .tiles > div { padding: 0 !important; }
+      .tiles > div:hover { background: none; }
+      .tiles .num { font-size: 40px; font-weight: 500; text-shadow: 0 0 6px rgb(255 140 66 / 0.9), 0 0 18px rgb(255 140 66 / 0.5), 0 0 40px rgb(255 140 66 / 0.3); }
+      .stats strong { text-shadow: 0 0 18px rgb(255 140 66 / 0.45); }
+      .duo { gap: 80px; }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <div class="wrap page-hero">
+      <span class="eyebrow reveal">Notre maison</span>
+      <h1 class="display reveal" style="--d:100ms;margin-top:24px">À Propos de <em>ForeverCars</em></h1>
+      <p class="lead reveal" style="--d:200ms">Une passion automobile au service de votre satisfaction</p>
+    </div>
+
+    <section class="wrap story">
+      <figure class="portrait curtain" style="margin:0"><img src="../../apps/site/public/images/Fondateur.png" alt="Clément Scicluna - Fondateur ForeverCars" /><figcaption>Clément Scicluna — Fondateur de ForeverCars</figcaption></figure>
+      <div class="reveal" style="--d:150ms">
+        <span class="eyebrow">01 — Histoire</span>
+        <h2 class="h2" style="margin-top:20px">Notre Histoire</h2>
+        <p class="muted" style="margin-top:24px">ForeverCars est né d'une passion pour l'automobile et d'un constat simple : acheter ou vendre un véhicule peut être une expérience stressante et chronophage.</p>
+        <p class="muted">Fort de plusieurs années d'expérience dans le secteur automobile, j'ai décidé de créer une agence différente, où le client est au centre de toutes les attentions.</p>
+        <p class="motto">"Acheter ou vendre autrement"</p>
+        <p class="muted">Cette devise résume notre philosophie : vous accompagner de A à Z, pour que votre projet automobile devienne une expérience sereine et agréable.</p>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="head reveal"><div><span class="eyebrow">02 — Services</span><h2 class="h2" style="margin-top:20px">Nos Services</h2></div><p class="lead" style="margin:0">Un accompagnement complet pour tous vos projets automobiles</p></div>
+      <div class="tiles reveal" id="services"></div>
+    </section>
+
+    <section class="wrap">
+      <div class="head reveal"><div><span class="eyebrow">03 — Valeurs</span><h2 class="h2" style="margin-top:20px">Nos Valeurs</h2></div></div>
+      <div class="tiles reveal" id="valeurs" style="grid-template-columns:repeat(4,1fr)"></div>
+    </section>
+
+    <section class="wrap duo">
+      <div class="block reveal">
+        <span class="eyebrow">Livraison</span>
+        <h3 class="h2" style="font-size:34px;margin-top:20px">Livraison à domicile</h3>
+        <p class="muted" style="margin-top:20px">Possibilité de livrer votre véhicule directement devant chez vous. Nous nous déplaçons dans tout le Loiret et ses alentours.</p>
+      </div>
+      <div class="block reveal" style="--d:150ms">
+        <span class="eyebrow">Qualité</span>
+        <h3 class="h2" style="font-size:34px;margin-top:20px">Notre Engagement Qualité</h3>
+        <p class="muted" style="margin-top:20px">Chaque véhicule proposé chez ForeverCars passe par un processus rigoureux de sélection et de vérification. Nous contrôlons l'historique, l'état mécanique et la conformité de chaque automobile.</p>
+        <p class="muted">Notre objectif : vous proposer uniquement des véhicules de confiance, à des prix justes et transparents.</p>
+        <div class="stats" style="margin-top:28px"><div><strong style="font-size:34px">100%</strong><span>Véhicules vérifiés</span></div><div><strong style="font-size:34px">45</strong><span>Loiret</span></div><div><strong style="font-size:34px">5★</strong><span>Satisfaction</span></div></div>
+      </div>
+    </section>
+
+    <div class="wrap final reveal">
+      <h2 class="h2">Prêt à nous faire confiance ?</h2>
+      <p class="lead" style="margin:20px auto 36px">Contactez-nous pour discuter de votre projet automobile.</p>
+      <a class="btn btn-primary" href="contact.html">Nous contacter <span class="arrow">→</span></a>
+    </div>
+
+    <div id="footer"></div>
+    <div id="switch"></div>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("À Propos");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("À propos");
+      const tiles = (list) => list.map(([t, d], i) => `<div><span class="num">0${i + 1}</span><h3 class="h3">${t}</h3><p class="muted" style="margin:0">${d}</p></div>`).join("");
+      document.getElementById("services").innerHTML = tiles([
+        ["Gestion de la vente", "Confiez-nous la vente de votre véhicule. Photos professionnelles, annonces, négociation, nous gérons tout."],
+        ["Expertise complète", "Contrôle technique, historique, essai routier. Chaque véhicule est minutieusement vérifié."],
+        ["Démarches administratives", "Carte grise, assurance, contrôle technique. On s'occupe de toute la paperasse."],
+        ["Recherche sur mesure", "Vous cherchez un véhicule précis ? On le trouve pour vous aux meilleures conditions."],
+      ]);
+      document.getElementById("valeurs").innerHTML = tiles([
+        ["Transparence", "Aucune surprise, chaque véhicule est contrôlé et son historique vérifié."],
+        ["Passion", "L'automobile est notre passion, nous la partageons avec vous."],
+        ["Excellence", "Nous sélectionnons uniquement des véhicules de qualité."],
+        ["Proximité", "Un accompagnement personnalisé du début à la fin."],
+      ]);
+      animate();
+    </script>
+  </body>
+</html>

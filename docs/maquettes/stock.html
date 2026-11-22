@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Notre Stock · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      .page-head { padding: 190px 0 56px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; }
+      .count { font: 300 96px/0.8 var(--font-display); font-stretch: 125%; color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
+
+      /* Panneau de filtres : une ligne par critère, libellé à gauche, options qui passent à la ligne */
+      .filters { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); scroll-margin-top: 110px; }
+      .frow { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 24px; padding: 22px 28px; border-bottom: 1px solid var(--line); }
+      .frow:last-child { border-bottom: 0; }
+      .frow.split { grid-template-columns: 170px 1fr 120px 1fr; }
+      .flabel { font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.26em; text-transform: uppercase; color: var(--silver); }
+      .options { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip { height: 40px; padding: 0 16px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: transparent; font: 500 13px/1 var(--font-body); color: var(--silver); transition: color 300ms var(--ease-out), border-color 300ms var(--ease-out), background-color 300ms var(--ease-out); }
+      .chip:hover { color: var(--ivory); border-color: var(--silver); }
+      .chip[aria-pressed="true"] { background: var(--ivory); color: var(--carbon); border-color: var(--ivory); }
+      .budget { display: flex; align-items: center; gap: 20px; }
+      .budget input { flex: 1; accent-color: var(--orange); }
+      .budget .bound { font-size: 12px; color: var(--silver); white-space: nowrap; }
+      .budget output { font: 600 18px/1 var(--font-display); font-stretch: 112%; color: var(--orange); min-width: 110px; text-align: right; }
+      .results { display: flex; justify-content: space-between; align-items: center; padding: 28px 0 0; }
+      .reset { background: none; border: 0; color: var(--silver); font: 600 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 0; border-bottom: 1px solid var(--line-strong); }
+      .reset:hover { color: var(--orange); border-color: var(--orange); }
+
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 24px; }
+      .pager { display: flex; justify-content: center; gap: 6px; margin-top: 64px; }
+      .pager button { width: 46px; height: 46px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: none; font: 600 13px/1 var(--font-display); font-stretch: 112%; }
+      .pager button:disabled { opacity: 0.35; cursor: not-allowed; }
+      .pager span { width: 30px; text-align: center; color: var(--silver); align-self: center; }
+      .pager button[aria-current="page"] { background: var(--orange); border-color: var(--orange); color: var(--carbon); }
+      @media (max-width: 1000px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+        .frow, .frow.split { grid-template-columns: 1fr; gap: 14px; }
+      }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+
+    <div class="wrap page-head">
+      <div>
+        <span class="eyebrow reveal">Véhicules contrôlés · Loiret</span>
+        <h1 class="display reveal" style="--d:100ms;margin-top:24px">Notre Stock</h1>
+        <p class="lead reveal" style="--d:200ms;margin:20px 0 0" id="count-text"></p>
+      </div>
+      <span class="count reveal" style="--d:300ms" id="count" aria-hidden="true"></span>
+    </div>
+
+    <main class="wrap">
+      <div class="filters reveal" id="filters" role="search" aria-label="Filtres"></div>
+      <div class="results"><span class="muted" style="font-size:14px" id="results"></span><button class="reset" id="reset">Réinitialiser</button></div>
+      <div class="grid" id="grid"></div>
+      <nav class="pager" id="pager" aria-label="Pagination"></nav>
+    </main>
+
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script src="panel.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Notre Stock");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Stock");
+
+      // Même logique que le site actuel : 9 par page, compteur sur les véhicules filtrés.
+      const PER_PAGE = 9;
+      const maxPrice = Math.ceil(Math.max(...STOCK.map((v) => v.price), 50000) / 5000) * 5000;
+      const countText = (n) => (n === 0 ? "Aucun véhicule" : n === 1 ? "1 véhicule disponible" : n > 30 ? "+ de 30 véhicules disponibles" : `${n} véhicules disponibles`);
+      const brands = ["Toutes", ...[...new Set(STOCK.map(brandOf))].sort((a, b) => a.localeCompare(b))];
+      const initial = () => ({ Marque: "Toutes", Carburant: "Tous", Boîte: "Tous", budget: maxPrice, page: 1 });
+      let state = initial();
+
+      const chips = (group, items) =>
+        `<div class="options" role="group" aria-label="${group}">${items.map((t) => `<button class="chip" data-group="${group}" aria-pressed="${state[group] === t}">${t}</button>`).join("")}</div>`;
+      const drawFilters = () => {
+        document.getElementById("filters").innerHTML = `
+          <div class="frow"><span class="flabel">Marque</span>${chips("Marque", brands)}</div>
+          <div class="frow split"><span class="flabel">Carburant</span>${chips("Carburant", ["Tous", "Essence", "Diesel", "Hybride", "Électrique"])}
+            <span class="flabel">Boîte</span>${chips("Boîte", ["Tous", "Manuelle", "Automatique"])}</div>
+          <div class="frow"><label class="flabel" for="budget">Budget maximum</label>
+            <div class="budget"><span class="bound">5 000 €</span><input type="range" id="budget" min="5000" max="${maxPrice}" step="1000" value="${state.budget}" /><span class="bound">${fmtPrice(maxPrice)}</span><output id="budget-out">${fmtPrice(state.budget)}</output></div></div>`;
+      };
+
+      const pages = (page, total) => {
+        if (total <= 5) return Array.from({ length: total }, (_, k) => k + 1);
+        const out = [1];
+        if (page > 3) out.push("…");
+        for (let p = Math.max(2, page - 1); p <= Math.min(total - 1, page + 1); p++) out.push(p);
+        if (page < total - 2) out.push("…");
+        return [...out, total];
+      };
+
+      const render = () => {
+        const list = STOCK.map((v, i) => ({ v, i })).filter(({ v }) =>
+          (state.Marque === "Toutes" || brandOf(v) === state.Marque) &&
+          (state.Carburant === "Tous" || v.fuel === state.Carburant.toLowerCase().replace("é", "e")) &&
+          (state.Boîte === "Tous" || v.transmission === state.Boîte.toLowerCase()) &&
+          v.price <= state.budget);
+        const totalPages = Math.ceil(list.length / PER_PAGE);
+        state.page = Math.min(state.page, Math.max(1, totalPages));
+        document.getElementById("count-text").textContent = countText(list.length);
+        document.getElementById("count").textContent = String(list.length);
+        document.getElementById("results").textContent = list.length ? `Page ${state.page} sur ${totalPages} · ${list.length} véhicule${list.length > 1 ? "s" : ""}` : "";
+        document.getElementById("pager").innerHTML = totalPages <= 1 ? "" :
+          `<button data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Page précédente">←</button>` +
+          pages(state.page, totalPages).map((p) => (p === "…" ? "<span>…</span>" : `<button data-page="${p}" ${p === state.page ? 'aria-current="page"' : ""}>${p}</button>`)).join("") +
+          `<button data-page="${state.page + 1}" ${state.page === totalPages ? "disabled" : ""} aria-label="Page suivante">→</button>`;
+        const shown = list.slice((state.page - 1) * PER_PAGE, state.page * PER_PAGE);
+        document.getElementById("grid").innerHTML = shown.map(({ v, i }, k) => card(v, i, (k % 3) * 90)).join("") ||
+          '<p class="muted" style="grid-column:1/-1;text-align:center;padding:80px 0">Aucun véhicule ne correspond à vos critères.</p>';
+        animate();
+      };
+
+      document.getElementById("filters").addEventListener("click", (e) => {
+        const b = e.target.closest(".chip"); if (!b) return;
+        state[b.dataset.group] = b.textContent; state.page = 1;
+        b.parentElement.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b));
+        render();
+      });
+      document.getElementById("filters").addEventListener("input", (e) => {
+        if (e.target.id !== "budget") return;
+        state.budget = Number(e.target.value); state.page = 1;
+        document.getElementById("budget-out").textContent = fmtPrice(state.budget); render();
+      });
+      document.getElementById("reset").addEventListener("click", () => { state = initial(); drawFilters(); render(); });
+      // Changement de page : on remonte en haut de la liste (filtres visibles), pas en bas.
+      document.getElementById("pager").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-page]"); if (!b || b.disabled) return;
+        state.page = Number(b.dataset.page); render();
+        document.getElementById("filters").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      drawFilters();
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Back-office · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <link rel="stylesheet" href="bo.css" />
+    <style>
+      body { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+      .side { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); padding: 28px 18px; display: flex; flex-direction: column; gap: 36px; }
+      .side nav { display: grid; gap: 2px; }
+      .side a { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: var(--r-sm); font: 500 11px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.2em; text-transform: uppercase; color: var(--silver); border-left: 1px solid transparent; }
+      .side a[aria-current="page"] { color: var(--ivory); background: var(--graphite); border-left-color: var(--orange); }
+      .side a:hover { color: var(--ivory); }
+      .side .foot { margin-top: auto; font-size: 12px; color: var(--silver); }
+      .top { height: 72px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; font-size: 12px; color: var(--silver); }
+      .pill { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 1px solid rgb(74 222 128 / 0.3); color: var(--success); border-radius: 999px; }
+      .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+      main { padding: 48px 40px 120px; display: grid; gap: 48px; align-content: start; }
+      .head { display: flex; justify-content: space-between; align-items: end; }
+      .kpis { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .kpi { padding: 26px 24px; border-right: 1px solid var(--line); }
+      .kpi:last-child { border-right: 0; }
+      .kpi dt { font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.24em; text-transform: uppercase; color: var(--silver); }
+      .kpi dd { margin: 16px 0 0; font: 600 36px/1 var(--font-display); font-stretch: 125%; font-variant-numeric: tabular-nums; }
+      .kpi dd small { font-size: 13px; color: var(--success); font-stretch: 100%; margin-left: 8px; }
+      .cols { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th { text-align: left; font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.22em; text-transform: uppercase; color: var(--silver); padding: 0 12px 14px; border-bottom: 1px solid var(--line); }
+      th, td .tag, td:nth-child(2), td:nth-child(3) { white-space: nowrap; }
+      td { padding: 14px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+      tr:hover td { background: rgb(244 241 234 / 0.02); }
+      .thumb { width: 88px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-sm); }
+      .age { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+      .age.old { color: var(--orange); }
+      .age.old::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+      .panel { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); padding: 26px; display: grid; gap: 20px; }
+      .bars { display: flex; align-items: end; gap: 8px; height: 120px; padding-top: 8px; }
+      .bars span { flex: 1; background: var(--line-strong); border-radius: 1px; transform-origin: bottom; transform: scaleY(0); transition: transform 1200ms var(--ease-spring); transition-delay: var(--d); }
+      .bars.in span { transform: scaleY(1); }
+      .bars span:last-child { background: var(--orange); box-shadow: 0 0 16px rgb(255 140 66 / 0.4); }
+      .row { display: flex; justify-content: space-between; font-size: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+      .demo { font-size: 11px; color: var(--silver); }
+      .actions { white-space: nowrap; text-align: right; }
+      .act { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--silver); font-size: 16px; transition: color 300ms, border-color 300ms; }
+      .act:hover { color: var(--ivory); border-color: var(--line-strong); }
+      .act.danger:hover { color: var(--danger); border-color: rgb(239 68 68 / 0.4); }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="side"></div>
+
+    <div>
+      <div class="top"><span>Maquette — chiffres de marge et de ventes : exemples. Véhicules et dates d'entrée : réels.</span><span class="pill">En ligne</span></div>
+      <main>
+        <div class="head reveal">
+          <div><span class="eyebrow">Novembre 2026</span><h1 class="h2" style="margin-top:18px">Le parc</h1></div>
+          <a class="btn btn-primary" href="backoffice-vente.html">Mettre en vente <span class="arrow">→</span></a>
+        </div>
+
+        <dl class="kpis reveal" style="margin:0" id="kpis"></dl>
+
+        <div class="cols">
+          <div class="reveal" style="--d:150ms">
+            <table>
+              <thead><tr><th>Véhicule</th><th>Dossier</th><th>En stock</th><th style="text-align:right">Prix</th><th>Statut</th><th><span class="sr-only">Actions</span></th></tr></thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          <aside class="panel reveal" style="--d:300ms">
+            <span class="eyebrow">Stats du mois</span>
+            <div><p class="demo" style="margin:0">Marge totale</p><p style="margin:6px 0 0;font:600 40px/1 var(--font-display);font-stretch:125%;color:var(--orange)">18 450 €</p></div>
+            <div class="bars" id="bars" aria-label="Ventes des 6 derniers mois"></div>
+            <div>
+              <div class="row"><span class="muted">Ventes</span><span>7</span></div>
+              <div class="row"><span class="muted">Délai moyen de vente</span><span>34 jours</span></div>
+              <div class="row"><span class="muted">Stock dormant (> 60 j)</span><span style="color:var(--orange)" id="dormant"></span></div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+    <div id="switch"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("switch").outerHTML = mockSwitch("Back-office");
+      document.getElementById("side").outerHTML = boSide("Parc");
+      const now = Date.now();
+      const days = (v) => Math.max(0, Math.round((now - Date.parse(v.createdAt)) / 86400000));
+      const stockValue = STOCK.reduce((s, v) => s + v.price, 0);
+      const dormant = STOCK.filter((v) => days(v) > 60).length;
+
+      document.getElementById("kpis").innerHTML = [
+        ["En ligne", 43], ["Réservés", 1], ["Vendus (30 j)", "7<small>+2</small>"], ["Valeur (extrait)", fmtPrice(stockValue)], ["Marge moyenne", "14 %"],
+      ].map(([l, v]) => `<div class="kpi"><dt>${l}</dt><dd>${v}</dd></div>`).join("");
+
+      // Simulation : chaque véhicule EXISTANT peut être modifié, réservé, vendu ou supprimé.
+      const rowState = STOCK.map((v) => ({ status: v.status === "reserved" ? "reserved" : "online", deleted: false }));
+      const statusTag = { online: '<span class="tag tag-outline">En ligne</span>', reserved: '<span class="tag tag-reserved">Réservé</span>', sold: '<span class="tag tag-new">Vendu</span>' };
+      const drawRows = () => {
+        document.getElementById("rows").innerHTML = STOCK.map((v, k) => {
+          if (rowState[k].deleted) return "";
+          const d = days(v);
+          const s = rowState[k].status;
+          return `<tr data-row="${k}">
+          <td><div style="display:flex;gap:16px;align-items:center"><img class="thumb" src="${img(v.images[0], 200, 150)}" alt="" />
+            <div><div class="model" style="font-size:13px">${title(v)}</div><div class="muted" style="font-size:12px;margin-top:4px">${v.year} · ${fmtKm(v.mileage)}</div></div></div></td>
+          <td style="font-family:ui-monospace,monospace;font-size:12px" class="muted">FC-2026-${String(44 - k).padStart(4, "0")}</td>
+          <td><span class="age ${d > 60 ? "old" : ""}">${d} j</span></td>
+          <td style="text-align:right"><span class="price" style="font-size:17px">${fmtPrice(v.price)}</span></td>
+          <td>${statusTag[s]}</td>
+          <td class="actions">
+            <a class="act" href="backoffice-vente.html?edit=${k}" title="Modifier" aria-label="Modifier ${title(v)}">✎</a>
+            ${s !== "sold" ? `<button class="act" data-act="reserve" title="${s === "reserved" ? "Remettre en ligne" : "Réserver"}" aria-label="${s === "reserved" ? "Remettre en ligne" : "Réserver"} ${title(v)}">${s === "reserved" ? "↺" : "◷"}</button>` : ""}
+            ${s !== "sold" ? `<button class="act" data-act="sold" title="Marquer vendu" aria-label="Marquer ${title(v)} comme vendu">✓</button>` : ""}
+            <button class="act danger" data-act="delete" title="Supprimer (admin)" aria-label="Supprimer ${title(v)}">🗑</button>
+          </td>
+        </tr>`;
+        }).join("");
+      };
+      drawRows();
+      document.getElementById("rows").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-act]"); if (!b) return;
+        const k = Number(b.closest("[data-row]").dataset.row);
+        const name = title(STOCK[k]);
+        if (b.dataset.act === "reserve") rowState[k].status = rowState[k].status === "reserved" ? "online" : "reserved";
+        if (b.dataset.act === "sold") rowState[k].status = "sold";
+        if (b.dataset.act === "delete") {
+          if (!confirm(`Supprimer définitivement ${name} ?\nL'annonce disparaîtra du site. (Simulation : rien n'est supprimé.)`)) return;
+          rowState[k].deleted = true;
+        }
+        drawRows();
+      });
+
+      // Véhicule publié depuis la maquette « Mise en vente » : affiché en tête du parc
+      try {
+        const n = JSON.parse(localStorage.getItem("maquette-vente") || "null");
+        if (n) {
+          const thumb = n.cover ? `<img class="thumb" src="${img(n.cover, 200, 150)}" alt="" />` : '<span class="thumb" style="display:block;background:var(--graphite)"></span>';
+          document.getElementById("rows").insertAdjacentHTML("afterbegin", `<tr style="background:var(--orange-soft)">
+            <td><div style="display:flex;gap:16px;align-items:center">${thumb}<div><div class="model" style="font-size:13px">${n.brand} ${n.model}</div><div class="muted" style="font-size:12px;margin-top:4px">${n.year} · ${fmtKm(n.mileage)} · publié à l'instant</div></div></div></td>
+            <td style="font-family:ui-monospace,monospace;font-size:12px" class="muted">${n.fileNumber}</td><td><span class="age">0 j</span></td>
+            <td style="text-align:right"><span class="price" style="font-size:17px">${fmtPrice(n.price)}</span></td><td><span class="tag tag-new">En ligne</span></td></tr>`);
+        }
+      } catch {}
+
+      document.getElementById("dormant").textContent = `${dormant} véhicule${dormant > 1 ? "s" : ""}`;
+      document.getElementById("bars").innerHTML = [38, 52, 41, 66, 58, 82].map((h, k) => `<span style="height:${h}%;--d:${k * 90}ms"></span>`).join("");
+      document.getElementById("bars").classList.add("reveal");
+      animate();
+    </script>
+  </body>
+</html>

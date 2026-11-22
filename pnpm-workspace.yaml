@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "outils/*"
 
 # Paquets autorisés à exécuter un script d'installation (pnpm 10 les bloque par défaut)
 onlyBuiltDependencies:

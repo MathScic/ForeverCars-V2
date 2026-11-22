@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Vendu · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      .sold-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 56px; }
+      .sold { position: relative; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; background: var(--graphite); }
+      .sold .media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+      /* Les ventes passées sont légèrement désaturées : l'œil reste sur le stock disponible */
+      .sold img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.55) brightness(0.82); transition: filter 700ms var(--ease-out), transform 1200ms var(--ease-spring); }
+      .sold:hover img { filter: none; transform: scale(1.04); }
+      .sold .tag { position: absolute; top: 14px; left: 14px; z-index: 1; }
+      .sold .body { padding: 20px 22px 22px; display: grid; gap: 8px; }
+      .pager { display: flex; justify-content: center; gap: 6px; margin-top: 56px; }
+      .pager button { width: 46px; height: 46px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: none; font: 600 13px/1 var(--font-display); font-stretch: 112%; }
+      .pager button[aria-current="page"] { background: var(--orange); border-color: var(--orange); color: var(--carbon); }
+      .pager button:disabled { opacity: 0.35; cursor: not-allowed; }
+      .next-one { margin-top: 140px; padding: 72px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 48px; }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <div class="wrap page-hero">
+      <span class="eyebrow reveal">Ventes</span>
+      <h1 class="display reveal" style="--d:100ms;margin-top:24px">Nos <em>Ventes</em></h1>
+      <p class="lead reveal" style="--d:200ms">Découvrez les véhicules que nous avons vendus. Chaque client satisfait est notre meilleure publicité.</p>
+    </div>
+    <div class="wrap stats reveal" id="stats"></div>
+
+    <main class="wrap">
+      <div class="sold-grid" id="grid"></div>
+      <nav class="pager" id="pager" aria-label="Pagination"></nav>
+
+      <section class="next-one reveal">
+        <div>
+          <span class="eyebrow">Vendre avec ForeverCars</span>
+          <h2 class="h2" style="margin-top:20px">Votre véhicule pourrait être le prochain</h2>
+          <p class="lead" style="margin-top:18px">Vous souhaitez vendre votre véhicule rapidement et au meilleur prix ? Confiez-nous votre vente, on s'occupe de tout.</p>
+        </div>
+        <a class="btn btn-primary" href="contact.html">Nous contacter <span class="arrow">→</span></a>
+      </section>
+    </main>
+
+    <div id="footer"></div>
+    <div id="switch"></div>
+    <script src="sold.js"></script>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Vendu");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Vendu");
+
+      document.getElementById("stats").innerHTML =
+        `<div><strong>${SOLD.length}+</strong><span>Véhicules vendus</span></div><div><strong>100%</strong><span>Clients satisfaits</span></div><div><strong>45</strong><span>Loiret &amp; environs</span></div>`;
+
+      const PER_PAGE = 9;
+      let page = 1;
+      const soldOn = (d) => (d ? new Date(d).toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) : "récemment");
+      const render = () => {
+        const total = Math.ceil(SOLD.length / PER_PAGE);
+        document.getElementById("grid").innerHTML = SOLD.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+          .map((v, k) => `<article class="sold reveal" style="--d:${(k % 3) * 90}ms"><div class="media"><span class="tag tag-reserved">Vendu</span><img loading="lazy" src="${img(v.image, 900, 675)}" alt="${title(v)}" /></div>
+            <div class="body"><h3 class="model">${title(v)}</h3><p class="muted" style="margin:0;font-size:13px">${v.year} · Vendu en ${soldOn(v.soldDate)}</p></div></article>`).join("");
+        document.getElementById("pager").innerHTML =
+          `<button data-p="${page - 1}" ${page === 1 ? "disabled" : ""} aria-label="Page précédente">←</button>` +
+          Array.from({ length: total }, (_, k) => `<button data-p="${k + 1}" ${k + 1 === page ? 'aria-current="page"' : ""}>${k + 1}</button>`).join("") +
+          `<button data-p="${page + 1}" ${page === total ? "disabled" : ""} aria-label="Page suivante">→</button>`;
+        animate();
+      };
+      document.getElementById("pager").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-p]"); if (!b || b.disabled) return;
+        page = Number(b.dataset.p); render();
+        scrollTo({ top: document.getElementById("grid").getBoundingClientRect().top + scrollY - 120, behavior: "smooth" });
+      });
+      render();
+    </script>
+  </body>
+</html>

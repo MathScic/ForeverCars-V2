@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Contact · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      .layout { display: grid; grid-template-columns: 7fr 5fr; gap: 80px; padding-top: 72px; align-items: start; }
+      form { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+      form .full { grid-column: 1 / -1; }
+      .subjects { display: flex; flex-wrap: wrap; gap: 8px; }
+      .subjects label { cursor: pointer; }
+      .subjects label { position: relative; }
+      .subjects input { position: absolute; opacity: 0; width: 1px !important; height: 1px; min-height: 0 !important; padding: 0 !important; }
+      .subjects span { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); font-size: 14px; color: var(--silver); transition: all 300ms var(--ease-out); }
+      .subjects input:checked + span { background: var(--ivory); color: var(--carbon); border-color: var(--ivory); }
+      .subjects input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 3px; }
+      .subjects label:hover span { color: var(--ivory); border-color: var(--ivory); }
+      aside { position: sticky; top: 120px; display: grid; gap: 48px; }
+      .socials { display: flex; gap: 10px; }
+      .socials a { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 999px; font: 600 12px/1 var(--font-display); transition: all 300ms var(--ease-out); }
+      .socials a:hover { border-color: var(--orange); color: var(--orange); }
+      .sent { display: none; padding: 18px 20px; border: 1px solid rgb(74 222 128 / 0.35); color: var(--success); border-radius: var(--r-sm); }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <div class="wrap page-hero">
+      <span class="eyebrow reveal">Contact</span>
+      <h1 class="display reveal" style="--d:100ms;margin-top:24px">Contactez-nous</h1>
+      <p class="lead reveal" style="--d:200ms">Une question ? Un projet ? N'hésitez pas à nous écrire.</p>
+    </div>
+
+    <main class="wrap layout">
+      <form class="reveal" id="form" novalidate>
+        <label class="field"><span>Nom complet</span><input required placeholder="Votre nom" autocomplete="name" /></label>
+        <label class="field"><span>Email</span><input type="email" required placeholder="votre@email.com" autocomplete="email" /></label>
+        <label class="field"><span>Téléphone</span><input type="tel" placeholder="06 XX XX XX XX" autocomplete="tel" /></label>
+        <fieldset class="field full" style="border:0;padding:0;margin:0"><span>Sujet</span>
+          <div class="subjects">
+            <label><input type="radio" name="sujet" checked /><span>Question générale</span></label>
+            <label><input type="radio" name="sujet" /><span>Achat d'un véhicule</span></label>
+            <label><input type="radio" name="sujet" /><span>Vendre mon véhicule</span></label>
+            <label><input type="radio" name="sujet" /><span>Autre</span></label>
+          </div>
+        </fieldset>
+        <label class="field full"><span>Message</span><textarea required placeholder="Votre message..."></textarea></label>
+        <div class="full" style="display:grid;gap:16px">
+          <button class="btn btn-primary" type="submit" style="justify-content:space-between;border:0">Envoyer le message <span class="arrow">→</span></button>
+          <p class="sent" role="status" id="sent">Message envoyé avec succès ! Nous vous répondrons rapidement.</p>
+        </div>
+      </form>
+
+      <aside class="reveal" style="--d:150ms">
+        <div><span class="eyebrow">Informations</span>
+          <dl class="info-list" style="margin:24px 0 0">
+            <div><dt>Adresse</dt><dd>Lot N23, 1695 rue de la Grand Cour<br />45760 Marigny-Les-Usages</dd></div>
+            <div><dt>Téléphone</dt><dd><a href="#">06.67.53.74.00</a></dd></div>
+            <div><dt>Email</dt><dd><a href="#">c.forevercars@gmail.com</a></dd></div>
+          </dl></div>
+        <div><span class="eyebrow">Horaires</span>
+          <dl class="info-list" style="margin:24px 0 0">
+            <div><dt>Lundi - Vendredi</dt><dd>9h - 19h</dd></div>
+            <div><dt>Samedi</dt><dd>10h - 17h</dd></div>
+            <div><dt>Dimanche</dt><dd class="muted">Fermé</dd></div>
+          </dl></div>
+        <div><span class="eyebrow">Suivez-nous</span>
+          <div class="socials" style="margin-top:24px"><a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="Facebook">FB</a><a href="#" aria-label="TikTok">TT</a></div></div>
+      </aside>
+    </main>
+
+    <div id="footer"></div>
+    <div id="switch"></div>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Contact");
+      document.getElementById("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        document.getElementById("sent").style.display = "block"; // maquette : aucun envoi réel
+      });
+      animate();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Fiche véhicule · Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      .layout { padding-top: 132px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 56px; align-items: start; }
+      .back { display: inline-flex; gap: 10px; margin-bottom: 28px; }
+      .stage { position: relative; aspect-ratio: 16 / 10; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); background: var(--graphite); }
+      .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 600ms var(--ease-out), transform 1400ms var(--ease-spring); }
+      .stage img.leaving { opacity: 0; transform: scale(1.03); }
+      .stage .counter { position: absolute; right: 18px; bottom: 18px; z-index: 1; font: 600 11px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.2em; background: rgb(10 10 11 / 0.7); backdrop-filter: blur(10px); padding: 10px 12px; border-radius: var(--r-sm); }
+      .thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
+      .thumbs button { padding: 0; border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; aspect-ratio: 4 / 3; background: none; opacity: 0.55; transition: opacity 300ms, border-color 300ms; }
+      .thumbs button[aria-current="true"], .thumbs button:hover { opacity: 1; border-color: var(--orange); }
+      .thumbs img { width: 100%; height: 100%; object-fit: cover; }
+      .panel { position: sticky; top: 112px; display: grid; gap: 26px; }
+      .panel .model { font-size: 28px; line-height: 1.1; letter-spacing: 0.03em; }
+      .panel .price { font-size: 44px; }
+      .specs { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
+      .spec { padding: 18px 0; border-bottom: 1px solid var(--line); }
+      .spec:nth-child(odd) { padding-right: 16px; border-right: 1px solid var(--line); }
+      .spec:nth-child(even) { padding-left: 20px; }
+      .spec dt { font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.24em; text-transform: uppercase; color: var(--silver); }
+      .spec dd { margin: 10px 0 0; font: 600 18px/1 var(--font-display); font-stretch: 112%; }
+      .panel .btn { justify-content: space-between; width: 100%; }
+      .details { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; margin-top: 120px; padding-top: 56px; border-top: 1px solid var(--line); }
+      .features { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+      .features span { padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); font-size: 13px; color: var(--silver); }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main class="wrap">
+      <div class="layout">
+        <div>
+          <a class="link-arrow back" href="stock.html">← Retour au stock</a>
+          <div class="stage curtain" id="stage"><span class="counter" id="counter"></span></div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+        <aside class="panel reveal" style="--d:200ms" id="panel"></aside>
+      </div>
+      <div class="details" id="details"></div>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Notre Stock");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Fiche");
+
+      const i = Number(new URLSearchParams(location.search).get("i") ?? STOCK.findIndex((v) => /M2/.test(v.model)));
+      const v = STOCK[i] ?? STOCK[0];
+      document.title = `${title(v)} — Maquette`;
+
+      const stage = document.getElementById("stage");
+      const show = (k) => {
+        const old = stage.querySelector("img");
+        const next = Object.assign(document.createElement("img"), { src: img(v.images[k], 1800), alt: `${title(v)}, photo ${k + 1}` });
+        stage.prepend(next);
+        if (old) { old.classList.add("leaving"); setTimeout(() => old.remove(), 600); }
+        document.getElementById("counter").textContent = `${String(k + 1).padStart(2, "0")} / ${String(v.images.length).padStart(2, "0")}`;
+        document.querySelectorAll(".thumbs button").forEach((b, j) => b.setAttribute("aria-current", j === k));
+      };
+      document.getElementById("thumbs").innerHTML = v.images
+        .map((u, k) => `<button aria-label="Photo ${k + 1}"><img src="${img(u, 300, 225)}" alt="" /></button>`).join("");
+      document.querySelectorAll(".thumbs button").forEach((b, k) => b.addEventListener("click", () => show(k)));
+      show(0);
+
+      const badge = v.status === "reserved" ? '<span class="tag tag-reserved">Réservé</span>' : v.isNew ? '<span class="tag tag-new">Nouveau</span>' : "";
+      const specs = [["Année", v.year], ["Kilométrage", fmtKm(v.mileage)], ["Carburant", cap(v.fuel)], ["Boîte", cap(v.transmission)], ["Puissance", `${v.power} ch`]];
+      document.getElementById("panel").innerHTML = `
+        <div style="display:flex;gap:8px">${badge}</div>
+        <h1 class="model">${title(v)}</h1>
+        <span class="price">${fmtPrice(v.price)}</span>
+        <dl class="specs" style="margin:0">${specs.map(([l, val]) => `<div class="spec"><dt>${l}</dt><dd>${val}</dd></div>`).join("")}</dl>
+        <div style="display:grid;gap:10px">
+          <a class="btn btn-primary" href="#">Je suis intéressé <span class="arrow">→</span></a>
+          <button class="btn btn-ghost" style="background:none">Copier le lien de cette annonce <span>⧉</span></button>
+        </div>`;
+
+      document.getElementById("details").innerHTML = `
+        <div class="reveal"><span class="eyebrow">Description</span>
+          <p style="margin:22px 0 0;white-space:pre-line;color:var(--ivory);line-height:1.75">${(v.description || "").trim()}</p></div>
+        <div class="reveal" style="--d:150ms"><span class="eyebrow">Équipements</span>
+          <div class="features">${(v.features || []).map((f) => `<span>${f}</span>`).join("")}</div></div>`;
+      animate();
+    </script>
+  </body>
+</html>

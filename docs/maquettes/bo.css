@@ -1,0 +1,11 @@
+/* Habillage commun au back-office (maquettes) */
+body { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+.side { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); padding: 28px 18px; display: flex; flex-direction: column; gap: 36px; }
+.side nav { display: grid; gap: 2px; }
+.side a { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: var(--r-sm); font: 500 11px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.2em; text-transform: uppercase; color: var(--silver); border-left: 1px solid transparent; }
+.side a[aria-current="page"] { color: var(--ivory); background: var(--graphite); border-left-color: var(--orange); }
+.side a:hover { color: var(--ivory); }
+.side .foot { margin-top: auto; font-size: 12px; color: var(--silver); }
+.top { height: 72px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; font-size: 12px; color: var(--silver); }
+.pill { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 1px solid rgb(74 222 128 / 0.3); color: var(--success); border-radius: 999px; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }

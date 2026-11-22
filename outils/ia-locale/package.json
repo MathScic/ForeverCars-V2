@@ -1,0 +1,14 @@
+{
+  "name": "@forevercars/ia-locale",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Serveur LOCAL de test pour la description d'annonce par IA (remplacé plus tard par une Edge Function Supabase)",
+  "scripts": {
+    "start": "node serveur.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0",
+    "zod": "^4.6.7"
+  }
+}

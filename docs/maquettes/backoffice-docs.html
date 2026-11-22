@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Documents · Back-office</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <link rel="stylesheet" href="bo.css" />
+    <style>
+      main { padding: 48px 40px 140px; display: grid; gap: 32px; align-content: start; }
+      .layout2 { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
+      .list { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); max-height: 70vh; overflow-y: auto; }
+      .list input { width: 100%; height: 52px; padding: 0 16px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ivory); font: 400 14px var(--font-body); position: sticky; top: 0; background: var(--graphite); }
+      .list input:focus { outline: none; border-bottom-color: var(--orange); }
+      .veh { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; transition: background-color 300ms; }
+      .veh:hover { background: var(--graphite-2); }
+      .veh[aria-current="true"] { background: var(--graphite-2); box-shadow: inset 2px 0 0 var(--orange); }
+      .veh img { width: 56px; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; }
+      .count { font: 600 12px/1 var(--font-display); font-stretch: 112%; color: var(--silver); white-space: nowrap; }
+      .count.full { color: var(--success); }
+      .dossier { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); padding: 28px; display: grid; gap: 20px; }
+      .doc { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .doc:last-child { border-bottom: 0; }
+      .st { font: 600 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.18em; text-transform: uppercase; padding: 7px 9px; border-radius: 2px; white-space: nowrap; }
+      .st.ok { color: var(--success); border: 1px solid rgb(74 222 128 / 0.35); }
+      .st.miss { color: var(--orange); border: 1px solid rgb(255 140 66 / 0.45); }
+      .st.gen { color: var(--silver); border: 1px solid var(--line-strong); }
+      .doc .btn { --h: 40px; padding: 0 16px; }
+      .drop { border: 1px dashed var(--line-strong); border-radius: var(--r-sm); padding: 22px; text-align: center; color: var(--silver); font-size: 13px; transition: border-color 300ms, background-color 300ms; }
+      .drop.over { border-color: var(--orange); background: var(--orange-soft); }
+      .modal { position: fixed; inset: 0; z-index: 70; display: none; place-items: center; background: rgb(5 5 6 / 0.75); backdrop-filter: blur(8px); padding: 16px; }
+      .modal.on { display: grid; }
+      .paper { width: min(560px, 100%); max-height: 88vh; overflow-y: auto; background: #fff; color: #0a0a0b; border-radius: 3px; padding: 36px 40px; font-size: 12px; line-height: 1.55; animation: rise 600ms var(--ease-spring); }
+      @keyframes rise { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
+      .paper h3 { font: 700 16px/1.2 var(--font-display); font-stretch: 112%; text-transform: uppercase; margin: 0 0 4px; }
+      .paper .box { border: 1px solid #ccc; padding: 10px 12px; margin-top: 12px; }
+      .paper .blank { display: inline-block; min-width: 160px; border-bottom: 1px dotted #999; }
+      @media print { body * { visibility: hidden; } .paper, .paper * { visibility: visible; } .paper { position: fixed; inset: 0; width: auto; max-height: none; border-radius: 0; } }
+      @media (max-width: 1024px) { .layout2 { grid-template-columns: 1fr; } .list { max-height: 300px; } }
+      @media (max-width: 760px) { .doc { grid-template-columns: 1fr auto; } .doc .btn { grid-column: 1 / -1; justify-content: center; } .dossier { padding: 18px; } .paper { padding: 24px 20px; } }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="side"></div>
+    <div>
+      <div class="top"><span>Maquette : documents simulés. Les modèles officiels (Cerfa) seront intégrés à l'étape « accompagnement administratif ».</span><span class="pill">En ligne</span></div>
+      <main>
+        <div class="reveal"><span class="eyebrow">Documents</span><h1 class="h2" style="margin-top:18px">Dossiers administratifs</h1>
+          <p class="muted" style="margin:12px 0 0">Les pièces de chaque véhicule au même endroit, et les documents de vente générés en un clic.</p></div>
+        <div class="layout2">
+          <nav class="list reveal" aria-label="Véhicules"><input type="search" id="q" placeholder="Rechercher un véhicule…" aria-label="Rechercher un véhicule" /><div id="vehicles"></div></nav>
+          <section class="dossier reveal" style="--d:150ms" id="dossier" aria-live="polite"></section>
+        </div>
+      </main>
+    </div>
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Document généré">
+      <div style="display:grid;gap:12px;justify-items:center;width:min(560px,100%)">
+        <div class="paper" id="paper"></div>
+        <div style="display:flex;gap:10px"><button class="btn btn-primary" onclick="window.print()" style="border:0">Imprimer / PDF</button><button class="btn btn-ghost" id="close" style="background:none">Fermer</button></div>
+      </div>
+    </div>
+    <div id="switch"></div>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("side").outerHTML = boSide("Documents");
+      document.getElementById("switch").outerHTML = mockSwitch("Docs");
+
+      // Pièces d'un dossier : reçues (fichier), manquantes, ou générées par l'app.
+      const DOCS = [
+        { id: "cg", name: "Carte grise (certificat d'immatriculation)", kind: "file" },
+        { id: "ct", name: "Contrôle technique de moins de 6 mois", kind: "file" },
+        { id: "nongage", name: "Certificat de situation administrative (non-gage)", kind: "file" },
+        { id: "factures", name: "Factures d'entretien", kind: "file" },
+        { id: "bdc", name: "Bon de commande", kind: "gen" },
+        { id: "cession", name: "Déclaration de cession (Cerfa 15776)", kind: "gen" },
+        { id: "facture", name: "Facture de vente", kind: "gen" },
+      ];
+      // État simulé : quelques pièces déjà reçues selon le véhicule
+      const state = STOCK.map((v, k) => Object.fromEntries(DOCS.map((d, j) => [d.id, d.kind === "file" ? (k + j) % 3 !== 0 : false])));
+      let current = 0;
+      const done = (k) => DOCS.filter((d) => state[k][d.id]).length;
+
+      const drawList = () => {
+        const q = document.getElementById("q").value.trim().toLowerCase();
+        document.getElementById("vehicles").innerHTML = STOCK.map((v, k) => ({ v, k })).filter(({ v }) => !q || title(v).toLowerCase().includes(q))
+          .map(({ v, k }) => `<button class="veh" data-k="${k}" aria-current="${k === current}"><img src="${img(v.images[0], 120, 90)}" alt="" />
+            <span><span class="model" style="font-size:12px;display:block">${title(v)}</span><span class="muted" style="font-size:11px">FC-2026-${String(44 - k).padStart(4, "0")}</span></span>
+            <span class="count ${done(k) === DOCS.length ? "full" : ""}">${done(k)}/${DOCS.length}</span></button>`).join("");
+      };
+
+      const drawDossier = () => {
+        const v = STOCK[current];
+        document.getElementById("dossier").innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:16px;align-items:start;flex-wrap:wrap">
+            <div><span class="eyebrow">Dossier FC-2026-${String(44 - current).padStart(4, "0")}</span><h2 class="model" style="font-size:20px;margin-top:12px">${title(v)}</h2>
+              <p class="muted" style="margin:6px 0 0;font-size:13px">${v.year} · ${fmtKm(v.mileage)} · ${fmtPrice(v.price)}</p></div>
+            <span class="count ${done(current) === DOCS.length ? "full" : ""}" style="font-size:20px">${done(current)}/${DOCS.length} pièces</span></div>
+          <div>${DOCS.map((d) => {
+            const ok = state[current][d.id];
+            const st = ok ? '<span class="st ok">Reçu</span>' : d.kind === "gen" ? '<span class="st gen">À générer</span>' : '<span class="st miss">Manquant</span>';
+            const action = d.kind === "gen"
+              ? `<button class="btn ${ok ? "btn-ghost" : "btn-primary"}" data-gen="${d.id}" style="${ok ? "background:none" : "border:0"}">${ok ? "Voir" : "Générer"}</button>`
+              : `<label class="btn btn-ghost" style="background:none;cursor:pointer">${ok ? "Remplacer" : "Ajouter"}<input type="file" hidden data-file="${d.id}" accept="image/*,application/pdf" /></label>`;
+            return `<div class="doc"><span>${d.name}</span>${st}${action}</div>`;
+          }).join("")}</div>
+          <div class="drop" id="drop">Glissez ici les scans ou photos des documents (carte grise, CT, factures…)</div>`;
+      };
+
+      // Documents générés : pré-remplis avec la fiche du véhicule et l'identité du garage.
+      function paper(id) {
+        const v = STOCK[current];
+        const veh = `<div class="box"><b>Véhicule</b><br />${title(v)} — ${v.year} — ${fmtKm(v.mileage)}<br />N° d'immatriculation : <span class="blank"></span> · N° VIN : <span class="blank"></span></div>`;
+        const garage = `<div class="box"><b>Vendeur</b><br />ForeverCars — Lot N23, 1695 rue de la Grand Cour, 45760 Marigny-les-Usages — 06 67 53 74 00</div>`;
+        const buyer = `<div class="box"><b>Acheteur</b><br />Nom, prénom : <span class="blank"></span><br />Adresse : <span class="blank" style="min-width:260px"></span></div>`;
+        const head = (t, sub) => `<div style="display:flex;justify-content:space-between;align-items:start;border-bottom:2px solid #0a0a0b;padding-bottom:12px;margin-bottom:8px"><div><h3>${t}</h3><span style="color:#666">${sub}</span></div><b>FOREVER<span style="color:#ff8c42">CARS</span></b></div>`;
+        const date = new Date().toLocaleDateString("fr-FR");
+        if (id === "cession") return head("Déclaration de cession", "d'un véhicule d'occasion — modèle simplifié (Cerfa 15776 à intégrer)") + garage + buyer + veh + `<p style="margin-top:14px">Date et heure de la cession : ${date} à <span class="blank" style="min-width:60px"></span></p><p>Signatures : vendeur <span class="blank"></span> acheteur <span class="blank"></span></p>`;
+        if (id === "bdc") return head("Bon de commande", `N° BC-${String(44 - current).padStart(4, "0")} — ${date}`) + garage + buyer + veh + `<div class="box"><b>Prix de vente TTC</b> : ${fmtPrice(v.price)}<br />Acompte versé : <span class="blank"></span> · Reste à payer : <span class="blank"></span></div><p style="margin-top:14px">Livraison prévue le <span class="blank"></span> — Garantie : <span class="blank" style="min-width:80px"></span></p>`;
+        return head("Facture", `N° F-2026-${String(44 - current).padStart(4, "0")} — ${date}`) + garage + buyer + veh + `<div class="box" style="display:flex;justify-content:space-between"><b>Total TTC</b><b>${fmtPrice(v.price)}</b></div><p style="margin-top:14px;color:#666">Mention TVA (régime de la marge, art. 297 A du CGI) : à valider avec le comptable.</p>`;
+      }
+
+      document.getElementById("vehicles").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (!b) return; current = Number(b.dataset.k); drawList(); drawDossier(); });
+      document.getElementById("q").addEventListener("input", drawList);
+      document.getElementById("dossier").addEventListener("click", (e) => {
+        const g = e.target.closest("[data-gen]"); if (!g) return;
+        state[current][g.dataset.gen] = true;
+        document.getElementById("paper").innerHTML = paper(g.dataset.gen);
+        document.getElementById("modal").classList.add("on");
+        drawList(); drawDossier();
+      });
+      document.getElementById("dossier").addEventListener("change", (e) => { const f = e.target.closest("[data-file]"); if (f && f.files.length) (state[current][f.dataset.file] = true, drawList(), drawDossier()); });
+      document.getElementById("dossier").addEventListener("dragover", (e) => { e.preventDefault(); document.getElementById("drop")?.classList.add("over"); });
+      document.getElementById("dossier").addEventListener("drop", (e) => {
+        e.preventDefault();
+        const missing = DOCS.find((d) => d.kind === "file" && !state[current][d.id]);
+        if (missing && e.dataTransfer.files.length) state[current][missing.id] = true; // l'app classera le document (lecture automatique à venir)
+        drawList(); drawDossier();
+      });
+      document.getElementById("close").onclick = () => document.getElementById("modal").classList.remove("on");
+      addEventListener("keydown", (e) => e.key === "Escape" && document.getElementById("modal").classList.remove("on"));
+      drawList(); drawDossier(); animate();
+    </script>
+  </body>
+</html>

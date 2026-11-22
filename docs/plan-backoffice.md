@@ -2,7 +2,36 @@
 
 > Les règles permanentes (façon de travailler, architecture, sécurité, charte) sont dans `CLAUDE.md`, à la racine.
 > Une phase à la fois : on ne passe à la suivante qu'une fois ses critères de sortie validés.
-> Ordre : 1 → 1 bis → 2 → … → 10.
+> Ordre : voir « Ordre révisé » ci-dessous (remplace l'ordre 1 → 10).
+
+## Ordre révisé (validé le 22/11/2026)
+
+Exception assumée à la règle « backend d'abord » : on finit **l'habillage et le front** de l'app
+sur les données de démo, **puis** le backend, **puis** la migration Sanity.
+
+```
+A. Front (données de démo)  ──▶  B. Backend Supabase  ──▶  C. Migration Sanity  ──▶  D. Livraison
+```
+
+**A. Front et habillage** (l'ébauche `apps/desktop` sert de base)
+1. **Refonte visuelle** (phase 1 bis) : audit → 3 directions → maquettes → tokens `packages/design` → site refondu → vérifications. Le thème sombre décidé le 22/11/2026 est remis en jeu par le choix de direction.
+2. Statut « Réservé » dans l'app (le site l'utilise déjà) + type de carrosserie + date de vente.
+3. Ancienneté en stock : jours depuis l'entrée, alerte au-delà de 60 jours, suggestion de baisse de prix.
+4. Stats du mois : marge totale, délai moyen de vente, ventes du mois.
+5. Accompagnement administratif : documents du véhicule (carte grise, CT, factures) et génération
+   du certificat de cession et du bon de commande.
+6. QR code photos : écran côté PC + page mobile (l'envoi réel arrive avec le backend, étape C).
+
+**B. Backend** : phases 2 (avec `reserved`, carrosserie, date de vente), 3, 4, 5 et 6.
+
+**C. Migration Sanity** (phase 9) : copie des 106 véhicules et 2 931 photos, Sanity intact jusqu'à
+validation, mêmes URL. Branchement réel du QR code photos (Supabase Storage + Realtime, lien à usage
+unique de 30 min).
+
+**D. Livraison** (phase 10) : installeur Windows, compte du client créé depuis « Équipe »,
+mises à jour automatiques, certificat de signature à prévoir.
+
+À trancher plus tard : identification par numéro VIN (en plus du n° de dossier).
 
 ## Phases
 
@@ -21,17 +50,23 @@ Objectif : déplacer le site dans `apps/site`, à fonctionnement identique.
 Tests : `pnpm -r build`, `pnpm --filter site dev`, puis un déploiement de prévisualisation Vercel sur la branche.
 Sortie : le site de prévisualisation est identique à la production (pages, images, Sanity encore branché). Fusion seulement après mon OK.
 
-### Phase 1 bis — Charte ForeverCars partagée
+### Phase 1 bis — Refonte visuelle (nouvelle charte partagée site + back-office)
 
-Objectif : extraire la charte du site et la rendre réutilisable (règles complètes dans `CLAUDE.md`, section « Charte »).
+Objectif : une nouvelle charte ForeverCars, appliquée au site puis au back-office. Remplace l'ancienne phase « extraire la charte telle quelle ».
+Méthode : brainstorming puis plan écrit avant tout code. Skills : apple-design (animations, finitions), webapp-testing (vérifications Playwright).
 
-1. Audit de `apps/site` : polices, couleurs, rayons, ombres, espacements, composants de référence, logo, ton éditorial.
-2. Rédaction de `docs/CHARTE.md`, puis **présentation pour validation**.
-3. `packages/design` : `tokens.ts`, `tailwind-preset.ts`, polices auto-hébergées.
-4. Le site passe sur le preset, sans aucun changement visuel.
+1. **Audit** de la charte actuelle (polices, couleurs, rayons, ombres, composants, logo, ton) : ce qui marche, ce qui fait daté → `docs/CHARTE.md`.
+2. **Trois directions visuelles** nommées et très différentes (palette, typo, formes, style photo, animations, intention). Choix de l'utilisateur.
+3. **Maquettes** de la direction choisie : accueil, liste du stock, fiche véhicule, tableau de bord du back-office (Figma via MCP si possible, sinon pages HTML). Validation de l'utilisateur.
+4. **Tokens** dans `packages/design` : `tokens.ts`, thème Tailwind partagé, polices auto-hébergées (aucune requête Google Fonts), courbes d'animation à ressort, modes clair et sombre si la direction le demande.
+5. **Application au site**, page par page, sur une branche dédiée :
+   - aucun changement de contenu, d'URL, de slug ni de métadonnées SEO ;
+   - contraste AA, focus clavier visible, `prefers-reduced-motion` respecté ;
+   - Lighthouse performance ≥ 90 sur mobile (vidéo du hero optimisée ou externalisée) ;
+   - reprise des animations de la branche `test-apple-design` (commit `f3824bf`) plutôt que de les refaire.
+6. **Vérification** : captures Playwright avant / après de chaque page, Lighthouse avant / après, puis prévisualisation Vercel validée avec le client.
 
-Tests : captures Playwright du site (accueil, liste, fiche véhicule) avant et après, avec un écart visuel nul.
-Sortie : `docs/CHARTE.md` validé par moi et le site toujours identique en prévisualisation.
+Sortie : maquettes validées, site refondu en prévisualisation validé par l'utilisateur et son client. Rien n'est fusionné ni poussé en production sans son OK.
 
 ### Phase 2 — Base Supabase : schéma, rôles, RLS
 

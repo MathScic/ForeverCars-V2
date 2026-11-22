@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — Équipe · Back-office</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <link rel="stylesheet" href="bo.css" />
+    <style>
+      main { padding: 48px 40px 140px; display: grid; gap: 40px; align-content: start; max-width: 1180px; }
+      .card2 { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); padding: 28px; display: grid; gap: 20px; }
+      .member { display: grid; grid-template-columns: 48px 1fr auto auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+      .member:last-child { border-bottom: 0; }
+      .avatar { width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--graphite-2); border: 1px solid var(--line-strong); font: 600 15px/1 var(--font-display); font-stretch: 112%; }
+      .avatar.admin { border-color: var(--orange); color: var(--orange); box-shadow: 0 0 14px rgb(255 140 66 / 0.35); }
+      .role { height: 40px; padding: 0 34px 0 14px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: transparent; color: var(--ivory); font: 500 13px/1 var(--font-body); appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--silver) 50%), linear-gradient(135deg, var(--silver) 50%, transparent 50%); background-position: calc(100% - 16px) 17px, calc(100% - 11px) 17px; background-size: 5px 5px; background-repeat: no-repeat; }
+      .role option { background: var(--graphite); }
+      .status { font-size: 12px; color: var(--silver); white-space: nowrap; }
+      .status.on::before { content: "● "; color: var(--success); }
+      .invite { display: grid; grid-template-columns: 1fr 200px auto; gap: 12px; align-items: end; }
+      table.rights { width: 100%; border-collapse: collapse; font-size: 14px; }
+      .rights th { text-align: center; font: 500 10px/1 var(--font-display); font-stretch: 112%; letter-spacing: 0.22em; text-transform: uppercase; color: var(--silver); padding: 0 12px 14px; border-bottom: 1px solid var(--line); }
+      .rights th:first-child { text-align: left; }
+      .rights td { padding: 14px 12px; border-bottom: 1px solid var(--line); text-align: center; }
+      .rights td:first-child { text-align: left; }
+      .yes { color: var(--success); font-weight: 600; }
+      .no { color: var(--silver); opacity: 0.5; }
+      .device { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+      .device:last-child { border-bottom: 0; }
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+      @media (max-width: 760px) {
+        .member { grid-template-columns: 44px 1fr; }
+        .member .role, .member .status { grid-column: 2; justify-self: start; }
+        .invite, .grid2 { grid-template-columns: 1fr; }
+        .rights { font-size: 13px; }
+        .rights td, .rights th { padding-left: 6px; padding-right: 6px; }
+      }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <div id="side"></div>
+    <div>
+      <div class="top"><span>Maquette : invitations et changements de rôle simulés (rien n'est envoyé).</span><span class="pill">En ligne</span></div>
+      <main>
+        <div class="reveal"><span class="eyebrow">Équipe</span><h1 class="h2" style="margin-top:18px">Qui a accès au back-office</h1>
+          <p class="muted" style="margin:12px 0 0">Seul un admin voit cette page. Chaque personne se connecte avec son propre compte.</p></div>
+
+        <section class="card2 reveal" aria-labelledby="t-membres">
+          <h2 class="h3" id="t-membres">Membres</h2>
+          <div id="members"></div>
+          <form class="invite" id="invite">
+            <label class="field"><span>Inviter par e-mail</span><input type="email" required placeholder="prenom@forevercars.fr" id="inv-mail" /></label>
+            <label class="field"><span>Rôle</span><select id="inv-role"><option value="seller">Vendeur</option><option value="admin">Admin</option></select></label>
+            <button class="btn btn-primary" type="submit" style="border:0">Envoyer l'invitation</button>
+          </form>
+          <p class="muted" style="margin:0;font-size:12px">La personne reçoit un e-mail pour créer son mot de passe, puis télécharge l'app.</p>
+        </section>
+
+        <div class="grid2">
+          <section class="card2 reveal" aria-labelledby="t-droits">
+            <h2 class="h3" id="t-droits">Ce que chaque rôle peut faire</h2>
+            <table class="rights"><thead><tr><th>Action</th><th>Admin</th><th>Vendeur</th></tr></thead><tbody id="rights"></tbody></table>
+            <p class="muted" style="margin:0;font-size:12px">Ces droits sont vérifiés par la base de données elle-même : un vendeur ne peut pas les contourner.</p>
+          </section>
+          <section class="card2 reveal" style="--d:150ms" aria-labelledby="t-postes">
+            <h2 class="h3" id="t-postes">Postes connectés</h2>
+            <div id="devices"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="switch"></div>
+    <script src="app.js"></script>
+    <script>
+      document.getElementById("side").outerHTML = boSide("Équipe");
+      document.getElementById("switch").outerHTML = mockSwitch("Équipe");
+      const members = [
+        { name: "Clément Scicluna", mail: "c.forevercars@gmail.com", role: "admin", status: "En ligne · PC du garage", on: true },
+        { name: "Vendeur (démo)", mail: "vendeur@forevercars.fr", role: "seller", status: "Vu il y a 2 h", on: false },
+      ];
+      const drawMembers = () => {
+        document.getElementById("members").innerHTML = members.map((m, k) => `
+          <div class="member"><span class="avatar ${m.role === "admin" ? "admin" : ""}" aria-hidden="true">${m.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}</span>
+            <div><strong style="display:block">${m.name}</strong><span class="muted" style="font-size:13px">${m.mail}</span></div>
+            <span class="status ${m.on ? "on" : ""}">${m.status}</span>
+            <select class="role" data-k="${k}" aria-label="Rôle de ${m.name}" ${k === 0 ? "disabled" : ""}><option value="admin" ${m.role === "admin" ? "selected" : ""}>Admin</option><option value="seller" ${m.role === "seller" ? "selected" : ""}>Vendeur</option></select>
+          </div>`).join("");
+      };
+      drawMembers();
+      document.getElementById("members").addEventListener("change", (e) => { members[e.target.dataset.k].role = e.target.value; drawMembers(); });
+      document.getElementById("invite").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const mail = document.getElementById("inv-mail").value.trim();
+        if (!mail) return;
+        members.push({ name: mail.split("@")[0], mail, role: document.getElementById("inv-role").value, status: "Invitation envoyée", on: false });
+        document.getElementById("inv-mail").value = "";
+        drawMembers();
+      });
+
+      const rights = [
+        ["Voir le parc et les fiches", 1, 1], ["Mettre en vente, modifier une annonce", 1, 1], ["Publier sur le site, marquer vendu / réservé", 1, 1],
+        ["Préparer Leboncoin / La Centrale", 1, 1], ["Voir les prix d'achat et les marges", 1, 0], ["Supprimer un véhicule", 1, 0],
+        ["Statistiques de marge", 1, 0], ["Gérer l'équipe et les rôles", 1, 0],
+      ];
+      const mark = (v) => (v ? '<span class="yes" aria-label="oui">✓</span>' : '<span class="no" aria-label="non">—</span>');
+      document.getElementById("rights").innerHTML = rights.map(([l, a, s]) => `<tr><td>${l}</td><td>${mark(a)}</td><td>${mark(s)}</td></tr>`).join("");
+
+      const devices = [["PC du garage — Windows", "Clément · actif maintenant"], ["Portable — Windows", "Vendeur (démo) · il y a 2 h"]];
+      document.getElementById("devices").innerHTML = devices.map(([d, w]) => `<div class="device"><div><strong style="display:block">${d}</strong><span class="muted" style="font-size:12px">${w}</span></div><button class="btn btn-ghost" style="background:none;--h:40px;padding:0 16px">Déconnecter</button></div>`).join("");
+      animate();
+    </script>
+  </body>
+</html>

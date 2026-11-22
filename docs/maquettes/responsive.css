@@ -1,0 +1,206 @@
+/* ─────────────────────────────────────────────────────────────
+   Responsive « Showroom Nocturne » — chargé APRÈS les styles de page.
+   Tablette ≤ 1024 px · Téléphone ≤ 760 px. Testé à 390 px de large.
+   ───────────────────────────────────────────────────────────── */
+
+/* Menu mobile (caché sur ordinateur) — même système que le site actuel :
+   panneau plein de 280 px qui glisse depuis la droite, fond noir opaque, voile derrière. */
+.burger, .mobile-menu, .mobile-scrim { display: none; }
+
+@media (max-width: 1024px) {
+  .site-header nav,
+  .site-header .header-cta { display: none; }
+  .burger {
+    display: inline-grid;
+    place-items: center;
+    gap: 5px;
+    width: 48px;
+    height: 48px;
+    padding: 14px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+  }
+  .burger span { display: block; width: 24px; height: 2px; border-radius: 2px; background: var(--ivory); transition: background-color 300ms; }
+  .burger:hover span { background: var(--orange); }
+  .mobile-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 58;
+    background: rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-out);
+  }
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 59;
+    width: 280px;
+    max-width: 86vw;
+    background: var(--carbon); /* opaque : lisible quel que soit le fond */
+    border-left: 1px solid var(--line-strong);
+    box-shadow: -30px 0 60px -20px rgb(0 0 0 / 0.9);
+    transform: translateX(100%);
+    transition: transform 450ms var(--ease-spring);
+  }
+  .menu-open .mobile-scrim { opacity: 1; pointer-events: auto; }
+  .menu-open .mobile-menu { transform: none; }
+  .mm-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 16px 24px; border-bottom: 1px solid var(--line); }
+  .mm-title { font: 700 18px/1 var(--font-display); font-stretch: 112%; }
+  .mm-close { width: 44px; height: 44px; border: 0; background: none; font-size: 22px; color: var(--ivory); transition: color 300ms; }
+  .mm-close:hover { color: var(--orange); }
+  .mobile-menu nav { display: flex; flex-direction: column; padding: 16px 0; }
+  .mobile-menu nav a {
+    display: block;
+    padding: 16px 24px;
+    font: 500 16px/1.2 var(--font-body);
+    color: var(--silver);
+    border-left: 2px solid transparent;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 400ms var(--ease-out), transform 600ms var(--ease-spring), color 300ms, background-color 300ms, border-color 300ms;
+    transition-delay: calc(var(--k) * 70ms + 100ms), calc(var(--k) * 70ms + 100ms), 0ms, 0ms, 0ms;
+  }
+  .mobile-menu nav a:hover,
+  .mobile-menu nav a[aria-current="page"] { color: var(--ivory); background: var(--graphite); border-left-color: var(--orange); }
+  .menu-open .mobile-menu nav a { opacity: 1; transform: none; }
+  .mm-foot { margin-top: auto; padding: 16px 16px 32px; display: grid; gap: 16px; }
+  .mm-tagline { margin: 0; text-align: center; font-size: 12px; font-style: italic; color: var(--silver); }
+
+  /* Accueil */
+  .split, .cta, .story, .duo, .details, .layout, .preview, .next-one, .cols { grid-template-columns: 1fr !important; }
+  .split > .reveal { position: static !important; }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+  .steps .step { padding-bottom: 32px; }
+  .cta .portrait { min-height: 380px; }
+  .cta .portrait::after { background: linear-gradient(to top, var(--carbon), transparent 55%); }
+
+  /* Stock, vendu, a-propos */
+  .grid, .sold-grid { grid-template-columns: repeat(2, 1fr); }
+  .tiles { grid-template-columns: repeat(2, 1fr) !important; }
+  .panel { position: static !important; }
+  aside[class*="reveal"] { position: static !important; }
+
+  /* Back-office : la barre latérale devient une barre en haut */
+  body:has(> .side), body:has(> #side) { display: block; }
+  .side { position: sticky; top: 0; z-index: 30; height: auto; flex-direction: row; align-items: center; gap: 16px; padding: 10px 16px; border-right: 0; border-bottom: 1px solid var(--line); background: rgb(10 10 11 / 0.92); backdrop-filter: blur(14px); }
+  .side img { height: 36px !important; }
+  .side nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .side a { white-space: nowrap; height: 40px; border-left: 0; border-bottom: 1px solid transparent; }
+  .side a[aria-current="page"] { border-bottom-color: var(--orange); }
+  .side .foot { display: none; }
+  .top { padding: 0 16px; height: auto; min-height: 56px; gap: 12px; }
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+  .kpi:nth-child(3n) { border-right: 0; }
+}
+
+@media (max-width: 760px) {
+  .wrap { width: min(100% - 32px, var(--wrap)); }
+  .display { font-size: clamp(36px, 11vw, 56px); }
+  .h2 { font-size: clamp(26px, 7.5vw, 36px); }
+  .lead { font-size: 16px; }
+  .site-header .wrap { height: 68px; }
+  .site-header img { height: 40px !important; }
+  .btn { --h: 50px; padding: 0 22px; }
+
+  /* Accueil */
+  body > section.wrap { padding-top: 96px; }
+  .hero { min-height: 600px; }
+  .hero .content { padding-bottom: 64px; }
+  .hero .side { display: none; }
+  .hero .actions .btn { width: 100%; justify-content: space-between; }
+  .pillar { grid-template-columns: 44px 1fr; gap: 14px; padding: 26px 0; }
+  .slide { width: 82vw; }
+  .steps { grid-template-columns: 1fr; }
+  .step { padding: 32px 0 0; }
+  .cta { margin-top: 96px; }
+  .cta .text { padding: 32px 22px 36px; }
+  .cta .contact { flex-direction: column; gap: 4px; }
+  .cta .contact .btn { width: 100%; justify-content: center; }
+  .section-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .site-footer { padding-top: 56px; margin-top: 96px; }
+  .site-footer .legal { flex-direction: column; gap: 8px; }
+
+  /* Stock */
+  .page-head, .page-hero { padding: 120px 0 40px; }
+  .page-head { grid-template-columns: 1fr; }
+  .count { display: none; }
+  .frow, .frow.split { grid-template-columns: 1fr !important; gap: 12px; padding: 18px 16px; }
+  .budget { flex-wrap: wrap; gap: 10px; }
+  .budget input { flex-basis: 100%; order: 3; }
+  .budget output { margin-left: auto; }
+  .results { flex-wrap: wrap; gap: 8px; }
+  .grid, .sold-grid { grid-template-columns: 1fr; }
+  .card .body { padding: 18px; }
+  .pager { flex-wrap: wrap; }
+
+  /* Fiche (page) et panneau latéral */
+  .layout { padding-top: 96px !important; gap: 28px !important; }
+  .thumbs { grid-template-columns: repeat(6, 72px) !important; overflow-x: auto; scrollbar-width: none; }
+  .panel .model { font-size: 22px; }
+  .panel .price { font-size: 34px; }
+  .details { margin-top: 64px; gap: 40px; }
+  .sheet-bar { padding: 14px 16px; }
+  .sheet-body { padding: 24px 16px 40px; }
+  .sheet-body dl { grid-template-columns: repeat(2, 1fr) !important; }
+  .sheet .nav-prev { left: 10px; }
+  .sheet .nav-next { right: 10px; }
+
+  /* Vendu, À propos, Contact */
+  .stats { grid-template-columns: 1fr; }
+  .stats > div { padding: 22px 0 !important; border-right: 0; border-bottom: 1px solid var(--line); }
+  .next-one { padding: 32px 22px; margin-top: 96px; }
+  .tiles { grid-template-columns: 1fr !important; }
+  .tiles > div { padding: 28px 22px; }
+  .block { padding: 32px 22px; }
+  .head { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .final { padding: 64px 0; }
+  form { grid-template-columns: 1fr !important; }
+  .info-list > div { flex-direction: column; gap: 4px; }
+  .info-list dd { text-align: left; }
+
+  /* Back-office : tableau → cartes */
+  .side ~ div main { padding: 28px 16px 120px !important; }
+  .list { grid-template-columns: 1fr !important; }
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .kpi { padding: 18px 16px; border-bottom: 1px solid var(--line); }
+  .kpi:nth-child(3n) { border-right: 1px solid var(--line); }
+  .kpi:nth-child(2n) { border-right: 0; }
+  .kpi dd { font-size: 24px; }
+  .pill { white-space: nowrap; flex: none; }
+  .head { flex-direction: column; align-items: stretch; gap: 18px; }
+  /* uniquement le tableau du parc (id rows) */
+  table:has(#rows) thead { display: none; }
+  table:has(#rows), #rows { display: block; }
+  #rows tr { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  #rows td { display: block; padding: 0 !important; border: 0 !important; }
+  #rows td:first-child { grid-column: 1 / -1; }
+  #rows td:nth-child(2) { display: none; }
+  #rows td:nth-child(4) { text-align: right !important; }
+  #rows td.actions { grid-column: 1 / -1; display: flex !important; justify-content: flex-end; gap: 4px; }
+  .top span:first-child { font-size: 11px; }
+
+  /* Mise en vente */
+  .stepper { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .stepper .lbl { display: none; }
+  .stepper .now .lbl { display: block; grid-column: 1 / -1; font-size: 10px; }
+  .panel { padding: 18px !important; }
+  .g2, .g3 { grid-template-columns: 1fr !important; }
+  .lookup { grid-template-columns: 1fr; padding: 16px; }
+  .drop { padding: 28px 16px; }
+  .thumbs li { list-style: none; }
+  #thumbs { grid-template-columns: repeat(3, 1fr) !important; overflow: visible; }
+  .footer-bar { gap: 10px; }
+  .footer-bar .btn { flex: 1; justify-content: center; }
+  .modal .box { width: calc(100vw - 32px); padding: 24px; }
+
+  /* Barre des maquettes : défile horizontalement */
+  .mock-switch { left: 12px; right: 12px; transform: none; overflow-x: auto; scrollbar-width: none; bottom: 12px; }
+}

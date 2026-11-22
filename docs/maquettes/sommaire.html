@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquettes ForeverCars — Showroom Nocturne</title>
+    <link rel="stylesheet" href="nocturne.css" />
+    <style>
+      main { padding: 120px 0; }
+      .list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 56px; }
+      .list a { display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 20px; padding: 28px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--graphite); transition: border-color 300ms, transform 500ms var(--ease-spring); }
+      .list a:hover { border-color: var(--orange); transform: translateY(-3px); }
+      .list .num { font: 500 13px/1 var(--font-display); font-stretch: 125%; color: var(--orange); }
+      .group { margin-top: 64px; }
+    </style>
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <img src="../../apps/site/public/images/Forever-CarsLogo.svg" alt="ForeverCars" style="height:72px" />
+      <h1 class="display" style="margin-top:48px">Maquettes</h1>
+      <p class="lead">Direction « Showroom Nocturne ». Vrais véhicules et vrais textes du site. Tout est cliquable ; rien n'est envoyé nulle part.</p>
+      <div class="group"><span class="eyebrow">Site forevercars.fr</span>
+        <div class="list">
+          <a href="index.html"><span class="num">01</span><span class="h3">Accueil</span><span>→</span></a>
+          <a href="stock.html"><span class="num">02</span><span class="h3">Notre Stock (+ panneau véhicule)</span><span>→</span></a>
+          <a href="fiche.html"><span class="num">03</span><span class="h3">Fiche véhicule (page)</span><span>→</span></a>
+          <a href="vendu.html"><span class="num">04</span><span class="h3">Vendu</span><span>→</span></a>
+          <a href="a-propos.html"><span class="num">05</span><span class="h3">À propos</span><span>→</span></a>
+          <a href="contact.html"><span class="num">06</span><span class="h3">Contact</span><span>→</span></a>
+        </div></div>
+      <div class="group"><span class="eyebrow">Back-office du garage</span>
+        <div class="list">
+          <a href="backoffice.html"><span class="num">07</span><span class="h3">Le parc (tableau de bord)</span><span>→</span></a>
+          <a href="backoffice-vente.html"><span class="num">08</span><span class="h3">Mise en vente (simulation)</span><span>→</span></a>
+          <a href="backoffice-stats.html"><span class="num">09</span><span class="h3">Statistiques</span><span>→</span></a>
+          <a href="backoffice-equipe.html"><span class="num">10</span><span class="h3">Équipe et droits</span><span>→</span></a>
+          <a href="backoffice-docs.html"><span class="num">11</span><span class="h3">Documents et administratif</span><span>→</span></a>
+        </div></div>
+    </main>
+  </body>
+</html>
