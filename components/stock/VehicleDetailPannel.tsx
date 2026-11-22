@@ -19,6 +19,15 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
   const [copied, setCopied] = useState(false);
   const router = useRouter();
 
+  // Réinitialise la galerie quand on change de véhicule, pendant le rendu
+  // (et non dans un effet, qui provoquerait un second rendu inutile).
+  const [prevVehicleId, setPrevVehicleId] = useState(vehicle?._id);
+  if (vehicle?._id !== prevVehicleId) {
+    setPrevVehicleId(vehicle?._id);
+    setCurrentImage(0);
+    setLightboxOpen(false);
+  }
+
   const handleCopyLink = () => {
     if (!vehicle) return;
     const url = `${window.location.origin}/stock/${vehicle.slug}`;
@@ -26,11 +35,6 @@ export default function VehicleDetailPanel({ vehicle, onClose }: VehicleDetailPa
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  useEffect(() => {
-    setCurrentImage(0);
-    setLightboxOpen(false);
-  }, [vehicle?._id]);
 
   // Gérer le bouton retour du navigateur pour fermer le panneau au lieu de quitter la page
   useEffect(() => {
