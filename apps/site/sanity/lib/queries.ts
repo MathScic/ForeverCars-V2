@@ -1,5 +1,7 @@
 import { groq } from "next-sanity";
 
+// Photos : le strict nécessaire. L'_id suffit pour construire l'URL, les dimensions servent au
+// plein écran ; _key, _type, url et aspectRatio alourdissaient chaque liste sans servir.
 const vehicleProjection = groq`
   _id,
   brand,
@@ -13,12 +15,9 @@ const vehicleProjection = groq`
   type,
   power,
   "images": images[defined(asset._ref)]{
-    _key,
-    _type,
     asset->{
       _id,
-      url,
-      metadata { dimensions, lqip }
+      metadata { lqip, "dimensions": dimensions { width, height } }
     }
   },
   description,

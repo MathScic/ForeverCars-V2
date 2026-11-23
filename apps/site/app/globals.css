@@ -1,158 +1,126 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+@import "@forevercars/design/theme.css";
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
-
-  /* ForeverCars Brand Colors */
-  --color-brand-black: #0A0A0A;
-  --color-brand-orange: #FF8C42;
-  --color-brand-white: #FFFFFF;
-  --color-brand-gray-dark: #1A1A1A;
-  --color-brand-gray-medium: #404040;
-  --color-brand-gray-light: #E5E5E5;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+/* « clip » et non « hidden » : hidden ferait de body un conteneur de défilement
+   et les éléments sticky (titres, colonnes d'infos) ne colleraient plus. */
+html,
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.13 0.028 261.692);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.028 261.692);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.028 261.692);
-  --primary: oklch(0.21 0.034 264.665);
-  --primary-foreground: oklch(0.985 0.002 247.839);
-  --secondary: oklch(0.967 0.003 264.542);
-  --secondary-foreground: oklch(0.21 0.034 264.665);
-  --muted: oklch(0.967 0.003 264.542);
-  --muted-foreground: oklch(0.551 0.027 264.364);
-  --accent: oklch(0.967 0.003 264.542);
-  --accent-foreground: oklch(0.21 0.034 264.665);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.928 0.006 264.531);
-  --input: oklch(0.928 0.006 264.531);
-  --ring: oklch(0.707 0.022 261.325);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0.002 247.839);
-  --sidebar-foreground: oklch(0.13 0.028 261.692);
-  --sidebar-primary: oklch(0.21 0.034 264.665);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.967 0.003 264.542);
-  --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
-  --sidebar-border: oklch(0.928 0.006 264.531);
-  --sidebar-ring: oklch(0.707 0.022 261.325);
+/* ── Rideau sur les photos (déclenché par la classe .in) ───── */
+.fc-curtain {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1300ms var(--ease-spring);
+}
+.fc-curtain.in {
+  clip-path: inset(0 0 0 0);
 }
 
-.dark {
-  --background: oklch(0.13 0.028 261.692);
-  --foreground: oklch(0.985 0.002 247.839);
-  --card: oklch(0.21 0.034 264.665);
-  --card-foreground: oklch(0.985 0.002 247.839);
-  --popover: oklch(0.21 0.034 264.665);
-  --popover-foreground: oklch(0.985 0.002 247.839);
-  --primary: oklch(0.928 0.006 264.531);
-  --primary-foreground: oklch(0.21 0.034 264.665);
-  --secondary: oklch(0.278 0.033 256.848);
-  --secondary-foreground: oklch(0.985 0.002 247.839);
-  --muted: oklch(0.278 0.033 256.848);
-  --muted-foreground: oklch(0.707 0.022 261.325);
-  --accent: oklch(0.278 0.033 256.848);
-  --accent-foreground: oklch(0.985 0.002 247.839);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.034 264.665);
-  --sidebar-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.278 0.033 256.848);
-  --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  html, body {
-    @apply bg-background text-foreground;
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-}
-
-/* Carrousel infini (véhicules en vedette) */
+/* ── Carrousel infini (véhicules en vedette) ───────────────── */
 @keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 10px));
   }
 }
-
 .marquee-track {
-  animation: marquee var(--marquee-duration, 40s) linear infinite;
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
 }
-
 .marquee-track:hover,
 .marquee-track:focus-within,
 .marquee-track.is-paused {
   animation-play-state: paused;
 }
-
 .marquee-mask {
-  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* ── Entrée du hero (CSS pur, aucun JS) ─────────────────────── */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(8px);
+  }
+}
+.rise-in {
+  animation: rise-in 1000ms var(--ease-spring) both;
+  animation-delay: var(--delay, 0ms);
+}
+/* Titres principaux : mise au point sans passer par l'opacité 0. Le titre est peint dès
+   le premier affichage, donc compté comme « plus grand élément » (LCP) sans attendre le JS. */
+@keyframes focus-in {
+  from {
+    transform: translateY(18px);
+    filter: blur(10px);
+  }
+}
+.focus-in {
+  animation: focus-in 1100ms var(--ease-spring) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* ── Apparitions au défilement (FadeIn / InView ajoutent .is-in) ── */
+.fade-in {
+  opacity: 0;
+  transform: translate(var(--fade-x, 0px), var(--fade-y, 28px));
+  transition:
+    opacity 1100ms var(--ease-spring) var(--fade-delay, 0s),
+    transform 1100ms var(--ease-spring) var(--fade-delay, 0s);
+}
+.fade-in.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* « Comment ça marche » : le filet orange se dessine, puis les numéros néon s'allument tour à tour
+   (gris lisible éteints, puis orange néon de .fc-neon grâce à revert-layer). */
+.steps-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 2200ms var(--ease-spring) 300ms;
+}
+.is-in .steps-line {
+  transform: scaleX(1);
+}
+.step-num {
+  color: var(--color-silver);
+  text-shadow: none;
+  transition-property: color, text-shadow;
+  transition-duration: 900ms;
+  transition-timing-function: var(--ease-soft);
+  transition-delay: calc(400ms + var(--i, 0) * 250ms);
+}
+.is-in .step-num {
+  color: revert-layer;
+  text-shadow: revert-layer;
+}
+@keyframes settle {
+  from {
+    transform: scale(1.06);
+  }
+}
+.hero-media {
+  animation: settle 2400ms var(--ease-spring) both;
+}
+@keyframes cue {
+  from {
+    transform: translateY(-100%);
+  }
+  60%,
+  to {
+    transform: translateY(100%);
+  }
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-orange);
+  animation: cue 2200ms var(--ease-soft) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -162,4 +130,67 @@
   .marquee-mask {
     overflow-x: auto;
   }
+  .fc-curtain {
+    clip-path: none;
+  }
+  .rise-in,
+  .focus-in,
+  .hero-media {
+    animation: none;
+  }
+  .fade-in,
+  .steps-line {
+    transform: none;
+  }
+  .step-num {
+    color: revert-layer;
+    text-shadow: revert-layer;
+  }
+}
+
+/* ── Curseur de budget : poignée orange visible, focus clavier ── */
+.fc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.fc-range:focus {
+  outline: none;
+}
+.fc-range::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  background: transparent;
+}
+.fc-range::-moz-range-track {
+  height: 0.5rem;
+  background: transparent;
+}
+.fc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -7px;
+  border-radius: 999px;
+  background: var(--color-orange);
+  border: 3px solid var(--color-graphite);
+  box-shadow: 0 0 14px rgb(255 140 66 / 0.5);
+  transition: transform 150ms var(--ease-soft);
+}
+.fc-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--color-orange);
+  border: 3px solid var(--color-graphite);
+  box-shadow: 0 0 14px rgb(255 140 66 / 0.5);
+}
+.fc-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.fc-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgb(255 140 66 / 0.45);
+}
+.fc-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgb(255 140 66 / 0.45);
 }

@@ -1,31 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
-import VehicleDetailPanel from "@/components/stock/VehicleDetailPannel";
+import VehicleDetailPanel from "@/components/stock/LazyVehiclePanel";
 import FadeIn from "../ui/FadeIn";
 
 interface Props {
   vehicles: Vehicle[];
 }
 
-// Nombre minimum de cartes par "moitié" de piste pour que la boucle remplisse les grands écrans
+// Nombre minimum de cartes par « moitié » de piste pour que la boucle remplisse les grands écrans
 const MIN_ITEMS_PER_TRACK = 8;
 
-function CarouselCard({
-  vehicle,
-  onClick,
-  hidden,
-}: {
-  vehicle: Vehicle;
-  onClick: () => void;
-  hidden?: boolean;
-}) {
-  const imageBuilder = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
-  const imageUrl = imageBuilder ? imageBuilder.width(960).height(600).quality(85).url() : null;
+function Slide({ vehicle, onClick, hidden }: { vehicle: Vehicle; onClick: () => void; hidden?: boolean }) {
+  const builder = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
+  const imageUrl = builder ? builder.width(1000).height(690).quality(80).url() : null;
   const isReserved = vehicle.status === "reserved";
 
   return (
@@ -34,55 +26,38 @@ function CarouselCard({
       onClick={onClick}
       aria-hidden={hidden}
       tabIndex={hidden ? -1 : 0}
-      aria-label={`Voir la fiche ${vehicle.brand} ${vehicle.model}`}
-      className="group relative shrink-0 w-80 md:w-[26rem] aspect-[16/10] rounded-2xl overflow-hidden bg-brand-gray-medium text-left border border-brand-white/5 hover:border-brand-orange/50 focus-visible:outline-2 focus-visible:outline-brand-orange transition-colors duration-300 cursor-pointer"
+      aria-label={`Aperçu ${vehicle.brand} ${vehicle.model}`}
+      className="group relative aspect-[16/11] w-[82vw] shrink-0 overflow-hidden rounded-md border border-line bg-graphite text-left transition-colors duration-400 hover:border-orange/50 sm:w-[clamp(320px,34vw,500px)]"
     >
       {imageUrl ? (
         <Image
           src={imageUrl}
           alt=""
           fill
-          sizes="416px"
-          placeholder={vehicle.images?.[0]?.lqip ? "blur" : "empty"}
-          blurDataURL={vehicle.images?.[0]?.lqip}
-          className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isReserved ? "brightness-75" : ""}`}
+          sizes="(min-width: 640px) 34vw, 82vw"
+          placeholder={vehicle.images?.[0]?.asset?.metadata?.lqip ? "blur" : "empty"}
+          blurDataURL={vehicle.images?.[0]?.asset?.metadata?.lqip}
+          className={`object-cover transition-transform duration-[1400ms] ease-[var(--ease-spring)] group-hover:scale-105 ${isReserved ? "brightness-75" : ""}`}
         />
       ) : (
-        <span className="absolute inset-0 flex items-center justify-center text-brand-gray-light">
-          Image à venir
-        </span>
+        <span className="absolute inset-0 grid place-items-center text-silver">Image à venir</span>
       )}
-
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/30 to-transparent" />
-
+      <span className="absolute inset-0 bg-[linear-gradient(to_top,rgb(10_10_11/0.95),rgb(10_10_11/0.15)_55%,transparent)]" />
       {(vehicle.isNew || isReserved) && (
-        <span
-          className={`absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full ${
-            isReserved ? "bg-white text-brand-black" : "bg-brand-orange text-brand-black"
-          }`}
-        >
+        <span className={`absolute left-4 top-4 z-10 rounded-sm px-2.5 py-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] ${isReserved ? "bg-ivory text-carbon" : "bg-orange text-carbon"}`}>
           {isReserved ? "Réservé" : "Nouveau"}
         </span>
       )}
-
-      <div className="absolute inset-x-0 bottom-0 p-5">
-        <p className="font-inter text-xs text-brand-gray-light/80">
-          {vehicle.year} • {vehicle.mileage.toLocaleString()} km • <span className="capitalize">{vehicle.fuel}</span>
-        </p>
-        <h3 className="font-orbitron text-lg font-semibold text-brand-white mt-1 truncate">
-          {vehicle.brand} {vehicle.model}
-        </h3>
-        <div className="flex items-center justify-between mt-3">
-          <span
-            className={`font-orbitron text-xl font-bold ${isReserved ? "text-white" : "text-brand-orange"}`}
-          >
-            {vehicle.price.toLocaleString()} €
-          </span>
-          <span className="font-inter text-xs text-brand-white/70 group-hover:text-brand-orange transition-colors duration-300">
-            Voir la fiche →
-          </span>
-        </div>
-      </div>
+      <span className="absolute inset-x-0 bottom-0 z-10 grid gap-2 p-6">
+        <span className="text-xs text-silver">
+          {vehicle.year} · {vehicle.mileage.toLocaleString("fr-FR")} km · <span className="capitalize">{vehicle.fuel}</span>
+        </span>
+        <span className="fc-model text-[17px]">{vehicle.brand} {vehicle.model}</span>
+        <span className="mt-1.5 flex items-center justify-between">
+          <span className="fc-price text-[22px]">{vehicle.price.toLocaleString("fr-FR")} €</span>
+          <span className="fc-label transition-colors group-hover:text-orange">Voir la fiche →</span>
+        </span>
+      </span>
     </button>
   );
 }
@@ -93,52 +68,38 @@ export default function FeaturedVehiclesClient({ vehicles }: Props) {
   // On répète la liste pour remplir la piste, puis on la double pour une boucle sans couture
   const repeat = Math.max(1, Math.ceil(MIN_ITEMS_PER_TRACK / vehicles.length));
   const track = Array.from({ length: repeat }, () => vehicles).flat();
-  const duration = track.length * 5;
+  const duration = track.length * 6;
 
   return (
     <>
-      <section className="py-20 bg-brand-gray-dark overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="pt-24 lg:pt-36" aria-labelledby="vedette">
+        <div className="mx-auto flex w-[min(100%-32px,1320px)] flex-col items-start gap-4 md:w-[min(100%-48px,1320px)] md:flex-row md:items-end md:justify-between md:gap-10">
           <FadeIn>
-            <h2 className="font-orbitron text-3xl md:text-4xl font-bold text-brand-white text-center mb-4">
-              Véhicules en vedette
-            </h2>
-            <p className="font-inter text-brand-gray-light text-center mb-12">
-              Notre sélection du moment
-            </p>
+            <span className="fc-eyebrow">Notre sélection du moment</span>
+            <h2 id="vedette" className="fc-h2 mt-5">Véhicules en vedette</h2>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <Link href="/stock" className="fc-link-arrow">Voir tout le stock <span aria-hidden>→</span></Link>
           </FadeIn>
         </div>
 
         <FadeIn delay={0.15}>
-          <div className="marquee-mask">
+          <div className="marquee-mask mt-14 overflow-hidden">
             <div
-              className={`marquee-track flex w-max ${selectedVehicle ? "is-paused" : ""}`}
-              style={{ "--marquee-duration": `${duration}s` } as React.CSSProperties}
+              className={`marquee-track flex w-max gap-5 ${selectedVehicle ? "is-paused" : ""}`}
+              style={{ "--marquee-duration": `${duration}s` } as CSSProperties}
             >
-              {[0, 1].map((copy) => (
-                <div key={copy} className="flex gap-6 pr-6" aria-hidden={copy === 1}>
-                  {track.map((vehicle, index) => (
-                    <CarouselCard
-                      key={`${copy}-${vehicle._id}-${index}`}
-                      vehicle={vehicle}
-                      hidden={copy === 1 || index >= vehicles.length}
-                      onClick={() => setSelectedVehicle(vehicle)}
-                    />
-                  ))}
-                </div>
-              ))}
+              {[0, 1].map((copy) =>
+                track.map((vehicle, index) => (
+                  <Slide
+                    key={`${copy}-${vehicle._id}-${index}`}
+                    vehicle={vehicle}
+                    hidden={copy === 1 || index >= vehicles.length}
+                    onClick={() => setSelectedVehicle(vehicle)}
+                  />
+                )),
+              )}
             </div>
-          </div>
-        </FadeIn>
-
-        <FadeIn delay={0.3}>
-          <div className="text-center mt-12 px-4">
-            <Link
-              href="/stock"
-              className="inline-block font-orbitron text-sm font-semibold px-8 py-3 border-2 border-brand-orange text-brand-orange rounded-full hover:bg-brand-orange hover:text-brand-black transition-all duration-300"
-            >
-              Voir tout le stock
-            </Link>
           </div>
         </FadeIn>
       </section>

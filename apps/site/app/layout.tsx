@@ -1,20 +1,27 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Orbitron } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/layout/Header";
 import MobileHeader from "@/components/layout/MobileHeader";
 import Footer from "@/components/layout/Footer";
 
-const inter = Inter({
-  subsets: ["latin"],
+// Polices de la charte, partagées avec le back-office (packages/design/fonts) : versions allégées
+// aux seules graisses / largeurs utilisées (81 Ko au lieu de 138). Aucune requête vers Google.
+const inter = localFont({
+  src: "../../../packages/design/fonts/inter-latin-var.woff2",
   variable: "--font-inter",
+  weight: "400 700",
+  display: "swap",
 });
 
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-orbitron",
-  weight: ["400", "500", "600", "700", "800", "900"],
+// Titres « Showroom Nocturne » : Archivo variable avec l'axe de largeur (font-stretch 100 à 125 %).
+const archivo = localFont({
+  src: "../../../packages/design/fonts/archivo-latin-var.woff2",
+  variable: "--font-archivo",
+  weight: "300 700",
+  display: "swap",
+  declarations: [{ prop: "font-stretch", value: "100% 125%" }],
 });
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://forevercars.fr";
@@ -75,12 +82,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        {/* Preload hero video for faster first frame */}
-        <link rel="preload" as="video" href="/videos/hero-video.mp4" type="video/mp4" />
-      </head>
       <body
-        className={`${inter.variable} ${orbitron.variable} font-inter min-h-screen flex flex-col bg-brand-black text-brand-white`}
+        className={`${inter.variable} ${archivo.variable} font-sans min-h-screen flex flex-col bg-carbon text-ivory`}
       >
         <script
           type="application/ld+json"
@@ -118,7 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <Header />
           <MobileHeader />
-          <main className="flex-grow pt-16 lg:pt-[5.5rem]">{children}</main>
+          <main className="flex-grow pt-[68px] lg:pt-[84px]">{children}</main>
         </ThemeProvider>
         <Footer />
       </body>

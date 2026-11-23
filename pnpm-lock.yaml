@@ -99,6 +99,9 @@ importers:
 
   apps/site:
     dependencies:
+      '@forevercars/design':
+        specifier: workspace:*
+        version: link:../../packages/design
       '@forevercars/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -196,6 +199,12 @@ importers:
       zod:
         specifier: ^4.6.7
         version: 4.6.7
+
+  packages/design:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/shared:
     devDependencies:

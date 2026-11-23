@@ -1,37 +1,26 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import InView from "./InView";
 
 interface FadeInProps {
   children: ReactNode;
+  /** Délai en secondes. */
   delay?: number;
   direction?: "up" | "down" | "left" | "right";
   className?: string;
 }
 
-export default function FadeIn({
-  children,
-  delay = 0,
-  direction = "up",
-  className = "",
-}: FadeInProps) {
-  const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { x: 40, y: 0 },
-    right: { x: -40, y: 0 },
-  };
+// Décalage court : un mouvement discret paraît plus soigné qu'un grand glissement.
+const OFFSET = 28;
+const OFFSETS = { up: [0, OFFSET], down: [0, -OFFSET], left: [OFFSET, 0], right: [-OFFSET, 0] } as const;
 
+// Apparition au défilement (reprise de test-apple-design) : même courbe sans rebond que le ressort
+// d'origine, jouée en CSS (.fade-in dans globals.css). Mouvement réduit : apparition directe.
+export default function FadeIn({ children, delay = 0, direction = "up", className = "" }: FadeInProps) {
+  const [x, y] = OFFSETS[direction];
+  const style = { "--fade-x": `${x}px`, "--fade-y": `${y}px`, "--fade-delay": `${delay}s` } as CSSProperties;
   return (
-    <motion.div
-      initial={{ opacity: 0, ...directions[direction] }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
-      className={className}
-    >
+    <InView className={`fade-in ${className}`} style={style}>
       {children}
-    </motion.div>
+    </InView>
   );
 }

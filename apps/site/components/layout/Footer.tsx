@@ -2,46 +2,28 @@ import Image from "next/image";
 import Link from "next/link";
 import SocialIcon from "@/components/ui/SocialIcon";
 import { socialLinks } from "@/lib/social";
+import { HOME_LINK, NAV_LINKS } from "./nav";
 
-const navLinks = [
-  { href: "/", label: "Accueil" },
-  { href: "/stock", label: "Notre Stock" },
-  { href: "/vendu", label: "Vendu" },
-  { href: "/a-propos", label: "À Propos" },
-];
+const heading = "mb-5 font-display text-[11px] font-medium uppercase tracking-[0.24em] text-silver [font-stretch:112%]";
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-black border-t border-brand-gray-medium/20">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Logo & Tagline */}
+    <footer className="mt-24 border-t border-line lg:mt-32">
+      <div className="mx-auto w-[min(100%-32px,1320px)] py-14 md:w-[min(100%-48px,1320px)] md:py-[72px]">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link href="/" className="inline-block">
-              <Image
-                src="/images/Forever-CarsLogo.svg"
-                alt="Forever Cars Logo"
-                width={200}
-                height={50}
-              />
+            <Link href="/" className="inline-block" aria-label="ForeverCars, accueil">
+              <Image src="/images/Forever-CarsLogo.svg" alt="ForeverCars" width={200} height={126} className="h-16 w-auto" />
             </Link>
-            <p className="font-inter text-sm text-brand-gray-light mt-4 italic">
-              &ldquo;Acheter ou vendre autrement&rdquo;
-            </p>
+            <p className="mt-5 text-sm italic text-silver">&ldquo;Acheter ou vendre autrement&rdquo;</p>
           </div>
 
-          {/* Navigation */}
           <div>
-            <h4 className="font-orbitron text-sm font-semibold text-brand-white mb-4">
-              Navigation
-            </h4>
-            <ul className="space-y-2">
-              {navLinks.map((link) => (
+            <h2 className={heading}>Navigation</h2>
+            <ul className="grid gap-3 text-sm">
+              {[HOME_LINK, ...NAV_LINKS].map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="font-inter text-sm text-brand-gray-light hover:text-brand-orange transition-colors duration-300"
-                  >
+                  <Link href={link.href} className="transition-colors duration-300 hover:text-orange">
                     {link.label}
                   </Link>
                 </li>
@@ -49,16 +31,17 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-orbitron text-sm font-semibold text-brand-white mb-4">Contact</h4>
-            <ul className="space-y-2 font-inter text-sm text-brand-gray-light">
-              <li>Lot N23, 1695 rue de la Grand Cour</li>
-              <li>45760 Marigny-Les-Usages</li>
-              <li>c.forevercars@gmail.com</li>
-              <li>06.67.53.74.00</li>
-            </ul>
-            <div className="flex gap-3 mt-6">
+            <h2 className={heading}>Contact</h2>
+            <address className="not-italic">
+              <ul className="grid gap-3 text-sm">
+                <li>Lot N23, 1695 rue de la Grand Cour</li>
+                <li>45760 Marigny-Les-Usages</li>
+                <li><a href="mailto:c.forevercars@gmail.com" className="transition-colors hover:text-orange">c.forevercars@gmail.com</a></li>
+                <li><a href="tel:+33667537400" className="transition-colors hover:text-orange">06.67.53.74.00</a></li>
+              </ul>
+            </address>
+            <div className="mt-6 flex gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
@@ -66,20 +49,18 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}
-                  className="w-10 h-10 rounded-full border border-brand-gray-medium/40 flex items-center justify-center text-brand-gray-light hover:border-brand-orange hover:text-brand-orange transition-colors duration-300"
+                  className="grid h-11 w-11 place-items-center rounded-full border border-line-strong text-silver transition-colors duration-300 hover:border-orange hover:text-orange"
                 >
-                  <SocialIcon name={social.name} className="w-4 h-4" />
+                  <SocialIcon name={social.name} className="h-4 w-4" />
                 </a>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-brand-gray-medium/20 mt-8 pt-8 text-center">
-          <p className="font-inter text-sm text-brand-gray-medium">
-            © {new Date().getFullYear()} ForeverCars. Tous droits réservés.
-          </p>
+        <div className="mt-16 flex flex-col gap-2 border-t border-line pt-6 text-xs text-silver md:flex-row md:justify-between">
+          <span>© {new Date().getFullYear()} ForeverCars. Tous droits réservés.</span>
+          <span>Tu t&apos;occupes de rien, je m&apos;occupe de tout.</span>
         </div>
       </div>
     </footer>

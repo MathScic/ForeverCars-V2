@@ -1,129 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { Menu } from "lucide-react";
+import MobileMenu from "./MobileMenu";
 
-const navLinks = [
-  { href: "/", label: "Accueil" },
-  { href: "/stock", label: "Notre Stock" },
-  { href: "/vendu", label: "Vendu" },
-  { href: "/a-propos", label: "À Propos" },
-];
-
+// Mobile (< 1024 px) : barre en haut + panneau de menu (MobileMenu). Le panneau est HORS de la barre
+// translucide : un parent avec backdrop-filter l'enfermerait dans sa hauteur.
 export default function MobileHeader() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const menuBtn = useRef<HTMLButtonElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
+  const close = () => setOpen(false);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const closeMenu = () => setIsOpen(false);
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    if (!open) {
+      if (wasOpen.current) menuBtn.current?.focus(); // le focus revient au bouton qui a ouvert
+      wasOpen.current = false;
+      return;
+    }
+    wasOpen.current = true;
+    closeBtn.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
-    <header className="lg:hidden fixed top-0 left-0 right-0 z-50">
-      {/* Top Bar */}
-      <div className="bg-brand-black/95 backdrop-blur-sm border-b border-brand-gray-medium/20 px-4 py-2">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center" onClick={closeMenu}>
-            <Image
-              src="/images/Forever-CarsLogo.svg"
-              alt="ForeverCars - Achat & Revente de Véhicules dans le Loiret"
-              width={110}
-              height={69}
-            />
-          </Link>
-
-          {/* Burger Button */}
-          <button
-            onClick={toggleMenu}
-            className="p-2 text-brand-white hover:text-brand-orange transition-colors duration-300"
-            aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
+    <header className="lg:hidden fixed inset-x-0 top-0 z-50">
+      <div className="flex h-[68px] items-center justify-between border-b border-line bg-carbon/80 px-4 backdrop-blur-xl">
+        <Link href="/" onClick={close} aria-label="ForeverCars, accueil">
+          <Image src="/images/Forever-CarsLogo.svg" alt="ForeverCars" width={110} height={69} priority className="h-10 w-auto" />
+        </Link>
+        <button
+          ref={menuBtn}
+          onClick={() => setOpen(true)}
+          aria-label="Ouvrir le menu"
+          aria-expanded={open}
+          aria-controls="menu-mobile"
+          className="grid h-12 w-12 place-items-center rounded-full text-ivory transition-colors hover:text-orange"
+        >
+          <Menu size={26} />
+        </button>
       </div>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={closeMenu}
-            />
-
-            {/* Menu Panel */}
-            <motion.nav
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-[280px] bg-brand-black border-l border-brand-gray-medium/20 shadow-2xl"
-            >
-              {/* Menu Header */}
-              <div className="flex items-center justify-between p-4 border-b border-brand-gray-medium/20">
-                <span className="font-orbitron text-lg font-bold text-brand-white">Menu</span>
-                <button
-                  onClick={closeMenu}
-                  className="p-2 text-brand-white hover:text-brand-orange transition-colors duration-300"
-                  aria-label="Fermer le menu"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="flex flex-col py-4">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={closeMenu}
-                      className="block px-6 py-4 font-inter text-base font-medium text-brand-gray-light hover:text-brand-white hover:bg-brand-gray-dark/50 transition-all duration-300 border-l-2 border-transparent hover:border-brand-orange"
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* CTA Button */}
-              <div className="absolute bottom-8 left-4 right-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <Link
-                    href="/contact"
-                    onClick={closeMenu}
-                    className="block w-full text-center font-orbitron text-sm font-semibold px-6 py-3 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
-                  >
-                    Nous Contacter
-                  </Link>
-                </motion.div>
-
-                {/* Tagline */}
-                <p className="text-center text-brand-gray-medium text-xs mt-4 font-inter italic">
-                  &ldquo;Acheter ou vendre autrement&rdquo;
-                </p>
-              </div>
-            </motion.nav>
-          </>
-        )}
-      </AnimatePresence>
+      <MobileMenu open={open} onClose={close} closeRef={closeBtn} />
     </header>
   );
 }

@@ -4,41 +4,35 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, X, ArrowLeft, Link2, Check } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/sanity/lib/image";
+import Gallery from "@/components/stock/panel/Gallery";
+import Lightbox from "@/components/stock/panel/Lightbox";
+import VehicleInfo from "@/components/stock/panel/VehicleInfo";
 
 interface Props {
   vehicle: Vehicle;
 }
 
+// Page fiche (liens partagés, Google, QR code de la fiche vitrine) : même contenu que le panneau.
 export default function VehicleDetailPage({ vehicle }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const router = useRouter();
 
   const images = vehicle.images || [];
-
-  const getImageUrl = (img: (typeof images)[number], width = 1200): string | null => {
-    const b = urlForImage(img);
-    if (!b) return null;
-    return b.width(width).quality(90).url();
+  const name = `${vehicle.brand} ${vehicle.model}`;
+  const go = (index: number) => {
+    if (!images.length) return;
+    setDirection(index > currentImage ? 1 : -1);
+    setCurrentImage((index + images.length) % images.length);
   };
 
-  const getImageDimensions = (img: (typeof images)[number]) => ({
-    width: img?.asset?.metadata?.dimensions?.width || 1200,
-    height: img?.asset?.metadata?.dimensions?.height || 900,
-  });
-
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-
   const handleInterest = () => {
-    const params = new URLSearchParams({
-      vehicule: `${vehicle.brand} ${vehicle.model}`,
-      sujet: "achat",
-    });
+    const params = new URLSearchParams({ vehicule: name, sujet: "achat" });
     router.push(`/contact?${params.toString()}`);
   };
 
@@ -49,82 +43,33 @@ export default function VehicleDetailPage({ vehicle }: Props) {
   };
 
   return (
-    <main className="bg-brand-black min-h-screen">
-      {/* Back */}
-      <div className="max-w-6xl mx-auto px-4 pt-6">
-        <Link
-          href="/stock"
-          className="inline-flex items-center gap-2 font-inter text-sm text-brand-gray-light hover:text-brand-white transition-colors duration-300"
-        >
-          <ArrowLeft size={16} />
-          Retour au stock
-        </Link>
-      </div>
+    <div className="mx-auto w-[min(100%-32px,1320px)] pt-8 md:w-[min(100%-48px,1320px)] md:pt-12">
+      <Link href="/stock" className="fc-link-arrow mb-7">
+        <span aria-hidden>←</span> Retour au stock
+      </Link>
 
-      <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-10">
-
-        {/* Galerie */}
-        <div className="space-y-4">
-          <div
-            className="relative w-full bg-brand-black rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => setLightboxOpen(true)}
-          >
-            {(() => {
-              const img = images[currentImage];
-              const url = img ? getImageUrl(img) : null;
-              const dims = img ? getImageDimensions(img) : null;
-              const lqip = img?.asset?.metadata?.lqip;
-              return url && dims ? (
-                <Image
-                  src={url}
-                  alt={`${vehicle.brand} ${vehicle.model}`}
-                  width={dims.width}
-                  height={dims.height}
-                  placeholder={lqip ? "blur" : "empty"}
-                  blurDataURL={lqip}
-                  priority
-                  style={{ width: "100%", height: "auto", maxHeight: "70vh", objectFit: "contain" }}
-                />
-              ) : null;
-            })()}
-            {vehicle.status === "reserved" && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-white text-brand-black font-orbitron font-bold text-sm px-6 py-2 rounded-full shadow-lg -rotate-6">
-                  RÉSERVÉ
-                </div>
-              </div>
-            )}
-            <span className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-brand-black/70 text-brand-white text-xs px-3 py-1 rounded-full z-10">
-              Cliquez pour agrandir
-            </span>
-            {images.length > 1 && (
-              <>
-                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white z-10">
-                  <ChevronLeft size={20} />
-                </button>
-                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-brand-black/60 hover:bg-brand-black/80 rounded-full text-brand-white z-10">
-                  <ChevronRight size={20} />
-                </button>
-              </>
-            )}
-            <div className="absolute bottom-3 right-4 bg-brand-black/70 px-3 py-1 rounded-full z-10">
-              <span className="font-orbitron text-xs text-brand-white">{currentImage + 1} / {images.length}</span>
-            </div>
+      {/* grid-cols-1 + min-w-0 : sinon la bande de miniatures élargit la colonne (galerie géante sur téléphone) */}
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
+        <div className="min-w-0">
+          <div className="overflow-hidden rounded-md border border-line">
+            <Gallery images={images} current={currentImage} direction={direction} alt={name} onGo={go} onZoom={() => setLightboxOpen(true)} priority />
           </div>
-
-          {/* Miniatures */}
           {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {images.map((img, index) => {
-                const url = getImageUrl(img, 160);
-                if (!url) return null;
+            <div className="mt-2.5 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+              {images.map((img, i) => {
+                const thumb = urlForImage(img)?.width(240).height(180).quality(70).url();
                 return (
                   <button
-                    key={index}
-                    onClick={() => setCurrentImage(index)}
-                    className={`relative flex-shrink-0 w-20 h-16 rounded overflow-hidden border-2 transition-all ${index === currentImage ? "border-brand-orange" : "border-transparent opacity-60 hover:opacity-100"}`}
+                    key={i}
+                    type="button"
+                    onClick={() => go(i)}
+                    aria-label={`Photo ${i + 1}`}
+                    aria-current={i === currentImage ? "true" : undefined}
+                    className={`relative aspect-[4/3] w-[72px] shrink-0 overflow-hidden rounded-sm border transition-[opacity,border-color] duration-300 md:w-[110px] ${
+                      i === currentImage ? "border-orange opacity-100" : "border-line opacity-55 hover:opacity-100"
+                    }`}
                   >
-                    <Image src={url} alt="" fill className="object-cover" />
+                    {thumb && <Image src={thumb} alt="" fill sizes="110px" className="object-cover" />}
                   </button>
                 );
               })}
@@ -132,121 +77,15 @@ export default function VehicleDetailPage({ vehicle }: Props) {
           )}
         </div>
 
-        {/* Infos */}
-        <div className="space-y-6">
-          <div>
-            <h1 className="font-orbitron text-2xl md:text-3xl font-bold text-brand-white">
-              {vehicle.brand} {vehicle.model}
-            </h1>
-            <p className="font-inter text-sm text-brand-gray-light mt-1">
-              {vehicle.year} • {vehicle.mileage.toLocaleString()} km • {vehicle.fuel} • {vehicle.transmission}
-            </p>
-          </div>
-
-          <div className="py-4 bg-brand-gray-dark rounded-lg text-center">
-            <span className="font-orbitron text-3xl font-bold text-brand-orange">
-              {vehicle.price.toLocaleString()} €
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Année", value: vehicle.year },
-              { label: "Kilométrage", value: `${vehicle.mileage.toLocaleString()} km` },
-              { label: "Carburant", value: vehicle.fuel },
-              { label: "Boîte", value: vehicle.transmission },
-              { label: "Puissance", value: `${vehicle.power} ch` },
-              { label: "Type", value: vehicle.type },
-            ].map(({ label, value }) => (
-              <div key={label} className="bg-brand-gray-dark p-3 rounded-lg">
-                <p className="font-inter text-xs text-brand-gray-light uppercase">{label}</p>
-                <p className="font-orbitron text-sm font-semibold text-brand-white capitalize mt-1">{value}</p>
-              </div>
-            ))}
-          </div>
-
-          {vehicle.description && (
-            <div>
-              <h2 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Description</h2>
-              <p className="font-inter text-sm text-brand-gray-light leading-relaxed whitespace-pre-line">{vehicle.description}</p>
-            </div>
-          )}
-
-          {vehicle.features && vehicle.features.length > 0 && (
-            <div>
-              <h2 className="font-orbitron text-sm font-semibold text-brand-orange uppercase mb-2">Équipements</h2>
-              <div className="flex flex-wrap gap-2">
-                {vehicle.features.map((feature) => (
-                  <span key={feature} className="px-3 py-1 bg-brand-gray-dark text-brand-gray-light font-inter text-sm rounded-full">
-                    {feature}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <button
-              onClick={handleInterest}
-              className="w-full font-orbitron text-sm font-semibold px-8 py-4 bg-brand-orange text-brand-black rounded-full hover:bg-brand-orange/90 transition-all duration-300"
-            >
-              Je suis intéressé
-            </button>
-            <button
-              onClick={handleCopyLink}
-              className="w-full flex items-center justify-center gap-2 font-inter text-sm px-8 py-3 border border-brand-gray-medium/40 text-brand-gray-light rounded-full hover:border-brand-orange/50 hover:text-brand-white transition-all duration-300"
-            >
-              {copied ? <Check size={16} className="text-green-400" /> : <Link2 size={16} />}
-              {copied ? "Lien copié !" : "Copier le lien de cette annonce"}
-            </button>
-          </div>
-        </div>
+        <aside className="lg:sticky lg:top-28">
+          <h1 className="fc-model mb-6 text-[22px] leading-tight tracking-[0.03em] md:text-[28px]">{name}</h1>
+          <VehicleInfo vehicle={vehicle} copied={copied} onInterest={handleInterest} onCopy={handleCopyLink} />
+        </aside>
       </div>
 
-      {/* Lightbox */}
-      {lightboxOpen && (
-        <div
-          className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
-          onClick={() => setLightboxOpen(false)}
-        >
-          <button onClick={() => setLightboxOpen(false)} className="absolute top-4 right-4 p-3 bg-brand-gray-dark/80 rounded-full text-brand-white z-10">
-            <X size={28} />
-          </button>
-          <div className="relative w-full h-full flex items-center justify-center p-8">
-            {(() => {
-              const img = images[currentImage];
-              const url = img ? getImageUrl(img, 1920) : null;
-              const dims = img ? getImageDimensions(img) : null;
-              const lqip = img?.asset?.metadata?.lqip;
-              return url && dims ? (
-                <Image
-                  src={url}
-                  alt={`${vehicle.brand} ${vehicle.model}`}
-                  width={dims.width}
-                  height={dims.height}
-                  placeholder={lqip ? "blur" : "empty"}
-                  blurDataURL={lqip}
-                  style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain" }}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              ) : null;
-            })()}
-          </div>
-          {images.length > 1 && (
-            <>
-              <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 rounded-full text-brand-white">
-                <ChevronLeft size={32} />
-              </button>
-              <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-gray-dark/80 rounded-full text-brand-white">
-                <ChevronRight size={32} />
-              </button>
-            </>
-          )}
-          <div className="absolute top-4 left-4 bg-brand-gray-dark/80 px-4 py-2 rounded-full">
-            <span className="font-orbitron text-sm text-brand-white">{currentImage + 1} / {images.length}</span>
-          </div>
-        </div>
-      )}
-    </main>
+      <AnimatePresence>
+        {lightboxOpen && <Lightbox key="plein-ecran" images={images} current={currentImage} alt={name} onGo={go} onClose={() => setLightboxOpen(false)} />}
+      </AnimatePresence>
+    </div>
   );
 }

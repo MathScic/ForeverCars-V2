@@ -1,60 +1,44 @@
-"use client";
-
-import { Car, ClipboardCheck, Handshake, Sparkles } from "lucide-react";
+import type { CSSProperties } from "react";
 import FadeIn from "../ui/FadeIn";
+import InView from "../ui/InView";
 
-export default function HowItWork() {
-  const steps = [
-    {
-      icon: Car,
-      title: "Vous vendez ?",
-      description: "On s'occupe du reste, et vous avez l'esprit libéré.",
-    },
-    {
-      icon: ClipboardCheck,
-      title: "Expertise",
-      description: "Contrôle technique, historique, essai routier. Rien n'est laissé au hasard.",
-    },
-    {
-      icon: Handshake,
-      title: "Accompagnement",
-      description: "Plus de soucis de vérification des paiements, Forever gère pour vous la transaction.",
-    },
-    {
-      icon: Sparkles,
-      title: "Livraison",
-      description: "Vous recevez votre véhicule clé en main, lustré et nettoyé.",
-    },
-  ];
+const steps = [
+  { title: "Vous vendez ?", description: "On s'occupe du reste, et vous avez l'esprit libéré." },
+  { title: "Expertise", description: "Contrôle technique, historique, essai routier. Rien n'est laissé au hasard." },
+  { title: "Accompagnement", description: "Plus de soucis de vérification des paiements, Forever gère pour vous la transaction." },
+  { title: "Livraison", description: "Vous recevez votre véhicule clé en main, lustré et nettoyé." },
+];
 
+// Les 4 étapes : un filet orange se dessine, puis les numéros néon s'allument l'un après l'autre
+// (.steps-line / .step-num dans globals.css).
+export default function HowItWorks() {
   return (
-    <section className="py-20 px-4 bg-brand-black">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn>
-          <h2 className="font-orbitron text-3xl md:text-4xl font-bold text-brand-white text-center mb-4">
-            Comment ça marche ?
-          </h2>
-          <p className="font-inter text-brand-gray-light text-center mb-16">
-            Un processus simple et transparent.
-          </p>
-        </FadeIn>
+    <section className="mx-auto w-[min(100%-32px,1320px)] pt-24 md:w-[min(100%-48px,1320px)] lg:pt-36" aria-labelledby="comment">
+      <FadeIn>
+        <span className="fc-eyebrow">Un processus simple et transparent.</span>
+        <h2 id="comment" className="fc-h2 mt-5">
+          Comment ça marche ?
+        </h2>
+      </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <FadeIn key={step.title} delay={index * 0.15}>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <step.icon className="w-8 h-8 text-brand-orange" />
-                </div>
-                <h3 className="font-orbitron text-xl font-semibold text-brand-white mt-4 mb-2">
-                  {step.title}
-                </h3>
-                <p className="font-inter text-brand-gray-light">{step.description}</p>
-              </div>
-            </FadeIn>
+      <InView className="relative mt-14 border-t border-line lg:mt-16" margin="-10% 0px">
+        <div aria-hidden className="steps-line absolute -top-px left-0 h-px w-full bg-orange shadow-[0_0_14px_var(--color-orange)]" />
+        <ol className="grid gap-y-2 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, i) => (
+            <li key={step.title} className="pt-8 md:pr-8 lg:pt-10">
+              <span
+                aria-hidden
+                className="step-num fc-neon block font-display text-[56px] font-medium leading-none [font-stretch:125%] lg:text-[64px]"
+                style={{ "--i": i } as CSSProperties}
+              >
+                0{i + 1}
+              </span>
+              <h3 className="fc-h3 mb-2.5 mt-5">{step.title}</h3>
+              <p className="text-silver">{step.description}</p>
+            </li>
           ))}
-        </div>
-      </div>
+        </ol>
+      </InView>
     </section>
   );
 }

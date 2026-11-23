@@ -7,8 +7,8 @@ export default function ContactPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-brand-black flex items-center justify-center">
-          <p className="font-inter text-brand-gray-light">Chargement...</p>
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-silver">Chargement...</p>
         </div>
       }
     >

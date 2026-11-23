@@ -1,113 +1,44 @@
-"use client";
-
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Mail, Phone } from "lucide-react";
+import Button from "@/components/ui/Button";
 import FadeIn from "../ui/FadeIn";
 
-const actions = [
-  { icon: Phone, label: "06 67 53 74 00", href: "tel:+33667537400" },
-  { icon: Mail, label: "Écrire un message", href: "/contact" },
-  { icon: ArrowRight, label: "Voir le stock", href: "/stock", iconAfter: true },
-];
-
-// Ressort volontairement un peu rebondi pour l'effet "élastique" de la surbrillance
-const highlightSpring = { type: "spring", stiffness: 380, damping: 22, mass: 0.9 } as const;
-
+// Bloc du fondateur, sans contour (choix validé) : photo à gauche, citation et actions à droite.
 export default function CTASection() {
-  const [active, setActive] = useState(0);
-
   return (
-    <section className="py-24 px-4 bg-brand-gray-dark">
-      <div className="max-w-6xl mx-auto">
-        <FadeIn className="max-w-3xl mx-auto text-center">
-          <p className="font-inter text-xs uppercase tracking-[0.3em] text-brand-orange mb-6">
-            Prêt à trouver votre prochain véhicule ?
-          </p>
-
-          <blockquote className="font-orbitron text-3xl md:text-4xl lg:text-5xl font-bold text-brand-white leading-tight">
+    <section className="mx-auto mt-24 w-[min(100%-32px,1320px)] md:w-[min(100%-48px,1320px)] lg:mt-40" aria-labelledby="pret">
+      <FadeIn className="grid overflow-hidden lg:grid-cols-[5fr_7fr]">
+        <div className="relative min-h-[380px] lg:min-h-[640px]">
+          <Image
+            src="/images/Fondateur.webp"
+            alt="Clément, fondateur de ForeverCars"
+            fill
+            sizes="(min-width: 1024px) 40vw, 100vw"
+            className="object-cover object-[center_15%] [filter:grayscale(0.4)_brightness(0.8)_contrast(1.08)]"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-carbon),transparent_55%)] lg:bg-[linear-gradient(to_right,transparent_55%,var(--color-carbon))]" />
+        </div>
+        <div className="grid content-center gap-6 py-8 lg:px-16 lg:py-[72px]">
+          <span id="pret" className="fc-eyebrow">Prêt à trouver votre prochain véhicule ?</span>
+          <blockquote className="font-display text-[clamp(30px,3.4vw,52px)] font-semibold leading-[1.04] tracking-[-0.02em] [font-stretch:125%]">
             Tu t&apos;occupes de rien,
             <br />
-            <span className="text-brand-orange">je m&apos;occupe de tout.</span>
+            <span className="text-orange">je m&apos;occupe de tout.</span>
           </blockquote>
-
-          <div className="w-16 h-px bg-brand-orange my-8 mx-auto" />
-
-          <div className="space-y-4 font-inter text-brand-gray-light/80 max-w-xl mx-auto">
-            <p>
-              Chez ForeverCars, vous n&apos;avez pas affaire à un call center. C&apos;est moi qui
-              décroche, moi qui inspecte chaque voiture et moi qui vous remets les clés.
-            </p>
-            <p>
-              Vous cherchez un modèle précis ou vous voulez vendre le vôtre sans y passer vos
-              week-ends ? Appelez-moi, on en parle.
-            </p>
-          </div>
-
-          <p className="font-inter text-sm text-brand-gray-light/60 mt-6">
-            — Clément, fondateur de ForeverCars
+          <p className="max-w-[52ch] text-silver">
+            Chez ForeverCars, vous n&apos;avez pas affaire à un call center. C&apos;est moi qui décroche, moi qui inspecte chaque voiture et moi qui vous remets les clés.
           </p>
-        </FadeIn>
-
-        <FadeIn delay={0.15} className="flex justify-center">
-          <ul
-            className="mt-10 w-fit flex flex-col sm:flex-row gap-1 p-1.5 rounded-3xl sm:rounded-full border border-brand-white/10 bg-brand-black/50"
-            onMouseLeave={() => setActive(0)}
-          >
-            {actions.map((action, index) => {
-              const isActive = active === index;
-              const className =
-                "group relative flex items-center justify-center gap-2.5 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full font-orbitron text-xs sm:text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/60";
-              const handlers = {
-                onMouseEnter: () => setActive(index),
-                onFocus: () => setActive(index),
-              };
-              const icon = (
-                <action.icon
-                  className={`relative w-4 h-4 transition-all duration-300 ${
-                    isActive ? "text-brand-black" : "text-brand-orange"
-                  } ${action.iconAfter && isActive ? "translate-x-1" : ""}`}
-                />
-              );
-              const content = (
-                <>
-                  {isActive && (
-                    <motion.span
-                      layoutId="cta-highlight"
-                      transition={highlightSpring}
-                      className="absolute inset-0 rounded-full bg-brand-orange shadow-[0_8px_24px_-8px_rgba(255,140,66,0.7)]"
-                    />
-                  )}
-                  {!action.iconAfter && icon}
-                  <span
-                    className={`relative whitespace-nowrap transition-colors duration-300 ${
-                      isActive ? "text-brand-black" : "text-brand-white"
-                    }`}
-                  >
-                    {action.label}
-                  </span>
-                  {action.iconAfter && icon}
-                </>
-              );
-
-              return (
-                <li key={action.label}>
-                  {action.href.startsWith("tel:") ? (
-                    <a href={action.href} className={className} {...handlers}>
-                      {content}
-                    </a>
-                  ) : (
-                    <Link href={action.href} className={className} {...handlers}>
-                      {content}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </FadeIn>
-      </div>
+          <p className="max-w-[52ch] text-silver">
+            Vous cherchez un modèle précis ou vous voulez vendre le vôtre sans y passer vos week-ends ? Appelez-moi, on en parle.
+          </p>
+          <p className="text-sm">— Clément, fondateur de ForeverCars</p>
+          <div className="flex flex-col gap-1 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-8">
+            <Button href="tel:+33667537400" className="justify-center">06 67 53 74 00</Button>
+            <Link href="/contact" className="fc-link-arrow">Écrire un message <span aria-hidden>→</span></Link>
+            <Link href="/stock" className="fc-link-arrow">Voir le stock <span aria-hidden>→</span></Link>
+          </div>
+        </div>
+      </FadeIn>
     </section>
   );
 }

@@ -1,3 +1,4 @@
+import { keepCoverBlurOnly } from "@forevercars/shared";
 import { client } from "@/sanity/client";
 import { featuredVehiclesQuery } from "@/sanity/lib/queries";
 import { Vehicle } from "@/lib/types/vehicle";
@@ -8,5 +9,5 @@ export default async function FeaturedVehicles() {
 
   if (vehicles.length === 0) return null;
 
-  return <FeaturedVehiclesClient vehicles={vehicles} />;
+  return <FeaturedVehiclesClient vehicles={keepCoverBlurOnly(vehicles)} />;
 }

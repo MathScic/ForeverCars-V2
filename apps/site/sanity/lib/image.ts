@@ -1,8 +1,10 @@
 import { createImageUrlBuilder } from "@sanity/image-url";
-import { client } from "../client";
+import { dataset, projectId } from "../env";
 import type { SanityImage } from "@/lib/types/vehicle";
 
-const builder = createImageUrlBuilder(client);
+// projectId + dataset suffisent pour construire les URL : importer le client Sanity
+// ici l'envoyait au navigateur (~30 Ko de JavaScript sur chaque page).
+const builder = createImageUrlBuilder({ projectId, dataset });
 
 export function urlForImage(source: SanityImage | null | undefined) {
   if (!source?.asset) return null;
