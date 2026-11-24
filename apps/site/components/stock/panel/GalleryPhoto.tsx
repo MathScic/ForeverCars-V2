@@ -1,4 +1,4 @@
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import type { SanityImage } from "@/lib/types/vehicle";
 
 const WIDTHS = [640, 960, 1400];

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import type { SanityImage } from "@/lib/types/vehicle";
 import GalleryPhoto from "./GalleryPhoto";
 

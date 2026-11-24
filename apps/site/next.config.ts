@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: "cdn.sanity.io",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "vptxtgqduoxdutimivnv.supabase.co",
+        pathname: "/storage/v1/object/public/vehicle-photos/**",
+      },
     ],
   },
   async headers() {

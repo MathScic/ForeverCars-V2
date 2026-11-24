@@ -5,7 +5,7 @@ import Image from "next/image";
 import FadeIn from "@/components/ui/FadeIn";
 import Button, { Arrow } from "@/components/ui/Button";
 import { Vehicle } from "@/lib/types/vehicle";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import VehicleDetailPanel from "@/components/stock/LazyVehiclePanel";
 import Pagination from "@/components/ui/Pagination";
 

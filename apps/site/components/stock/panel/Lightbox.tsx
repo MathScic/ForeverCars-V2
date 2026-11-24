@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import type { SanityImage } from "@/lib/types/vehicle";
 
 interface Props {

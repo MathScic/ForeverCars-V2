@@ -1,11 +1,10 @@
 import { keepCoverBlurOnly } from "@forevercars/shared";
-import { client } from "@/sanity/client";
-import { soldVehiclesQuery } from "@/sanity/lib/queries";
+import { getSoldVehicles } from "@/lib/vehicles";
 import { Vehicle } from "@/lib/types/vehicle";
 import VenduClient from "./VenduClient";
 
 export default async function VenduPage() {
-  const vehicles: Vehicle[] = await client.fetch(soldVehiclesQuery, {}, { cache: "no-store" });
+  const vehicles: Vehicle[] = await getSoldVehicles();
 
   return <VenduClient vehicles={keepCoverBlurOnly(vehicles)} />;
 }

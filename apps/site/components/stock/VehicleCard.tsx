@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle } from "@/lib/types/vehicle";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 
 interface VehicleCardProps {
   vehicle: Vehicle;

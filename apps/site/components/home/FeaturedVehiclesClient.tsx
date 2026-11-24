@@ -4,7 +4,7 @@ import { useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle } from "@/lib/types/vehicle";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import VehicleDetailPanel from "@/components/stock/LazyVehiclePanel";
 import FadeIn from "../ui/FadeIn";
 

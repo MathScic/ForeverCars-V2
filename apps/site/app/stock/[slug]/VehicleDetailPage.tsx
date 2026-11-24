@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { Vehicle } from "@/lib/types/vehicle";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlForImage } from "@/lib/photos";
 import Gallery from "@/components/stock/panel/Gallery";
 import Lightbox from "@/components/stock/panel/Lightbox";
 import VehicleInfo from "@/components/stock/panel/VehicleInfo";

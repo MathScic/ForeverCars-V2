@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { client } from "@/sanity/client";
-import { vehicleBySlugQuery, allVehicleSlugsQuery } from "@/sanity/lib/queries";
+import { getAllVehicleSlugs, getVehicleBySlug } from "@/lib/vehicles";
 import { Vehicle } from "@/lib/types/vehicle";
 import VehicleDetailPage from "./VehicleDetailPage";
 
@@ -9,13 +8,13 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const slugs: { slug: string }[] = await client.fetch(allVehicleSlugsQuery);
+  const slugs: { slug: string }[] = await getAllVehicleSlugs();
   return slugs.map((s) => ({ slug: s.slug }));
 }
 
 export default async function VehicleSlugPage({ params }: Props) {
   const { slug } = await params;
-  const vehicle: Vehicle | null = await client.fetch(vehicleBySlugQuery, { slug }, { cache: "no-store" });
+  const vehicle: Vehicle | null = await getVehicleBySlug(slug);
 
   if (!vehicle) notFound();
 
