@@ -1,0 +1,14 @@
+{
+  "name": "@forevercars/migration-sanity",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Migration Sanity → Supabase : tests de la correspondance et lanceur de la copie des photos.",
+  "scripts": {
+    "test": "vitest run",
+    "migrer": "node src/run.mjs"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.1"
+  }
+}
