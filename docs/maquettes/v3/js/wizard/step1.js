@@ -1,6 +1,6 @@
 // Étape 1 — Identification : 3 façons de remplir la fiche. Par la plaque (service payant, à choisir),
 // par la carte grise (photo lue automatiquement), ou à la main. Il ne reste ensuite que le kilométrage.
-const MODES = [["plate", "Par la plaque", "Fiche officielle (service payant à choisir)"], ["cg", "Carte grise", "Photo ou scan, lu automatiquement"], ["manual", "À la main", "Sans service extérieur"]];
+const MODES = [["cg", "Carte grise", "Photo ou scan, lu automatiquement"], ["manual", "À la main", "Les 12 champs à remplir"]];
 const chipGroup = (key, values) =>
   values.map((v) => `<button type="button" class="pchip" data-pick="${key}" data-v="${v}" aria-pressed="${W[key] === v}">${v}</button>`).join("");
 

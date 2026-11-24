@@ -2,7 +2,7 @@
 const SITE = "../../../apps/site/public";
 const LOGO = `${SITE}/images/Forever-CarsLogo.svg`;
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
-document.documentElement.dataset.edges = store.get("fc-edges") || "fade"; // bords « fondu » par défaut (proposition)
+document.documentElement.dataset.edges = "fade"; // bords « fondu » retenus le 24/11/2026
 
 const fmtPrice = (n) => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
 const fmtKm = (n) => `${new Intl.NumberFormat("fr-FR").format(n)} km`;
@@ -53,8 +53,6 @@ function setMenu(open) {
 document.addEventListener("click", (e) => {
   if (e.target.closest(".burger")) setMenu(!document.documentElement.classList.contains("menu-open"));
   else if (e.target.closest("[data-menu-close]")) setMenu(false);
-  const edge = e.target.closest("[data-edges-set]");
-  if (edge) (document.documentElement.dataset.edges = edge.dataset.edgesSet), store.set("fc-edges", edge.dataset.edgesSet), document.querySelectorAll("[data-edges-set]").forEach((b) => b.setAttribute("aria-pressed", b === edge));
 });
 document.addEventListener("keydown", (e) => e.key === "Escape" && document.documentElement.classList.contains("menu-open") && setMenu(false));
 
@@ -79,10 +77,9 @@ const SITE_PAGES = [["index.html", "Accueil"], ["stock.html", "Stock"], ["fiche.
 const BO_PAGES = [["connexion.html", "Connexion"], ["backoffice.html", "Parc"], ["vente.html", "Mise en vente"], ["documents.html", "Documents"], ["stats.html", "Stats"], ["equipe.html", "Équipe"]];
 function mockSwitch(current) {
   const bo = BO_PAGES.some(([, l]) => l === current);
-  const pages = bo ? BO_PAGES : SITE_PAGES, edges = document.documentElement.dataset.edges;
+  const pages = bo ? BO_PAGES : SITE_PAGES;
   return `<nav class="mock-switch" aria-label="Maquettes"><a href="sommaire.html" class="ms-home">Sommaire</a><span class="ms-sep"></span>${pages.map(([h, l]) => `<a href="${h}" ${l === current ? 'aria-current="page"' : ""}>${l}</a>`).join("")}
-    <a class="ms-jump" href="${bo ? "index.html" : "backoffice.html"}">${bo ? "Voir le site" : "Voir l'app"}</a><span class="ms-sep"></span><span class="muted" style="padding:0 6px">Bords</span>
-    <button data-edges-set="fade" aria-pressed="${edges === "fade"}">Fondu</button><button data-edges-set="line" aria-pressed="${edges === "line"}">Trait</button></nav>`;
+    <a class="ms-jump" href="${bo ? "index.html" : "backoffice.html"}">${bo ? "Voir le site" : "Voir l'app"}</a></nav>`;
 }
 
 /** Apparitions au défilement + menu transparent tant que la bannière est visible. */

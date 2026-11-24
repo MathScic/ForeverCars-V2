@@ -1,6 +1,6 @@
 // État de l'assistant + cadre (en-tête, étapes, pied). Les étapes (step1…4.js) fournissent leur contenu.
 const W = {
-  step: 1, mode: "plate", edit: null, siv: null, plate: "", looking: false, looked: false, f: {}, km: "", owners: "1", warranty: "12 mois",
+  step: 1, mode: "cg", edit: null, siv: null, plate: "", looking: false, looked: false, f: {}, km: "", owners: "1", warranty: "12 mois",
   photos: [], importing: false, price: "", buy: "", repair: "", equip: [], desc: "", aiLoading: false,
   featured: false, lbc: false, lc: false, publishing: false, pSteps: [], done: null,
 };

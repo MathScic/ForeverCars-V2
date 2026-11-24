@@ -83,4 +83,4 @@ document.addEventListener("drop", (e) => {
   if (e.dataTransfer.files.length) filePhotos(e.dataTransfer.files);
 });
 
-renderStep("#plate");
+renderStep();
