@@ -3,19 +3,19 @@ import type { ButtonHTMLAttributes } from "react";
 type Variant = "primary" | "outline" | "ghost" | "danger";
 type Size = "md" | "lg" | "icon";
 
-// Mêmes formes que les boutons du site : pilule, orange plein ou contour orange.
+// Boutons de la charte (comme le site) : rectangles nets, capitales Archivo espacées.
 const variants: Record<Variant, string> = {
-  primary: "bg-brand-orange text-brand-black hover:bg-brand-orange/90 font-semibold",
-  outline: "border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-brand-black font-semibold",
-  ghost: "border border-brand-gray-medium/40 text-brand-gray-light hover:border-brand-orange/50 hover:text-brand-white",
-  danger: "border border-brand-danger/50 text-brand-danger hover:bg-brand-danger/10",
+  primary: "bg-orange text-carbon hover:bg-orange/90",
+  outline: "border border-orange text-orange hover:bg-orange hover:text-carbon",
+  ghost: "border border-line-strong text-ivory hover:border-ivory",
+  danger: "border border-danger/50 text-danger hover:bg-danger/10",
 };
 
-// Cibles cliquables ≥ 44 px (h-11)
+// Cibles cliquables ≥ 44 px (h-11). « icon » : bouton rond des actions de ligne.
 const sizes: Record<Size, string> = {
-  md: "h-11 px-6 text-sm",
-  lg: "h-12 px-8 text-sm",
-  icon: "h-11 w-11 justify-center",
+  md: "h-11 px-6 rounded-sm",
+  lg: "h-[54px] px-7 rounded-sm",
+  icon: "h-11 w-11 justify-center rounded-full",
 };
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,8 +27,17 @@ export default function Button({ variant = "primary", size = "md", className = "
   return (
     <button
       type={type}
-      className={`inline-flex items-center gap-2 rounded-full font-display transition-colors duration-300 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`group inline-flex items-center gap-3 font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] transition-[background-color,border-color,color,transform] duration-300 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${className}`}
       {...rest}
     />
+  );
+}
+
+/** Flèche qui glisse au survol du bouton (comme sur le site). */
+export function Arrow() {
+  return (
+    <span aria-hidden className="transition-transform duration-500 ease-[var(--ease-spring)] group-hover:translate-x-1.5">
+      →
+    </span>
   );
 }

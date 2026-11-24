@@ -23,8 +23,8 @@ export default function PriceBlock({ vehicle: v, onChange, errors }: Omit<StepPr
           className="text-2xl! font-bold! h-14! tabular-nums"
         />
       </Field>
-      <div className="rounded-lg border border-brand-orange/30 bg-brand-orange/5 p-4">
-        <p className="flex items-center gap-2 text-xs font-semibold text-brand-orange">
+      <div className="rounded-md border border-orange/30 bg-orange/5 p-4">
+        <p className="flex items-center gap-2 text-xs font-semibold text-orange">
           <TrendingUp size={14} /> Estimation marché (simulation, module à venir)
         </p>
         {estimate ? (
@@ -35,13 +35,13 @@ export default function PriceBlock({ vehicle: v, onChange, errors }: Omit<StepPr
             <button
               type="button"
               onClick={() => onChange({ price: estimate.suggested })}
-              className="mt-3 h-11 px-4 rounded-full border-2 border-brand-orange text-brand-orange text-sm font-semibold hover:bg-brand-orange hover:text-brand-black transition-colors"
+              className="mt-3 h-11 px-4 rounded-sm border border-orange text-orange font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] hover:bg-orange hover:text-carbon transition-colors"
             >
               Appliquer {formatPrice(estimate.suggested)}
             </button>
           </>
         ) : (
-          <p className="text-sm text-brand-gray-light/70 mt-1">Complétez marque, modèle et puissance pour estimer.</p>
+          <p className="text-sm text-silver mt-1">Complétez marque, modèle et puissance pour estimer.</p>
         )}
       </div>
     </div>

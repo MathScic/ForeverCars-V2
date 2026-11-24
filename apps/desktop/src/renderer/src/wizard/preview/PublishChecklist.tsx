@@ -32,11 +32,11 @@ export default function PublishChecklist({ vehicle, onPublish }: { vehicle: Demo
         {items.map((item) => (
           <li key={item.label} className="flex items-center gap-3 text-sm">
             {item.ok ? (
-              <CheckCircle2 size={18} className="text-brand-success shrink-0" />
+              <CheckCircle2 size={18} className="text-success shrink-0" />
             ) : (
-              <AlertCircle size={18} className="text-brand-orange shrink-0" />
+              <AlertCircle size={18} className="text-orange shrink-0" />
             )}
-            <span className={item.ok ? "text-brand-gray-light" : "text-brand-orange"}>{item.label}</span>
+            <span className={item.ok ? "text-silver" : "text-orange"}>{item.label}</span>
           </li>
         ))}
       </ul>
@@ -44,7 +44,7 @@ export default function PublishChecklist({ vehicle, onPublish }: { vehicle: Demo
         type="button"
         onClick={onPublish}
         disabled={blocking}
-        className="mt-6 w-full h-14 inline-flex items-center justify-center gap-2 rounded-full bg-brand-orange text-brand-black font-display font-bold hover:bg-brand-orange/90 active:scale-[0.99] transition disabled:opacity-40"
+        className="mt-6 w-full h-14 inline-flex items-center justify-center gap-2 rounded-sm bg-orange text-carbon font-display text-xs font-semibold uppercase tracking-[0.2em] [font-stretch:112%] hover:bg-orange/90 active:scale-[0.99] transition disabled:opacity-40"
       >
         <Send size={18} /> {vehicle.status === "online" ? "Mettre à jour l'annonce" : "Publier l'annonce"}
       </button>

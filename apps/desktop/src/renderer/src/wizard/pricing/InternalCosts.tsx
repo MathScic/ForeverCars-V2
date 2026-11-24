@@ -17,7 +17,7 @@ export default function InternalCosts({ vehicle: v, onChange }: Props) {
   const { isAdmin } = useDemoStore();
   if (!isAdmin) {
     return (
-      <Card className="p-5 text-sm text-brand-gray-light/70 flex items-start gap-3">
+      <Card className="p-5 text-sm text-silver flex items-start gap-3">
         <Lock size={16} className="mt-0.5 shrink-0" /> Les coûts internes et la marge sont réservés à l&apos;admin.
       </Card>
     );
@@ -27,7 +27,7 @@ export default function InternalCosts({ vehicle: v, onChange }: Props) {
   return (
     <Card className="p-5 space-y-4">
       <p className="flex items-center gap-2 text-sm font-semibold">
-        <ShieldCheck size={16} className="text-brand-orange" /> Données internes — jamais publiées
+        <ShieldCheck size={16} className="text-orange" /> Données internes — jamais publiées
       </p>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Prix d'achat (€)">
@@ -37,12 +37,12 @@ export default function InternalCosts({ vehicle: v, onChange }: Props) {
           <Input type="number" min={0} placeholder="ex. 450" value={v.repairCost ?? ""} onChange={(e) => onChange({ repairCost: num(e.target.value) })} />
         </Field>
       </div>
-      <div className="flex items-end justify-between pt-3 border-t border-brand-gray-medium/20">
+      <div className="flex items-end justify-between pt-3 border-t border-line">
         <div>
-          <p className="text-sm text-brand-gray-light">Marge prévisionnelle</p>
-          <p className="text-xs text-brand-gray-light/60">prix de vente − achat − remise en état</p>
+          <p className="text-sm text-silver">Marge prévisionnelle</p>
+          <p className="text-xs text-silver">prix de vente − achat − remise en état</p>
         </div>
-        <p className={`font-display text-2xl font-bold tabular-nums ${margin.amount < 0 ? "text-brand-danger" : "text-brand-success"}`}>
+        <p className={`font-display text-2xl font-bold tabular-nums ${margin.amount < 0 ? "text-danger" : "text-success"}`}>
           {formatPrice(margin.amount)}
         </p>
       </div>

@@ -7,7 +7,7 @@ interface Props {
   onChange: (value: string[]) => void;
 }
 
-const chip = "h-11 px-4 inline-flex items-center gap-2 rounded-full text-sm font-medium border transition-colors";
+const chip = "h-11 px-4 inline-flex items-center gap-2 rounded-sm text-[13px] font-medium border transition-colors";
 
 // Un clic = l'équipement est présent sur le véhicule. La description se met à jour toute seule.
 export default function EquipmentPicker({ value, onChange }: Props) {
@@ -33,22 +33,22 @@ export default function EquipmentPicker({ value, onChange }: Props) {
             onClick={() => toggle(item)}
             className={`${chip} ${
               on
-                ? "bg-brand-orange border-brand-orange text-brand-black"
-                : "bg-brand-black border-brand-gray-medium/50 text-brand-gray-light hover:border-brand-orange/60 hover:text-brand-white"
+                ? "bg-orange border-orange text-carbon"
+                : "bg-carbon border-line-strong text-silver hover:border-orange/60 hover:text-ivory"
             }`}
           >
             {on && <Check size={14} />} {item}
           </button>
         );
       })}
-      <span className={`${chip} pr-1 border-dashed border-brand-gray-medium/60 focus-within:border-brand-orange`}>
+      <span className={`${chip} pr-1 border-dashed border-line-strong focus-within:border-orange`}>
         <input
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustom())}
           placeholder="Autre équipement…"
           aria-label="Ajouter un autre équipement"
-          className="w-40 bg-transparent text-sm focus:outline-none placeholder:text-brand-gray-light/40"
+          className="w-40 bg-transparent text-sm focus:outline-none placeholder:text-silver/60"
         />
         <button type="button" onClick={addCustom} aria-label="Ajouter" className="h-9 w-9 inline-flex items-center justify-center rounded-full hover:bg-white/10">
           <Plus size={16} />

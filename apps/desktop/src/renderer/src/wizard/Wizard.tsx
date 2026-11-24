@@ -70,15 +70,11 @@ function Wizard({ id }: { id?: string }) {
 
   const View = views[step]!;
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="mx-auto grid max-w-5xl gap-10">
       <div>
-        <h1 className="font-display text-3xl font-bold tracking-tight">
-          {existing ? `Modifier : ${existing.brand} ${existing.model}` : "Mettre un véhicule en vente"}
-        </h1>
-        <p className="text-brand-gray-light mt-1">
-          Dossier <span className="font-mono text-brand-white">{vehicle.fileNumber}</span> · brouillon
-          enregistré à chaque étape, rien ne se perd si vous fermez l&apos;application.
-        </p>
+        <span className="fc-eyebrow">Dossier {vehicle.fileNumber}</span>
+        <h1 className="fc-h2 mt-5">{existing ? `Modifier : ${existing.brand} ${existing.model}` : "Mettre un véhicule en vente"}</h1>
+        <p className="mt-4 text-silver">Brouillon enregistré à chaque étape : rien ne se perd si vous fermez l&apos;application.</p>
       </div>
       <Stepper steps={STEPS} current={step} onSelect={(s) => s < step && goTo(s)} />
       <View vehicle={vehicle} onChange={onChange} errors={errors} onPublish={publish} />

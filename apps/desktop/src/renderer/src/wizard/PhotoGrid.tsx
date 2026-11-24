@@ -15,7 +15,7 @@ export function move<T>(list: T[], from: number, to: number): T[] {
 }
 
 const ctrl =
-  "h-9 w-9 inline-flex items-center justify-center rounded-full bg-brand-black/75 text-brand-white hover:bg-brand-black";
+  "h-9 w-9 inline-flex items-center justify-center rounded-full bg-carbon/75 text-ivory hover:bg-carbon";
 
 // La première photo est la couverture. On réordonne en faisant glisser une photo sur une autre.
 export default function PhotoGrid({ photos, onChange }: Props) {
@@ -48,17 +48,17 @@ export default function PhotoGrid({ photos, onChange }: Props) {
             if (dragIndex !== i) onChange(move(photos, dragIndex, i));
             reset();
           }}
-          className={`group relative aspect-[4/3] rounded-lg overflow-hidden bg-brand-gray-medium cursor-grab active:cursor-grabbing border-2 transition-[border-color,opacity,transform] duration-150 ${
-            overIndex === i && dragIndex !== i ? "border-brand-orange scale-[1.03]" : i === 0 ? "border-brand-orange/70" : "border-transparent"
+          className={`group relative aspect-[4/3] rounded-md overflow-hidden bg-graphite-2 cursor-grab active:cursor-grabbing border-2 transition-[border-color,opacity,transform] duration-150 ${
+            overIndex === i && dragIndex !== i ? "border-orange scale-[1.03]" : i === 0 ? "border-orange/70" : "border-transparent"
           } ${dragIndex === i ? "opacity-30" : ""}`}
         >
           <img src={p.url} alt={p.name} className="w-full h-full object-cover pointer-events-none" />
           <span className="absolute top-2 left-2 flex items-center gap-1">
-            <span className="h-6 px-1.5 inline-flex items-center rounded bg-brand-black/75 text-xs tabular-nums">
+            <span className="h-6 px-1.5 inline-flex items-center rounded bg-carbon/75 text-xs tabular-nums">
               <GripVertical size={12} className="opacity-60" /> {i + 1}
             </span>
             {i === 0 && (
-              <span className="h-6 px-2 inline-flex items-center text-xs font-semibold rounded bg-brand-orange text-brand-black">
+              <span className="h-6 px-2 inline-flex items-center text-xs font-semibold rounded bg-orange text-carbon">
                 Couverture
               </span>
             )}

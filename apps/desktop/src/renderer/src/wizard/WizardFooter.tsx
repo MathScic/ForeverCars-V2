@@ -12,7 +12,7 @@ interface Props {
 // À la dernière étape, la publication se fait depuis le bloc « Prêt à publier ».
 export default function WizardFooter({ step, onBack, onNext, onSaveDraft }: Props) {
   return (
-    <div className="flex items-center justify-between gap-4 pt-6 border-t border-brand-gray-medium/20">
+    <div className="flex items-center justify-between gap-4 pt-6 border-t border-line">
       <Button variant="ghost" onClick={onBack}>
         <ArrowLeft size={16} /> {step === 0 ? "Retour au parc" : "Précédent"}
       </Button>

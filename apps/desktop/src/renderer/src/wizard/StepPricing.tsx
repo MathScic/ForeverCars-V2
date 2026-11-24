@@ -15,7 +15,7 @@ export default function StepPricing({ vehicle: v, onChange, errors }: StepProps)
       </div>
 
       <div>
-        <p className="text-xs uppercase tracking-wider text-brand-gray-light mb-3">Équipements</p>
+        <p className="text-xs uppercase tracking-wider text-silver mb-3">Équipements</p>
         <EquipmentPicker value={v.equipment} onChange={(equipment) => onChange({ equipment })} />
       </div>
 

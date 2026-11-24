@@ -1,11 +1,6 @@
 import type { HTMLAttributes } from "react";
 
-// Carte du site : fond gris foncé, bordure subtile, rayon lg.
+// Panneau de la charte : fond graphite, filet discret, angles nets.
 export default function Card({ className = "", ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={`bg-brand-gray-dark rounded-lg border border-brand-gray-medium/20 ${className}`}
-      {...rest}
-    />
-  );
+  return <div className={`rounded-md border border-line bg-graphite ${className}`} {...rest} />;
 }

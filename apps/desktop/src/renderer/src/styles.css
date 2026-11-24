@@ -1,58 +1,37 @@
 @import "tailwindcss";
+/* Charte « Showroom Nocturne » commune au site et au back-office (couleurs, classes fc-*) */
+@import "@forevercars/design/theme.css";
 
-/* ─────────────────────────────────────────────────────────────
-   Tokens ForeverCars — relevés dans le CSS compilé de apps/site
-   (globals.css @theme). Provisoire : ils migreront dans
-   packages/design en phase 1 bis.
-   ───────────────────────────────────────────────────────────── */
-@theme {
-  --color-brand-black: #0a0a0a;
-  --color-brand-orange: #ff8c42;
-  --color-brand-white: #ffffff;
-  --color-brand-gray-dark: #1a1a1a;
-  --color-brand-gray-medium: #404040;
-  --color-brand-gray-light: #e5e5e5;
-  /* Vert déjà utilisé par le site pour les confirmations (green-400) */
-  --color-brand-success: #4ade80;
-  /* Rouge des messages d'erreur du site (red-500) */
-  --color-brand-danger: #ef4444;
+/* Polices de la charte en fichiers locaux : l'app doit marcher hors ligne (aucune requête Google). */
+@font-face {
+  font-family: "Archivo";
+  src: url("@forevercars/design/fonts/archivo-latin-var.woff2") format("woff2");
+  font-weight: 300 700;
+  font-stretch: 100% 125%;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("@forevercars/design/fonts/inter-latin-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
 
-  /* Le site en ligne affiche tout en Inter (la classe font-orbitron n'y génère
-     aucun CSS). Pour passer les titres en Orbitron : changer --font-display. */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
-
-  /* Rayons du site (--radius: 0.625rem) */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.625rem;
-  --radius-xl: 0.875rem;
+/* Le thème lit --font-archivo / --font-inter (sur le site, next/font les pose sur <body>). */
+:root {
+  --font-archivo: "Archivo";
+  --font-inter: "Inter";
 }
 
 @layer base {
-  * {
-    border-color: rgb(255 255 255 / 0.1);
-  }
   html,
   body,
   #root {
     height: 100%;
   }
-  body {
-    background-color: var(--color-brand-black);
-    color: var(--color-brand-white);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-  }
-  ::selection {
-    background: rgb(255 140 66 / 0.35);
-  }
-  /* Tailwind v4 remet cursor: default sur les boutons : on rétablit la main. */
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
+  /* Tailwind v4 remet cursor: default : la main sur tout ce qui se clique (en plus de theme.css). */
   [role="switch"],
   [role="radio"],
-  label:has(input[type="file"]),
   label:has(input[type="checkbox"]),
   select,
   summary {
@@ -61,10 +40,27 @@
   button:disabled {
     cursor: not-allowed;
   }
-  :focus-visible {
-    outline: 2px solid var(--color-brand-orange);
-    outline-offset: 2px;
+}
+
+/* Barres de graphique : elles montent depuis le bas à l'affichage (désactivé si mouvement réduit). */
+@keyframes bar-rise {
+  from {
+    transform: scaleY(0);
   }
+}
+.bar-rise {
+  transform-origin: bottom;
+  animation: bar-rise 1200ms var(--ease-spring) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+.bar-grow {
+  transform-origin: left;
+  animation: bar-grow 1100ms var(--ease-spring) both;
 }
 
 /* Impression : seule la fiche vitrine sort, mise à l'échelle sur une page A4. */
@@ -94,14 +90,5 @@
     zoom: 2.33; /* 340 px → 210 mm */
     border-radius: 0 !important;
     box-shadow: none !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
   }
 }

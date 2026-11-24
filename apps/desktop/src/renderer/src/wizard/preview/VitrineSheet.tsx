@@ -33,14 +33,14 @@ export default function VitrineSheet({ vehicle: v }: { vehicle: DemoVehicle }) {
   ];
 
   return (
-    <div className="print-area aspect-[210/297] w-full bg-brand-white text-brand-black p-7 flex flex-col rounded-md shadow-lg">
+    <div className="print-area aspect-[210/297] w-full bg-ivory text-carbon p-7 flex flex-col rounded-md shadow-lg">
       {/* Bandeau noir : le logo du site est prévu pour un fond sombre */}
-      <div className="-mx-7 -mt-7 px-7 py-3 bg-brand-black rounded-t-md flex items-center justify-between">
+      <div className="-mx-7 -mt-7 px-7 py-3 bg-carbon rounded-t-md flex items-center justify-between">
         <img src={logo} alt="ForeverCars" className="h-10 w-auto" />
-        <span className="text-[10px] font-mono text-brand-gray-light">{v.fileNumber}</span>
+        <span className="text-[10px] font-mono text-silver">{v.fileNumber}</span>
       </div>
       <h2 className="font-display text-2xl font-bold mt-4 leading-tight">{v.brand} {v.model}</h2>
-      <p className="text-xs text-brand-gray-medium">{v.version}</p>
+      <p className="text-xs text-silver">{v.version}</p>
       <p className="font-display text-4xl font-bold mt-3 tabular-nums">{formatPrice(v.price)}</p>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1 mt-4 text-[11px]">
         {specs.map(([label, value]) => (
@@ -52,15 +52,15 @@ export default function VitrineSheet({ vehicle: v }: { vehicle: DemoVehicle }) {
       </dl>
       <ul className="mt-3 text-[10px] space-y-0.5">
         {v.equipment.slice(0, 8).map((item) => (
-          <li key={item}><span className="text-brand-orange font-bold">+</span> {item}</li>
+          <li key={item}><span className="text-orange font-bold">+</span> {item}</li>
         ))}
       </ul>
-      <div className="mt-auto flex items-center gap-3 pt-3 border-t border-brand-black/10">
+      <div className="mt-auto flex items-center gap-3 pt-3 border-t border-carbon/10">
         {qr && <img src={qr} alt={`QR code vers ${url}`} className="h-16 w-16" />}
         <p className="text-[10px] leading-snug">
           Scannez pour voir toutes les photos et réserver un essai
           <br />
-          <span className="text-brand-gray-medium">forevercars.fr · « Tu t&apos;occupes de rien, je m&apos;occupe de tout »</span>
+          <span className="text-silver">forevercars.fr · « Tu t&apos;occupes de rien, je m&apos;occupe de tout »</span>
         </p>
       </div>
     </div>

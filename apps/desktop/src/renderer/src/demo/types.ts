@@ -1,6 +1,7 @@
 // Modèle de l'ébauche, calqué sur le schéma prévu en phase 2 (table vehicles).
 export type Role = "admin" | "seller";
-export type VehicleStatus = "draft" | "online" | "sold";
+/** « reserved » : toujours visible sur le site avec le badge Réservé (comme dans Sanity). */
+export type VehicleStatus = "draft" | "online" | "reserved" | "sold";
 export type Fuel = "essence" | "diesel" | "hybride" | "electrique";
 export type Gearbox = "manuelle" | "automatique";
 
@@ -39,6 +40,8 @@ export interface DemoVehicle {
   exportLaCentrale: boolean;
   /** Ordre d'affichage ; la première photo est la couverture. */
   photos: Photo[];
+  /** Pièces du dossier administratif prêtes (id de documents/catalog.ts → true). */
+  documents?: Record<string, boolean>;
   /** Données internes, réservées à l'admin (future table vehicle_costs). */
   purchasePrice?: number;
   repairCost?: number;

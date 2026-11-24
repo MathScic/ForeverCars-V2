@@ -16,11 +16,11 @@ export default function Shell() {
   }, []);
 
   return (
-    <div className="h-full flex">
+    <div className="flex h-full">
       <Sidebar />
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="flex-1 overflow-y-auto px-8 py-8">
+        <main className="flex-1 overflow-y-auto px-10 pb-24 pt-12">
           <Outlet />
         </main>
       </div>

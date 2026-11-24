@@ -1,39 +1,38 @@
+import { Monitor } from "lucide-react";
 import { Navigate } from "react-router";
 import { useDemoStore } from "../demo/store";
 import Card from "../ui/Card";
+import Members from "../team/Members";
+import RolesTable from "../team/RolesTable";
 
-const members = [
-  { name: "Clément Scicluna", email: "admin@forevercars.fr", role: "Admin" },
-  { name: "Vendeur (démo)", email: "vendeur@forevercars.fr", role: "Vendeur" },
-];
-
-// Écran réservé à l'admin. Les invitations passeront par une Edge Function (phase 6).
+// Équipe (maquette backoffice-equipe.html), réservée à l'admin. Les invitations et changements de rôle
+// passeront par une Edge Function protégée (phase 6) ; ici, rien n'est envoyé.
 export default function Team() {
   const { isAdmin } = useDemoStore();
   if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="@container mx-auto grid max-w-[1200px] gap-10">
       <div>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Équipe</h1>
-        <p className="text-brand-gray-light mt-1">Qui a accès au back-office, et avec quels droits.</p>
+        <span className="fc-eyebrow">Équipe</span>
+        <h1 className="fc-h2 mt-5">Qui a accès au back-office</h1>
+        <p className="mt-4 text-silver">Seul un admin voit cette page. Chaque personne se connecte avec son propre compte.</p>
       </div>
-      <Card className="divide-y divide-brand-gray-medium/20">
-        {members.map((m) => (
-          <div key={m.email} className="flex items-center justify-between p-5">
-            <div>
-              <p className="font-semibold">{m.name}</p>
-              <p className="text-sm text-brand-gray-light/70">{m.email}</p>
-            </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full border border-brand-orange/50 text-brand-orange">
-              {m.role}
+      <Members />
+      <div className="grid items-start gap-6 @min-[900px]:grid-cols-2">
+        <RolesTable />
+        <Card className="grid content-start gap-6 p-7">
+          <h2 className="fc-h3">Postes connectés</h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <Monitor size={20} aria-hidden className="text-silver" />
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">PC du garage — Windows</span>
+              <span className="block text-xs text-success">Connecté maintenant</span>
             </span>
           </div>
-        ))}
-      </Card>
-      <p className="text-sm text-brand-gray-light/60">
-        Inviter un employé et changer son rôle arrivera avec la connexion Supabase (phase 6).
-      </p>
+          <p className="text-xs text-silver">Un poste perdu ou vendu se déconnecte d&apos;ici (avec la connexion Supabase).</p>
+        </Card>
+      </div>
     </div>
   );
 }

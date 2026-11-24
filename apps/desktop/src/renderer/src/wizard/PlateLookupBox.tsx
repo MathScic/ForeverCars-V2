@@ -27,9 +27,9 @@ export default function PlateLookupBox({ plate, error, onPlate, onFound }: Props
   };
 
   return (
-    <div className="rounded-lg border border-brand-gray-medium/30 bg-brand-black/40 p-5">
+    <div className="rounded-md border border-line bg-carbon/40 p-5">
       <p className="text-sm font-semibold">Pré-remplir avec la plaque (facultatif)</p>
-      <p className="text-xs text-brand-gray-light/70 mt-1">
+      <p className="text-xs text-silver mt-1">
         Si le véhicule a encore sa plaque, on retrouve la fiche. Sinon, saisissez tout à la main.
       </p>
       <div className="mt-4 flex gap-3">
@@ -47,18 +47,18 @@ export default function PlateLookupBox({ plate, error, onPlate, onFound }: Props
           type="button"
           onClick={search}
           disabled={!plate.trim() || status === "loading"}
-          className="h-11 px-5 inline-flex items-center gap-2 rounded-full border-2 border-brand-orange text-brand-orange text-sm font-semibold hover:bg-brand-orange hover:text-brand-black transition-colors disabled:opacity-40"
+          className="h-11 px-5 inline-flex items-center gap-2 rounded-sm border border-orange text-orange font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] hover:bg-orange hover:text-carbon transition-colors disabled:opacity-40"
         >
           {status === "loading" ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
           Rechercher
         </button>
       </div>
       <p role="status" className="text-xs mt-2 min-h-4">
-        {error ? <span className="text-brand-danger">{error}</span> : null}
-        {!error && status === "found" && <span className="text-brand-success">Fiche pré-remplie : vérifiez les champs ci-dessous.</span>}
-        {!error && status === "missing" && <span className="text-brand-orange">Plaque inconnue : complétez la fiche à la main.</span>}
+        {error ? <span className="text-danger">{error}</span> : null}
+        {!error && status === "found" && <span className="text-success">Fiche pré-remplie : vérifiez les champs ci-dessous.</span>}
+        {!error && status === "missing" && <span className="text-orange">Plaque inconnue : complétez la fiche à la main.</span>}
         {!error && status === "idle" && (
-          <span className="text-brand-gray-light/50">Démo : essayez {DEMO_PLATES.join(", ")}</span>
+          <span className="text-silver">Démo : essayez {DEMO_PLATES.join(", ")}</span>
         )}
       </p>
     </div>

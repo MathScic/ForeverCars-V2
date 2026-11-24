@@ -10,7 +10,7 @@ const roles: { value: Role; label: string }[] = [
 export default function RoleSwitch() {
   const { state, dispatch } = useDemoStore();
   return (
-    <div role="radiogroup" aria-label="Rôle simulé" className="flex items-center gap-1 p-1 rounded-full border border-brand-gray-medium/40">
+    <div role="radiogroup" aria-label="Rôle simulé" className="flex items-center gap-1 rounded-full border border-line-strong p-1">
       {roles.map((r) => {
         const active = state.role === r.value;
         return (
@@ -20,8 +20,8 @@ export default function RoleSwitch() {
             role="radio"
             aria-checked={active}
             onClick={() => dispatch({ type: "setRole", role: r.value })}
-            className={`h-9 px-4 rounded-full text-xs font-semibold transition-colors ${
-              active ? "bg-brand-orange text-brand-black" : "text-brand-gray-light hover:text-brand-white"
+            className={`h-9 rounded-full px-4 text-xs font-medium transition-colors duration-300 ${
+              active ? "bg-ivory text-carbon" : "text-silver hover:text-ivory"
             }`}
           >
             {r.label}

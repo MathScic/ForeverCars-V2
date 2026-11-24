@@ -18,6 +18,30 @@ describe("demoReducer", () => {
     expect(byId(s, "demo-1")).toMatchObject({ status: "sold", soldAt: now, isFeatured: false });
   });
 
+  it("réserve un véhicule en ligne puis le remet en ligne", () => {
+    const reserved = demoReducer(createSeedState(), { type: "toggleReserved", id: "demo-1", now });
+    expect(byId(reserved, "demo-1").status).toBe("reserved");
+    expect(reserved.activity[0]!.label).toBe("Réservé : Peugeot 2008");
+    const back = demoReducer(reserved, { type: "toggleReserved", id: "demo-1", now });
+    expect(byId(back, "demo-1").status).toBe("online");
+    expect(back.activity[0]!.label).toBe("Remis en ligne : Peugeot 2008");
+  });
+
+  it("ne réserve ni un brouillon ni un véhicule vendu", () => {
+    const seed = createSeedState();
+    expect(demoReducer(seed, { type: "toggleReserved", id: "demo-4", now })).toBe(seed);
+    expect(demoReducer(seed, { type: "toggleReserved", id: "demo-5", now })).toBe(seed);
+  });
+
+  it("enregistre une pièce du dossier puis la retire", () => {
+    const added = demoReducer(createSeedState(), { type: "setDocument", id: "demo-2", doc: "cg", done: true, now });
+    expect(byId(added, "demo-2").documents).toEqual({ cg: true });
+    expect(added.activity[0]!.label).toBe("Dossier Volkswagen Golf 8 : Carte grise (certificat d'immatriculation)");
+    const removed = demoReducer(added, { type: "setDocument", id: "demo-2", doc: "cg", done: false, now });
+    expect(byId(removed, "demo-2").documents).toEqual({ cg: false });
+    expect(removed.activity).toHaveLength(added.activity.length); // un retrait n'est pas journalisé
+  });
+
   it("bascule le coup de cœur dans les deux sens", () => {
     const once = demoReducer(createSeedState(), { type: "toggleFeatured", id: "demo-2", now });
     expect(byId(once, "demo-2").isFeatured).toBe(true);

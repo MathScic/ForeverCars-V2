@@ -1,4 +1,3 @@
-import { Check } from "lucide-react";
 import type { StepIndex } from "./draft";
 
 interface Props {
@@ -8,9 +7,10 @@ interface Props {
   onSelect: (step: StepIndex) => void;
 }
 
+// Onglets d'étapes de la maquette : « 01 · Identification », filet orange sur l'étape en cours et les étapes faites.
 export default function Stepper({ steps, current, onSelect }: Props) {
   return (
-    <ol className="grid grid-cols-4 gap-3" aria-label="Étapes de la mise en vente">
+    <ol className="grid grid-cols-4 gap-4" aria-label="Étapes de la mise en vente">
       {steps.map((label, i) => {
         const done = i < current;
         const active = i === current;
@@ -21,29 +21,11 @@ export default function Stepper({ steps, current, onSelect }: Props) {
               disabled={!done}
               onClick={() => onSelect(i as StepIndex)}
               aria-current={active ? "step" : undefined}
-              className="w-full text-left disabled:cursor-default"
+              className={`w-full border-t-2 pt-3.5 text-left font-display text-[10px] font-medium uppercase leading-snug tracking-[0.22em] [font-stretch:112%] transition-colors duration-300 disabled:cursor-default ${
+                active ? "border-orange text-ivory" : done ? "border-orange/50 text-silver hover:text-ivory" : "border-line-strong text-silver"
+              }`}
             >
-              <span
-                className={`block h-1 rounded-full mb-3 transition-colors ${
-                  done || active ? "bg-brand-orange" : "bg-brand-gray-medium/40"
-                }`}
-              />
-              <span className="flex items-center gap-2 text-sm">
-                <span
-                  className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                    done
-                      ? "bg-brand-orange text-brand-black"
-                      : active
-                        ? "border-2 border-brand-orange text-brand-orange"
-                        : "border border-brand-gray-medium text-brand-gray-light/60"
-                  }`}
-                >
-                  {done ? <Check size={14} /> : i + 1}
-                </span>
-                <span className={active ? "text-brand-white font-semibold" : "text-brand-gray-light/70"}>
-                  {label}
-                </span>
-              </span>
+              {String(i + 1).padStart(2, "0")} · {label}
             </button>
           </li>
         );

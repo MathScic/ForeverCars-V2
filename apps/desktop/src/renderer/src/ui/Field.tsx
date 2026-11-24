@@ -1,8 +1,8 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 
-// Style des champs repris du formulaire de contact du site.
+// Champs du formulaire de contact du site : fond transparent, filet, liseré orange au focus.
 const control =
-  "w-full min-h-11 bg-brand-black border border-brand-gray-medium/40 rounded-lg px-4 py-2.5 text-sm text-brand-white placeholder:text-brand-gray-light/40 focus:border-brand-orange focus:outline-none transition-colors";
+  "w-full min-h-[52px] rounded-sm border border-line-strong bg-transparent px-4 py-3 text-[15px] text-ivory transition-colors duration-300 placeholder:text-silver/60 hover:border-silver focus:border-orange focus:outline-none";
 
 interface FieldProps {
   label: string;
@@ -13,14 +13,10 @@ interface FieldProps {
 
 export function Field({ label, hint, error, children }: FieldProps) {
   return (
-    <label className="block">
-      <span className="block text-xs uppercase tracking-wider text-brand-gray-light mb-2">{label}</span>
+    <label className="grid gap-2.5">
+      <span className="fc-label">{label}</span>
       {children}
-      {error ? (
-        <span className="block text-xs text-brand-danger mt-1.5">{error}</span>
-      ) : hint ? (
-        <span className="block text-xs text-brand-gray-light/60 mt-1.5">{hint}</span>
-      ) : null}
+      {error ? <span className="text-xs text-danger">{error}</span> : hint ? <span className="text-xs text-silver">{hint}</span> : null}
     </label>
   );
 }
@@ -30,11 +26,11 @@ export const Input = ({ className = "", ...props }: InputHTMLAttributes<HTMLInpu
 );
 
 export const Textarea = (props: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
-  <textarea className={`${control} resize-y`} {...props} />
+  <textarea className={`${control} min-h-40 resize-y`} {...props} />
 );
 
 export const Select = ({ children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) => (
-  <select className={control} {...props}>
+  <select className={`${control} [&>option]:bg-graphite`} {...props}>
     {children}
   </select>
 );

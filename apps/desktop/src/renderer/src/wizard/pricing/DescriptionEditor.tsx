@@ -14,14 +14,14 @@ export default function DescriptionEditor({ vehicle: v, error, onChange }: Props
   return (
     <div>
       <div className="flex items-end justify-between mb-2">
-        <label htmlFor="annonce-description" className="text-xs uppercase tracking-wider text-brand-gray-light">
+        <label htmlFor="annonce-description" className="text-xs uppercase tracking-wider text-silver">
           Description de l&apos;annonce
         </label>
         <button
           type="button"
           // Repasse en mode automatique : la description est régénérée depuis la fiche.
           onClick={() => onChange({ descriptionIsAuto: true })}
-          className="h-11 px-4 inline-flex items-center gap-2 rounded-full bg-brand-orange/10 border border-brand-orange/40 text-brand-orange text-sm font-semibold hover:bg-brand-orange/20 transition-colors"
+          className="h-11 px-4 inline-flex items-center gap-2 rounded-sm bg-orange/10 border border-orange/40 text-orange font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] hover:bg-orange/20 transition-colors"
         >
           <Sparkles size={16} /> {v.descriptionIsAuto ? "Régénérer" : "Générer avec l'IA"}
         </button>
@@ -36,9 +36,9 @@ export default function DescriptionEditor({ vehicle: v, error, onChange }: Props
       />
       <p className="mt-1.5 text-xs">
         {error ? (
-          <span className="text-brand-danger">{error}</span>
+          <span className="text-danger">{error}</span>
         ) : (
-          <span className="text-brand-gray-light/60">
+          <span className="text-silver">
             {words} mots ·{" "}
             {v.descriptionIsAuto
               ? "rédigée automatiquement, elle suit les équipements cochés (modèle local en attendant l'IA)"

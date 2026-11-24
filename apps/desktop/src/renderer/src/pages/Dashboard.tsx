@@ -1,22 +1,26 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus } from "lucide-react";
 import { useDemoStore } from "../demo/store";
-import Button from "../ui/Button";
-import Card from "../ui/Card";
+import Button, { Arrow } from "../ui/Button";
 import ActivityFeed from "./dashboard/ActivityFeed";
 import Filters, { type StatusFilter } from "./dashboard/Filters";
 import Kpis from "./dashboard/Kpis";
+import MonthPanel from "./dashboard/MonthPanel";
 import VehicleRow from "./dashboard/VehicleRow";
 
+const th = "fc-label whitespace-nowrap border-b border-line px-3 pb-3.5 text-left";
+const month = new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+// Le parc (maquette backoffice.html) : indicateurs, tableau du stock, stats du mois et activité.
 export default function Dashboard() {
   const { state, isAdmin } = useDemoStore();
   const navigate = useNavigate();
   const [status, setStatus] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
+  const [now] = useState(() => Date.now());
 
   const counts = useMemo(() => {
-    const c = { all: state.vehicles.length, online: 0, draft: 0, sold: 0 };
+    const c: Record<StatusFilter, number> = { all: state.vehicles.length, online: 0, reserved: 0, draft: 0, sold: 0 };
     for (const v of state.vehicles) c[v.status] += 1;
     return c;
   }, [state.vehicles]);
@@ -30,48 +34,52 @@ export default function Dashboard() {
   }, [state.vehicles, status, query]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      <div className="flex items-end justify-between gap-4">
+    <div className="@container mx-auto grid max-w-[1400px] gap-12">
+      <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight">Le parc</h1>
-          <p className="text-brand-gray-light mt-1">Tout le stock du garage, en un coup d&apos;œil.</p>
+          <span className="fc-eyebrow">{month}</span>
+          <h1 className="fc-h2 mt-5">Le parc</h1>
         </div>
         <Button size="lg" onClick={() => navigate("/vendre")}>
-          <Plus size={18} /> Mettre en vente
+          Mettre en vente <Arrow />
         </Button>
       </div>
 
       <Kpis vehicles={state.vehicles} isAdmin={isAdmin} />
 
-      <div className="grid grid-cols-1 2xl:grid-cols-[1fr_320px] gap-6 items-start">
-        <div className="space-y-4">
+      {/* Panneaux à droite seulement si la zone de contenu est assez large (barre latérale comprise) ; sinon dessous. */}
+      <div className="grid items-start gap-8 @min-[1280px]:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid min-w-0 gap-6">
           <Filters status={status} onStatus={setStatus} query={query} onQuery={setQuery} counts={counts} />
-          <Card className="overflow-hidden">
-            <table className="w-full">
-              <caption className="sr-only">Véhicules du parc</caption>
-              <thead className="text-left text-xs uppercase tracking-wider text-brand-gray-light/60">
-                <tr>
-                  <th className="py-3 pl-5 pr-4 font-medium">Véhicule</th>
-                  <th className="px-4 font-medium">Dossier</th>
-                  <th className="px-4 font-medium">Année · km</th>
-                  <th className="px-4 font-medium text-right">Prix</th>
-                  <th className="pr-3">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((v) => (
-                  <VehicleRow key={v.id} vehicle={v} isAdmin={isAdmin} />
-                ))}
-              </tbody>
-            </table>
-            {visible.length === 0 && (
-              <p className="p-8 text-center text-sm text-brand-gray-light/60">Aucun véhicule ne correspond.</p>
-            )}
-          </Card>
+          {/* Fenêtre étroite : le tableau défile dans son cadre au lieu d'élargir la page. */}
+          <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <caption className="sr-only">Véhicules du parc</caption>
+            <thead>
+              <tr>
+                <th className={th}>Véhicule</th>
+                <th className={`${th} hidden @min-[1000px]:table-cell`}>Dossier</th>
+                <th className={th}>En stock</th>
+                <th className={`${th} text-right`}>Prix</th>
+                <th className={th}>Statut</th>
+                <th className={th}>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((v) => (
+                <VehicleRow key={v.id} vehicle={v} isAdmin={isAdmin} now={now} />
+              ))}
+            </tbody>
+          </table>
+          </div>
+          {visible.length === 0 && <p className="py-10 text-center text-sm text-silver">Aucun véhicule ne correspond.</p>}
         </div>
-        <ActivityFeed entries={state.activity} />
+        <div className="grid items-start gap-6 @min-[760px]:grid-cols-2 @min-[1280px]:grid-cols-1">
+          <MonthPanel vehicles={state.vehicles} isAdmin={isAdmin} />
+          <ActivityFeed entries={state.activity} />
+        </div>
       </div>
     </div>
   );
