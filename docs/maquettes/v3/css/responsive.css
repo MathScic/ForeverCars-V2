@@ -1,0 +1,62 @@
+/* Site : portable → tablette → téléphone (vérifié à 390 px). */
+@media (max-width: 1180px) {
+  .car { --per: 3; }
+  .stock-grid, .sold-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .founder { grid-template-columns: 1fr 1fr; }
+  .founder .text { padding: 48px 40px; }
+  .fiche { grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; }
+}
+
+@media (max-width: 900px) {
+  .site-header .wrap { grid-template-columns: 1fr auto; }
+  .site-header nav, .header-cta { display: none; }
+  .site-header .burger { display: grid; }
+  .section { padding: 88px 0; }
+  .car { --per: 2; width: calc(100% - 48px); }
+  .pillars { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
+  .steps { grid-template-columns: 1fr 1fr; row-gap: 44px; }
+  .steps::before, .steps::after { display: none; }
+  .founder { grid-template-columns: 1fr; }
+  .founder .portrait { min-height: 440px; }
+  .site-footer .cols { grid-template-columns: 1fr 1fr; }
+  .site-footer .cols > :first-child { grid-column: 1 / -1; }
+  .fiche, .story, .contact-grid, .duo { grid-template-columns: minmax(0, 1fr); }
+  .buybox { position: static; }
+  .mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .mosaic > :first-child { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 16 / 10; }
+  .mosaic > :nth-child(n + 4) { display: none; }
+  .tiles { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .wrap { width: calc(100% - 32px); }
+  .site-header .wrap { height: 70px; }
+  .site-header .logo { height: 40px; }
+  .hero-content { padding: 120px 0 72px; }
+  .hero-actions .btn { flex: 1 1 100%; }
+  .section { padding: 72px 0; }
+  .section-head { margin-bottom: 36px; }
+  .page-head { padding: 116px 0 32px; }
+  .car { --per: 1; width: calc(100% - 32px); }
+  .car-dots { max-width: none; }
+  .steps { grid-template-columns: 1fr; }
+  .founder .portrait { min-height: 380px; }
+  .founder .text { padding: 32px 22px 36px; }
+  .founder .actions .btn { flex: 1 1 100%; }
+  .site-footer .cols { grid-template-columns: 1fr; gap: 36px; }
+  .filters { padding: 10px; }
+  .filters .dd { flex: 1 1 calc(50% - 5px); }
+  .stock-grid, .sold-grid, .tiles, .similar { grid-template-columns: minmax(0, 1fr); }
+  #sort-slot { width: 100%; }
+  #sort-slot .dd { min-width: 0; }
+  #sort-slot .dd-list { left: 0; right: auto; }
+  .sheet { width: 100vw; border-left: 0; }
+  .sheet-body { padding: 22px 16px 96px; }
+  .spec-grid { grid-template-columns: 1fr 1fr; }
+  .sheet-price .price { font-size: 30px; }
+  .stage .icon-btn { opacity: 1; }
+  .lightbox { grid-template-columns: 1fr; padding: 16px; }
+  .lb-prev, .lb-next { display: none; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .mock-switch { bottom: 8px; }
+}

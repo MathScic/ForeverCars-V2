@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fiche véhicule · ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/card.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/panel.css" />
+    <link rel="stylesheet" href="css/fiche.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main class="wrap fiche-page">
+      <a class="link back" href="stock.html" id="back">Retour au stock</a>
+      <div class="mosaic reveal" id="mosaic" role="group" aria-label="Photos du véhicule"></div>
+      <div class="fiche">
+        <div class="fiche-main" id="main"></div>
+        <aside class="buybox soft reveal" id="buy" aria-label="Prix et contact"></aside>
+      </div>
+      <section class="similar-wrap" aria-labelledby="sim">
+        <div class="section-head"><h2 class="h2 reveal focus" id="sim">Vous aimerez aussi</h2><p class="lead reveal">D'autres véhicules du stock, de la même marque ou à un prix proche.</p></div>
+        <div class="similar" id="similar"></div>
+      </section>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="../data.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/card.js"></script>
+    <script src="js/live.js"></script>
+    <script src="js/lightbox.js"></script>
+    <script src="js/panel.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Notre stock");
+      document.querySelector(".site-header").classList.add("solid");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Fiche");
+      document.getElementById("back").insertAdjacentHTML("afterbegin", ico("arrow"));
+    </script>
+    <script src="js/fiche.js"></script>
+  </body>
+</html>

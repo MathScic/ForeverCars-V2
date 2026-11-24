@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Documents · Back-office ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/bo.css" />
+    <link rel="stylesheet" href="css/stock.css" />
+    <link rel="stylesheet" href="css/docs.css" />
+    <link rel="stylesheet" href="css/bo-responsive.css" />
+  </head>
+  <body>
+    <div id="shell"></div>
+    <div id="switch"></div>
+    <div class="paper-wrap" id="paper-wrap" role="dialog" aria-modal="true" aria-label="Document généré" hidden>
+      <div class="paper-box"><div class="paper" id="paper"></div>
+        <div class="paper-actions"><button class="btn btn-ghost" id="paper-close">Fermer</button><button class="btn btn-primary" onclick="window.print()">Imprimer ou PDF</button></div></div>
+    </div>
+    <script src="../data.js"></script>
+    <script src="../sold.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/bo-shell.js"></script>
+    <script src="js/bo-data.js"></script>
+    <script>
+      document.getElementById("switch").outerHTML = mockSwitch("Documents");
+      mountShell("Documents");
+      document.getElementById("page").innerHTML = `
+        <div class="page">
+          <div class="page-title"><div><h1>Documents</h1><p>Les pièces de chaque véhicule au même endroit, et les documents de vente générés en un clic.</p></div></div>
+          <div class="docs">
+            <nav class="doc-list soft" aria-label="Véhicules"><label class="search">${ico("search")}<input id="dq" type="search" placeholder="Véhicule ou plaque…" aria-label="Rechercher un véhicule" /></label><div id="dvs" style="display:grid;gap:4px"></div></nav>
+            <section class="dossier soft" id="dossier" aria-live="polite"></section>
+          </div>
+        </div>`;
+    </script>
+    <script src="js/documents.js"></script>
+  </body>
+</html>

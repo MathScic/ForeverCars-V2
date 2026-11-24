@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>À propos · ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main>
+      <header class="wrap page-head">
+        <h1 class="h2 reveal focus" style="font-size:clamp(32px,4.4vw,64px)">À propos de ForeverCars</h1>
+        <p class="lead reveal" style="--d:120ms">Une passion automobile au service de votre satisfaction</p>
+      </header>
+      <section class="wrap story" aria-labelledby="histoire" style="padding-bottom:110px">
+        <figure class="wipe"><img src="../../../apps/site/public/images/Fondateur.webp" alt="Clément Scicluna, fondateur de ForeverCars" /><figcaption>Clément Scicluna, fondateur de ForeverCars</figcaption></figure>
+        <div class="text reveal">
+          <h2 class="h2" id="histoire">Notre histoire</h2>
+          <p>ForeverCars est né d'une passion pour l'automobile et d'un constat simple : acheter ou vendre un véhicule peut être une expérience stressante et chronophage.</p>
+          <p>Fort de plusieurs années d'expérience dans le secteur automobile, j'ai décidé de créer une agence différente, où le client est au centre de toutes les attentions.</p>
+          <p class="motto">« Acheter ou vendre autrement »</p>
+          <p>Cette devise résume notre philosophie : vous accompagner de A à Z, pour que votre projet automobile devienne une expérience sereine et agréable.</p>
+        </div>
+      </section>
+      <section class="section section-alt" aria-labelledby="services">
+        <div class="wrap"><div class="section-head"><h2 class="h2 reveal focus" id="services">Nos services</h2><p class="lead reveal">Un accompagnement complet pour tous vos projets automobiles</p></div><div class="tiles" id="tiles-services"></div></div>
+      </section>
+      <section class="section" aria-labelledby="valeurs">
+        <div class="wrap"><div class="section-head"><h2 class="h2 reveal focus" id="valeurs">Nos valeurs</h2></div><div class="tiles" id="tiles-valeurs"></div></div>
+      </section>
+      <section class="section section-alt" aria-label="Livraison et qualité">
+        <div class="wrap duo">
+          <div class="block soft reveal"><span class="icon-box" id="i-liv"></span><h2 class="h3" style="font-size:24px">Livraison à domicile</h2>
+            <p>Possibilité de livrer votre véhicule directement devant chez vous. Nous nous déplaçons dans tout le Loiret et ses alentours.</p></div>
+          <div class="block soft reveal" style="--d:120ms"><span class="icon-box" id="i-qual"></span><h2 class="h3" style="font-size:24px">Notre engagement qualité</h2>
+            <p>Chaque véhicule proposé chez ForeverCars passe par un processus rigoureux de sélection et de vérification. Nous contrôlons l'historique, l'état mécanique et la conformité de chaque automobile.</p>
+            <p>Notre objectif : vous proposer uniquement des véhicules de confiance, à des prix justes et transparents.</p>
+            <div class="mini-stats"><div><strong>100%</strong><span>Véhicules vérifiés</span></div><div><strong>45</strong><span>Loiret</span></div><div><strong>5★</strong><span>Satisfaction</span></div></div></div>
+        </div>
+      </section>
+      <section class="wrap cta-band soft reveal" aria-labelledby="confiance">
+        <div><h2 class="h2" id="confiance" style="font-size:clamp(24px,2.6vw,36px)">Prêt à nous faire confiance ?</h2><p class="lead" style="font-size:16px">Contactez-nous pour discuter de votre projet automobile.</p></div>
+        <a class="btn btn-primary" href="contact.html" id="cta">Nous contacter</a>
+      </section>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("À propos");
+      document.querySelector(".site-header").classList.add("solid");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("À propos");
+      document.getElementById("cta").insertAdjacentHTML("beforeend", ico("arrow", "go"));
+      document.getElementById("i-liv").innerHTML = ico("car");
+      document.getElementById("i-qual").innerHTML = ico("shield");
+      const tiles = (list) => list.map(([i, t, d], k) => `<article class="tile soft reveal" style="--d:${k * 90}ms"><span class="icon-box">${ico(i)}</span><h3 class="h3">${t}</h3><p>${d}</p></article>`).join("");
+      document.getElementById("tiles-services").innerHTML = tiles([
+        ["car", "Gestion de la vente", "Confiez-nous la vente de votre véhicule. Photos professionnelles, annonces, négociation, nous gérons tout."],
+        ["clipboard", "Expertise complète", "Contrôle technique, historique, essai routier. Chaque véhicule est minutieusement vérifié."],
+        ["file", "Démarches administratives", "Carte grise, assurance, contrôle technique. On s'occupe de toute la paperasse."],
+        ["search", "Recherche sur mesure", "Vous cherchez un véhicule précis ? On le trouve pour vous aux meilleures conditions."],
+      ]);
+      document.getElementById("tiles-valeurs").innerHTML = tiles([
+        ["shield", "Transparence", "Aucune surprise, chaque véhicule est contrôlé et son historique vérifié."],
+        ["star", "Passion", "L'automobile est notre passion, nous la partageons avec vous."],
+        ["checkCircle", "Excellence", "Nous sélectionnons uniquement des véhicules de qualité."],
+        ["handshake", "Proximité", "Un accompagnement personnalisé du début à la fin."],
+      ]);
+      animate();
+    </script>
+  </body>
+</html>

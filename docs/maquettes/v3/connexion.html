@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Connexion · Back-office ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/form.css" />
+    <style>
+      body { min-height: 100svh; display: grid; grid-template-columns: 1.1fr 1fr; }
+      .visual { position: relative; overflow: hidden; }
+      .visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: settle 2800ms var(--ease) both; }
+      @keyframes settle { from { transform: scale(1.06); } }
+      .visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(10 10 11 / 0.9), rgb(10 10 11 / 0.2) 60%), linear-gradient(to right, transparent 60%, var(--carbon)); }
+      .visual .txt { position: absolute; z-index: 1; left: 48px; bottom: 48px; display: grid; gap: 14px; max-width: 460px; }
+      .side-form { display: grid; place-items: center; padding: 48px 24px; }
+      .login { width: min(420px, 100%); display: grid; gap: 22px; padding: 40px 36px; border-radius: var(--r-md); }
+      .login > * { position: relative; }
+      .pw { position: relative; }
+      .pw button { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--silver); }
+      .pw button svg { width: 18px; height: 18px; }
+      .note { display: flex; gap: 10px; align-items: flex-start; margin: 0; color: var(--silver); font-size: 13px; }
+      .note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--success); }
+      .boot { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; font-size: 14px; }
+      .boot li { display: flex; align-items: center; gap: 10px; color: var(--silver); transition: color 300ms; }
+      .boot li.done { color: var(--ivory); }
+      .boot i { width: 18px; height: 18px; display: grid; place-items: center; border-radius: var(--r-xs); border: 1px solid var(--line-strong); }
+      .boot li.done i { background: var(--success); border-color: var(--success); color: var(--carbon); }
+      .boot i svg { width: 12px; height: 12px; stroke-width: 3; }
+      @media (max-width: 900px) { body { grid-template-columns: 1fr; } .visual { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="visual"><img src="https://cdn.sanity.io/images/kh6xke8y/production/aa90719c6e921460c51335eec6e183a57fa346e2-5712x3213.jpg?w=1600&auto=format&q=75" alt="" />
+      <div class="txt"><img src="../../../apps/site/public/images/Forever-CarsLogo.svg" alt="ForeverCars" style="position:static;width:auto;height:56px;animation:none" /><p class="lead" style="color:rgb(244 241 234 / 0.85)">Le back-office du garage : votre parc, vos annonces et vos documents, même sans internet.</p></div></div>
+    <main class="side-form">
+      <form class="login soft" id="login" novalidate>
+        <div style="display:grid;gap:8px"><h1 class="h3" style="font-size:26px">Connexion</h1><p class="muted" style="margin:0">Chaque membre de l'équipe a son propre compte.</p></div>
+        <label class="field"><span>E-mail</span><input type="email" value="c.forevercars@gmail.com" autocomplete="username" required /></label>
+        <label class="field"><span>Mot de passe</span><span class="pw"><input type="password" id="pw" value="maquette" autocomplete="current-password" required /><button type="button" id="eye" aria-label="Afficher le mot de passe"></button></span></label>
+        <button class="btn btn-primary" type="submit" id="go">Se connecter</button>
+        <a class="link" href="#" style="justify-self:center">Mot de passe oublié ?</a>
+        <p class="note" id="note"></p>
+        <ul class="boot" id="boot" hidden></ul>
+      </form>
+    </main>
+    <div id="switch"></div>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+      document.getElementById("switch").outerHTML = mockSwitch("Connexion");
+      document.getElementById("go").insertAdjacentHTML("beforeend", ico("arrow", "go"));
+      document.getElementById("eye").innerHTML = ico("eye");
+      document.getElementById("note").innerHTML = `${ico("lock")}<span>Session gardée chiffrée sur ce PC : sans internet, vous retrouvez votre dernier état et tout part au retour de la connexion.</span>`;
+      document.getElementById("eye").onclick = () => {
+        const pw = document.getElementById("pw"), show = pw.type === "password";
+        pw.type = show ? "text" : "password";
+        document.getElementById("eye").setAttribute("aria-label", show ? "Masquer le mot de passe" : "Afficher le mot de passe");
+      };
+      // Démarrage de l'app après connexion : base locale, synchro, prêt.
+      document.getElementById("login").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const boot = document.getElementById("boot"), steps = ["Ouverture de la base enregistrée sur ce PC", "Synchronisation avec forevercars.fr", "Tout est à jour"];
+        boot.hidden = false;
+        boot.innerHTML = steps.map((s) => `<li><i>${ico("check")}</i>${s}</li>`).join("");
+        document.getElementById("go").disabled = true;
+        steps.forEach((_, k) => setTimeout(() => boot.children[k].classList.add("done"), 450 * (k + 1)));
+        setTimeout(() => (location.href = "backoffice.html"), 450 * steps.length + 500);
+      });
+    </script>
+  </body>
+</html>

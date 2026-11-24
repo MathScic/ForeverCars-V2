@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mise en vente · Back-office ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/card.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/bo.css" />
+    <link rel="stylesheet" href="css/form.css" />
+    <link rel="stylesheet" href="css/wizard.css" />
+    <link rel="stylesheet" href="css/wizard-2.css" />
+    <link rel="stylesheet" href="css/bo-responsive.css" />
+  </head>
+  <body>
+    <div id="shell"></div>
+    <div id="switch"></div>
+    <script src="../data.js"></script>
+    <script src="../sold.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/card.js"></script>
+    <script src="js/bo-shell.js"></script>
+    <script src="js/bo-data.js"></script>
+    <script>
+      document.getElementById("switch").outerHTML = mockSwitch("Mise en vente");
+    </script>
+    <script src="js/wizard/data.js"></script>
+    <script src="js/wizard/state.js"></script>
+    <script src="js/wizard/step1.js"></script>
+    <script src="js/wizard/step2.js"></script>
+    <script src="js/wizard/step3.js"></script>
+    <script src="js/wizard/step4.js"></script>
+    <script src="js/wizard/success.js"></script>
+    <script src="js/wizard/main.js"></script>
+    <script src="js/wizard/edit.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parc véhicules · Back-office ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/bo.css" />
+    <link rel="stylesheet" href="css/parc.css" />
+    <link rel="stylesheet" href="css/bo-responsive.css" />
+  </head>
+  <body>
+    <div id="shell"></div>
+    <div id="switch"></div>
+    <script src="../data.js"></script>
+    <script src="../sold.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/bo-shell.js"></script>
+    <script src="js/bo-data.js"></script>
+    <script>
+      document.getElementById("switch").outerHTML = mockSwitch("Parc");
+    </script>
+    <script src="js/parc.js"></script>
+  </body>
+</html>

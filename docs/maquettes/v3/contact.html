@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact · ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/form.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main class="wrap">
+      <header class="page-head">
+        <h1 class="h2 reveal focus" style="font-size:clamp(32px,4.4vw,64px)">Contactez-nous</h1>
+        <p class="lead reveal" style="--d:120ms">Une question ? Un projet ? N'hésitez pas à nous écrire.</p>
+      </header>
+      <div class="contact-grid">
+        <form class="form soft reveal" id="form" novalidate>
+          <div class="form-grid">
+            <label class="field"><span>Nom complet <em>obligatoire</em></span><input name="nom" required placeholder="Votre nom" autocomplete="name" /></label>
+            <label class="field"><span>Téléphone</span><input name="tel" type="tel" placeholder="06 XX XX XX XX" autocomplete="tel" /></label>
+          </div>
+          <label class="field"><span>E-mail <em>obligatoire</em></span><input name="mail" type="email" required placeholder="votre@email.com" autocomplete="email" /></label>
+          <fieldset class="subjects"><legend>Sujet</legend>
+            <label class="pchip"><input class="sr" type="radio" name="sujet" value="question" checked />Question générale</label>
+            <label class="pchip"><input class="sr" type="radio" name="sujet" value="achat" />Achat d'un véhicule</label>
+            <label class="pchip"><input class="sr" type="radio" name="sujet" value="vente" />Vendre mon véhicule</label>
+            <label class="pchip"><input class="sr" type="radio" name="sujet" value="autre" />Autre</label>
+          </fieldset>
+          <label class="field"><span>Message <em>obligatoire</em></span><textarea name="message" required placeholder="Votre message…"></textarea></label>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px"><button class="btn btn-primary" type="submit" id="send">Envoyer le message</button><span class="muted" style="font-size:13px">Ou appelez directement le 06 67 53 74 00.</span></div>
+          <p class="sent" id="sent" role="status" hidden></p>
+        </form>
+        <aside class="info" aria-label="Informations pratiques">
+          <div class="info-block soft reveal"><h2 class="caps muted" style="margin:0">Informations</h2>
+            <dl><div><dt>Adresse</dt><dd>Lot N23, 1695 rue de la Grand Cour<br />45760 Marigny-les-Usages</dd></div><div><dt>Téléphone</dt><dd><a href="tel:0667537400">06 67 53 74 00</a></dd></div><div><dt>E-mail</dt><dd><a href="#">c.forevercars@gmail.com</a></dd></div></dl></div>
+          <div class="info-block soft reveal" style="--d:90ms"><h2 class="caps muted" style="margin:0">Horaires</h2>
+            <dl><div><dt>Lundi - Vendredi</dt><dd>9h - 19h</dd></div><div><dt>Samedi</dt><dd>10h - 17h</dd></div><div><dt>Dimanche</dt><dd>Fermé</dd></div></dl></div>
+          <div class="info-block soft reveal" style="--d:180ms"><h2 class="caps muted" style="margin:0">Suivez-nous</h2><div class="social" id="social" style="margin:0"></div></div>
+        </aside>
+      </div>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Contact");
+      document.querySelector(".site-header").classList.add("solid");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Contact");
+      document.getElementById("send").insertAdjacentHTML("beforeend", ico("send"));
+      document.getElementById("social").innerHTML = [["instagram", "Instagram"], ["facebook", "Facebook"], ["music", "TikTok"]].map(([i, l]) => `<a href="#" aria-label="${l}">${ico(i)}</a>`).join("");
+      // Arrivée depuis une annonce (« Je suis intéressé ») : sujet et message déjà remplis.
+      const form = document.getElementById("form"), veh = new URLSearchParams(location.search).get("vehicule");
+      if (veh) (form.sujet.value = "achat"), (form.message.value = `Bonjour, je suis intéressé par le véhicule « ${veh} ». Est-il toujours disponible ?`);
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // maquette : rien n'est envoyé
+        let ok = true;
+        form.querySelectorAll("[required]").forEach((el) => {
+          const bad = !el.value.trim() || (el.type === "email" && !/^\S+@\S+\.\S+$/.test(el.value));
+          const f = el.closest(".field");
+          f.classList.toggle("invalid", bad);
+          f.querySelector(".err")?.remove();
+          if (bad) (ok = false), f.insertAdjacentHTML("beforeend", `<span class="err">${el.type === "email" && el.value ? "Adresse e-mail incomplète." : "Ce champ est nécessaire."}</span>`);
+        });
+        const sent = document.getElementById("sent");
+        if (!ok) return form.querySelector(".invalid input, .invalid textarea").focus();
+        sent.innerHTML = `${ico("checkCircle")}Message envoyé avec succès ! Nous vous répondrons rapidement.`;
+        sent.hidden = false;
+      });
+      animate();
+    </script>
+  </body>
+</html>

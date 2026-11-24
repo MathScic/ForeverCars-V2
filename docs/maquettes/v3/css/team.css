@@ -1,0 +1,23 @@
+/* Équipe & rôles : membres, invitation, droits de chaque rôle, postes connectés. */
+.team { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.team-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.team-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 24px; border-radius: var(--r-md); }
+.team-card > * { position: relative; }
+.team-card h2 { margin: 0; font: 600 16px/1.2 var(--font-display); font-stretch: 125%; }
+.team-card .note { margin: 0; color: var(--silver); font-size: 13px; }
+.member { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 160px; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+.member strong { display: block; }
+.member small, .device small { display: block; overflow: hidden; color: var(--silver); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.member .dd-btn { min-height: 44px; }
+.presence { display: inline-flex; align-items: center; gap: 7px; color: var(--silver); font-size: 13px; white-space: nowrap; }
+.presence i { width: 7px; height: 7px; border-radius: 50%; background: var(--silver); }
+.presence.on i { background: var(--success); }
+.presence.wait i { background: var(--orange); }
+.invite { display: grid; grid-template-columns: minmax(0, 1fr) 160px auto; align-items: end; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+.rights { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rights th, .rights td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: center; }
+.rights th:first-child, .rights td:first-child { text-align: left; }
+.rights th { color: var(--silver); font-size: 13px; font-weight: 500; }
+.rights svg { width: 17px; height: 17px; margin: auto; color: var(--success); stroke-width: 2.4; }
+.rights .no { color: var(--silver); }
+.device { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }

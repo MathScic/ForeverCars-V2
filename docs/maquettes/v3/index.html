@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accueil · ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/card.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/panel.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main>
+      <section class="hero" aria-label="Présentation">
+        <video autoplay muted loop playsinline aria-hidden="true" poster="../../../apps/site/public/videos/hero-poster.webp" src="../../../apps/site/public/videos/hero.mp4"></video>
+        <div class="wrap hero-content">
+          <span class="hero-place reveal" id="place">Marigny-les-Usages, Loiret</span>
+          <h1 class="display reveal focus" style="--d:120ms">Votre prochain véhicule vous attend.</h1>
+          <p class="lead reveal" style="--d:260ms">Acheter ou vendre autrement</p>
+          <div class="hero-actions reveal" style="--d:380ms" id="hero-actions"></div>
+        </div>
+      </section>
+
+      <section class="section section-alt" aria-labelledby="why">
+        <div class="wrap">
+          <div class="section-head"><h2 class="h2 reveal focus" id="why">Pourquoi nous choisir ?</h2><p class="lead reveal" style="--d:120ms">Un seul interlocuteur, du premier appel à la remise des clés.</p></div>
+          <div class="pillars" id="pillars"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="vedette">
+        <div class="wrap section-head"><h2 class="h2 reveal focus" id="vedette">Véhicules en vedette</h2><p class="lead reveal" style="--d:120ms">Notre sélection du moment</p></div>
+        <div class="car reveal" style="--d:200ms" id="car" role="region" aria-roledescription="carrousel" aria-label="Véhicules en vedette">
+          <div class="car-view"><div class="car-track"></div></div>
+          <div class="car-bar"><div class="car-dots" aria-hidden="true"></div><div class="car-arrows"><button class="icon-btn" data-car="prev" aria-label="Véhicules précédents"></button><button class="icon-btn" data-car="next" aria-label="Véhicules suivants"></button></div></div>
+        </div>
+        <div class="wrap section-foot"><a class="btn btn-outline" href="stock.html" id="all-stock"></a></div>
+      </section>
+
+      <section class="section section-alt" aria-labelledby="how">
+        <div class="wrap">
+          <div class="section-head"><h2 class="h2 reveal focus" id="how">Comment ça marche ?</h2><p class="lead reveal" style="--d:120ms">Un processus simple et transparent.</p></div>
+          <ol class="steps" id="steps" style="list-style:none;margin:0;padding:0"></ol>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Le mot du fondateur">
+        <div class="wrap founder soft reveal">
+          <div class="portrait wipe" style="--d:150ms"><img src="../../../apps/site/public/images/Fondateur.webp" alt="Clément, fondateur de ForeverCars" /></div>
+          <div class="text">
+            <blockquote>Tu t'occupes de rien, <span>je m'occupe de tout.</span></blockquote>
+            <p>Chez ForeverCars, vous n'avez pas affaire à un call center. C'est moi qui décroche, moi qui inspecte chaque voiture et moi qui vous remets les clés.</p>
+            <p>Vous cherchez un modèle précis ou vous voulez vendre le vôtre sans y passer vos week-ends ? Appelez-moi, on en parle.</p>
+            <p class="sign">Clément, fondateur de ForeverCars</p>
+            <div class="actions" id="founder-actions"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="../data.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/card.js"></script>
+    <script src="js/live.js"></script>
+    <script src="js/lightbox.js"></script>
+    <script src="js/panel.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/home.js"></script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquettes v3 · ForeverCars</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <style>
+      main { padding: 64px 0 96px; display: grid; gap: 48px; }
+      .intro { display: grid; gap: 14px; max-width: 760px; }
+      .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+      .group h2 { margin: 0 0 14px; font: 600 18px/1.2 var(--font-display); }
+      .links { display: grid; gap: 12px; }
+      .tile { display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-radius: var(--r-md); background: var(--graphite); border: 1px solid var(--line); transition: border-color 300ms, transform 500ms var(--ease); }
+      .tile:hover { border-color: rgb(255 140 66 / 0.45); transform: translateY(-2px); }
+      .tile strong { display: block; font: 600 17px/1.3 var(--font-display); }
+      .tile small { display: block; margin-top: 3px; color: var(--silver); font-size: 14px; }
+      .tile > svg { width: 20px; height: 20px; margin-left: auto; flex-shrink: 0; color: var(--orange); }
+      .mix { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .mix div { padding: 20px; border-radius: var(--r-md); background: var(--graphite); border: 1px solid var(--line); }
+      .mix h3 { margin: 0 0 10px; font: 600 16px/1.3 var(--font-display); }
+      .mix ul { margin: 0; padding-left: 18px; color: var(--silver); display: grid; gap: 6px; font-size: 14.5px; }
+      .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; color: var(--silver); font-size: 14px; }
+      @media (max-width: 800px) { .groups, .mix { grid-template-columns: 1fr; } main { padding-top: 40px; } }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="intro">
+        <img src="../../../apps/site/public/images/Forever-CarsLogo.svg" alt="ForeverCars" style="height:56px;width:auto;justify-self:start" />
+        <h1 class="h2">Maquettes v3</h1>
+        <p class="lead">Toutes les pages du site et de l'application, dans la typo de la v2 et avec des angles nets. Données réelles du stock ; tout est cliquable. En bas de chaque page, « Bords » compare le fondu et le trait.</p>
+      </div>
+      <div class="groups" id="groups"></div>
+      <div class="mix" id="mix"></div>
+      <p class="foot"><button class="btn btn-ghost btn-sm" id="reset">Réinitialiser la démo du back-office</button><span id="reset-msg">Efface les véhicules publiés pendant tes essais.</span></p>
+    </main>
+    <script src="js/icons.js"></script>
+    <script>
+      const groups = [
+        ["Site forevercars.fr", [["index.html", "pin", "Accueil", "Menu transparent sur la vidéo, carrousel 4 par 4, étapes, mot du fondateur"], ["stock.html", "car", "Notre stock", "Listes aux couleurs du site, cartes, panneau sans barre de miniatures"],
+          ["fiche.html", "camera", "Fiche véhicule", "Mosaïque de photos, plein écran, prix et contact"], ["vendu.html", "checkCircle", "Vendu", "Chiffres, véhicules vendus, pages"], ["a-propos.html", "users", "À propos", "Histoire, services, valeurs, qualité"], ["contact.html", "mail", "Contact", "Formulaire, horaires, adresse"]]],
+        ["Application du garage (Windows)", [["connexion.html", "lock", "Connexion", "Compte personnel, démarrage même hors-ligne"], ["backoffice.html", "grid", "Parc véhicules", "Indicateurs, vignettes ou liste, actions, journal"], ["vente.html", "plus", "Mise en vente", "Plaque, carte grise ou à la main, photos, prix, publication"],
+          ["documents.html", "file", "Documents", "Pièces de chaque véhicule, documents de vente"], ["stats.html", "chart", "Statistiques", "Ventes, délais, ancienneté, marques, marge"], ["equipe.html", "users", "Équipe & rôles", "Membres, invitations, droits, postes"]]],
+      ];
+      document.getElementById("groups").innerHTML = groups
+        .map(([t, links]) => `<section class="group"><h2>${t}</h2><div class="links">${links.map(([h, i, l, d]) => `<a class="tile" href="${h}"><span class="icon-box">${ico(i)}</span><span><strong>${l}</strong><small>${d}</small></span>${ico("arrow")}</a>`).join("")}</div></section>`)
+        .join("");
+      const mix = [
+        ["Gardé du Showroom Nocturne (v2)", ["Sa typo : titres Archivo larges", "Angles nets, boutons en capitales", "Vidéo d'accueil, panneau qui glisse", "Noir carbone, orange rare"]],
+        ["Repris de ton site d'origine", ["Titres centrés + court sous-titre", "Icônes orange dans des carrés", "Cartes avec badge « Nouveau » et prix orange", "Sections alternées noir / graphite"]],
+        ["Retiré (la « patte IA »)", ["Petits surtitres en capitales espacées", "Gros numéros « 01, 02 » et néons", "Filets fins partout", "Bords marqués (option « fondu » à comparer)"]],
+      ];
+      document.getElementById("mix").innerHTML = mix.map(([t, l]) => `<div><h3>${t}</h3><ul>${l.map((x) => `<li>${x}</li>`).join("")}</ul></div>`).join("");
+      document.getElementById("reset").onclick = () => {
+        try { localStorage.removeItem("fc-bo-v3"); } catch {}
+        document.getElementById("reset-msg").textContent = "C'est fait : le parc est revenu à son état de départ.";
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vendu · ForeverCars (maquette v3)</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="header"></div>
+    <main class="wrap">
+      <header class="page-head">
+        <h1 class="h2 reveal focus" style="font-size:clamp(32px,4.4vw,64px)">Nos ventes</h1>
+        <p class="lead reveal" style="--d:120ms">Découvrez les véhicules que nous avons vendus. Chaque client satisfait est notre meilleure publicité.</p>
+      </header>
+      <div class="stats-row" id="stats"></div>
+      <div class="sold-grid" id="grid"></div>
+      <nav class="pager" id="pager" aria-label="Pagination"></nav>
+      <section class="cta-band soft reveal" aria-labelledby="sell">
+        <div><h2 class="h2" id="sell" style="font-size:clamp(24px,2.6vw,36px)">Votre véhicule pourrait être le prochain</h2>
+          <p class="lead" style="font-size:16px">Vous souhaitez vendre votre véhicule rapidement et au meilleur prix ? Confiez-nous votre vente, on s'occupe de tout.</p></div>
+        <a class="btn btn-primary" href="contact.html" id="sell-btn">Nous contacter</a>
+      </section>
+    </main>
+    <div id="footer"></div>
+    <div id="switch"></div>
+
+    <script src="../sold.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+      document.getElementById("header").outerHTML = header("Vendu");
+      document.querySelector(".site-header").classList.add("solid");
+      document.getElementById("footer").outerHTML = footer();
+      document.getElementById("switch").outerHTML = mockSwitch("Vendu");
+      document.getElementById("sell-btn").insertAdjacentHTML("beforeend", ico("arrow", "go"));
+      document.getElementById("stats").innerHTML = [[`${SOLD.length}+`, "Véhicules vendus"], ["100%", "Clients satisfaits"], ["45", "Loiret & environs"]]
+        .map(([n, l], k) => `<div class="stat soft reveal" style="--d:${k * 90}ms"><strong>${n}</strong><span>${l}</span></div>`).join("");
+
+      const PER_PAGE = 9;
+      let page = 1;
+      const soldOn = (d) => (d ? new Date(d).toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) : "récemment");
+      function render() {
+        const total = Math.ceil(SOLD.length / PER_PAGE);
+        document.getElementById("grid").innerHTML = SOLD.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+          .map((v, k) => `<article class="scard soft reveal" style="--d:${(k % 3) * 90}ms"><div class="scard-media"><span class="tag tag-reserved">Vendu</span><img loading="lazy" src="${img(v.image, 900, 675)}" alt="" /></div>
+            <div class="scard-body"><h2 class="model">${title(v)}</h2><p>${v.year} · Vendu en ${soldOn(v.soldDate)}</p></div></article>`).join("");
+        document.getElementById("pager").innerHTML =
+          `<button data-p="prev" ${page === 1 ? "disabled" : ""} aria-label="Page précédente">${ico("arrow")}</button>` +
+          Array.from({ length: total }, (_, k) => `<button data-p="${k + 1}" ${k + 1 === page ? 'aria-current="page"' : ""}>${k + 1}</button>`).join("") +
+          `<button data-p="next" ${page === total ? "disabled" : ""} aria-label="Page suivante">${ico("arrow")}</button>`;
+        animate();
+      }
+      document.getElementById("pager").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-p]");
+        if (!b) return;
+        page = b.dataset.p === "prev" ? page - 1 : b.dataset.p === "next" ? page + 1 : Number(b.dataset.p);
+        render();
+        scrollTo({ top: document.getElementById("grid").getBoundingClientRect().top + scrollY - 120, behavior: "smooth" });
+      });
+      render();
+    </script>
+  </body>
+</html>
