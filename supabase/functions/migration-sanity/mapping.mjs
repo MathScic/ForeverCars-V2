@@ -49,6 +49,9 @@ export function mapPhotos(doc) {
   });
 }
 export const thumbPath = (path) => path.replace(/\.webp$/, "-480.webp");
+/** Les 3 tailles stockées : 1600 px (chemin de base), 800 px (« -800 ») et 480 px (« -480 »). */
+export const SIZES = [["", 1600, 80], ["-800", 800, 78], ["-480", 480, 72]];
+export const sizedPath = (path, suffix) => (suffix ? path.replace(/\.webp$/, `${suffix}.webp`) : path);
 
 /** N° de dossier : celui déjà attribué, sinon le suivant (FC-<année de création>-0001…). */
 export function assignFileNumbers(rows, existing) {
