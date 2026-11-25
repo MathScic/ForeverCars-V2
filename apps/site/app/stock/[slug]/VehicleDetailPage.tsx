@@ -69,7 +69,7 @@ export default function VehicleDetailPage({ vehicle }: Props) {
                       i === currentImage ? "border-orange opacity-100" : "border-line opacity-55 hover:opacity-100"
                     }`}
                   >
-                    {thumb && <Image src={thumb} alt="" fill sizes="110px" className="object-cover" />}
+                    {thumb && <Image src={thumb} alt="" fill sizes="110px" fetchPriority="low" className="object-cover" />}
                   </button>
                 );
               })}

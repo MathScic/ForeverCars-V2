@@ -25,7 +25,7 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-[84px] w-[min(100%-48px,1320px)] items-center justify-between">
-        <Link href="/" aria-label="ForeverCars, accueil" className="rounded-sm">
+        <Link prefetch={false} href="/" aria-label="ForeverCars, accueil" className="rounded-sm">
           <Image src="/images/Forever-CarsLogo.svg" alt="ForeverCars" width={130} height={82} priority className="h-[52px] w-auto" />
         </Link>
 
@@ -33,7 +33,7 @@ export default function Header() {
           {NAV_LINKS.map((link) => {
             const active = isActive(pathname, link.href);
             return (
-              <Link
+              <Link prefetch={false}
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
@@ -53,7 +53,7 @@ export default function Header() {
           })}
         </nav>
 
-        <Link
+        <Link prefetch={false}
           href="/contact"
           className="inline-flex h-11 items-center rounded-full bg-orange px-6 font-display text-xs font-semibold uppercase tracking-[0.2em] text-carbon [font-stretch:112%] transition-[background-color,transform] duration-300 hover:bg-[#ffa266] active:scale-[0.98]"
         >

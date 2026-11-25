@@ -47,7 +47,7 @@ export default function MobileMenu({ open, onClose, closeRef }: Props) {
             return (
               // Le décalage d'apparition est porté par l'enveloppe, pour ne pas retarder le survol du lien.
               <div key={link.href} style={{ transitionDelay: open ? `${60 + i * 60}ms` : "0ms" }} className={`transition-[opacity,transform] ${slide} ${open ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}>
-                <Link
+                <Link prefetch={false}
                   href={link.href}
                   onClick={onClose}
                   aria-current={active ? "page" : undefined}
@@ -62,7 +62,7 @@ export default function MobileMenu({ open, onClose, closeRef }: Props) {
           })}
         </div>
         <div className="mt-auto grid gap-4 px-4 pb-8 pt-4">
-          <Link
+          <Link prefetch={false}
             href="/contact"
             onClick={onClose}
             className="flex h-12 items-center justify-center rounded-full bg-orange font-display text-xs font-semibold uppercase tracking-[0.2em] text-carbon [font-stretch:112%] active:scale-[0.98]"

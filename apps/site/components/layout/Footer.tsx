@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="mx-auto w-[min(100%-32px,1320px)] py-14 md:w-[min(100%-48px,1320px)] md:py-[72px]">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link href="/" className="inline-block" aria-label="ForeverCars, accueil">
+            <Link prefetch={false} href="/" className="inline-block" aria-label="ForeverCars, accueil">
               <Image src="/images/Forever-CarsLogo.svg" alt="ForeverCars" width={200} height={126} className="h-16 w-auto" />
             </Link>
             <p className="mt-5 text-sm italic text-silver">&ldquo;Acheter ou vendre autrement&rdquo;</p>
@@ -23,7 +23,7 @@ export default function Footer() {
             <ul className="grid gap-3 text-sm">
               {[HOME_LINK, ...NAV_LINKS].map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="transition-colors duration-300 hover:text-orange">
+                  <Link prefetch={false} href={link.href} className="transition-colors duration-300 hover:text-orange">
                     {link.label}
                   </Link>
                 </li>

@@ -1,5 +1,5 @@
 // Les véhicules du site, lus dans Supabase (remplace les requêtes GROQ de Sanity, mêmes données, mêmes slugs).
-import { SITE_VEHICLE_SELECT, toSiteVehicle, type VehicleRow } from "@forevercars/shared";
+import { SITE_VEHICLE_CARD_SELECT, SITE_VEHICLE_SELECT, toSiteVehicle, type VehicleRow } from "@forevercars/shared";
 import type { Vehicle } from "@/lib/types/vehicle";
 import { rest } from "@/lib/supabase/rest";
 
@@ -13,8 +13,13 @@ export const getAvailableVehicles = (): Promise<Vehicle[]> => list("status=in.(o
 export const getFeaturedVehicles = (): Promise<Vehicle[]> =>
   list("status=in.(online,reserved)&is_featured=is.true&order=published_at.desc&limit=12");
 
-/** Page « Vendu » : les dernières ventes d'abord. */
-export const getSoldVehicles = (): Promise<Vehicle[]> => list("status=eq.sold&order=sold_at.desc.nullslast");
+/** Page « Vendu » : les dernières ventes d'abord ; la carte seule (photo de couverture, sans description). */
+export const getSoldVehicles = async (): Promise<Vehicle[]> =>
+  (
+    await rest<VehicleRow[]>(
+      `vehicles?select=${SITE_VEHICLE_CARD_SELECT}&vehicle_photos.order=position.asc&vehicle_photos.limit=1&status=eq.sold&order=sold_at.desc.nullslast`,
+    )
+  ).map((r) => toSiteVehicle(r));
 
 export async function getVehicleBySlug(slug: string): Promise<Vehicle | null> {
   const [v] = await list(`slug=eq.${encodeURIComponent(slug)}&limit=1`);

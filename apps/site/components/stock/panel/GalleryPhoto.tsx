@@ -1,7 +1,8 @@
 import { urlForImage } from "@/lib/photos";
 import type { SanityImage } from "@/lib/types/vehicle";
 
-const WIDTHS = [640, 960, 1400];
+// Les 3 tailles réellement stockées dans Supabase : les largeurs annoncées collent aux fichiers.
+const WIDTHS = [480, 800, 1600];
 
 interface Props {
   image: SanityImage;
@@ -10,18 +11,18 @@ interface Props {
   priority?: boolean;
 }
 
-// Photo de galerie responsive : Sanity sert chaque largeur, le navigateur prend la plus petite utile
-// (≈ 50 Ko sur téléphone au lieu de 100). next/image ne génère pas de srcset ici (images non optimisées).
+// Photo de galerie responsive : le navigateur prend la plus petite taille utile (800 px ≈ 55 Ko sur
+// téléphone au lieu de 1600 px ≈ 150 Ko). next/image ne génère pas de srcset ici (images non optimisées).
 export default function GalleryPhoto({ image, alt, priority = false }: Props) {
   const base = urlForImage(image);
   if (!base) return null;
   const lqip: string | undefined = image?.asset?.metadata?.lqip;
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- srcset Sanity construit à la main
+    // eslint-disable-next-line @next/next/no-img-element -- srcset construit à la main (3 tailles stockées)
     <img
-      src={base.width(1400).quality(85).url()}
-      srcSet={WIDTHS.map((w) => `${base.width(w).quality(w > 960 ? 85 : 80).url()} ${w}w`).join(", ")}
+      src={base.width(1600).url()}
+      srcSet={WIDTHS.map((w) => `${base.width(w).url()} ${w}w`).join(", ")}
       sizes="(min-width: 768px) 720px, 100vw"
       alt={alt}
       draggable={false}

@@ -17,7 +17,7 @@ const MIN_ITEMS_PER_TRACK = 8;
 
 function Slide({ vehicle, onClick, hidden }: { vehicle: Vehicle; onClick: () => void; hidden?: boolean }) {
   const builder = vehicle.images?.[0] ? urlForImage(vehicle.images[0]) : null;
-  const imageUrl = builder ? builder.width(1000).height(690).quality(80).url() : null;
+  const imageUrl = builder ? builder.width(800).height(552).quality(80).url() : null;
   const isReserved = vehicle.status === "reserved";
 
   return (

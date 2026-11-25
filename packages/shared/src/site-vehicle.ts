@@ -33,8 +33,13 @@ type PhotoRow = Pick<Tables<"vehicle_photos">, "storage_path" | "position" | "wi
 export type VehicleRow = Pick<
   Tables<"vehicles">,
   | "id" | "slug" | "brand" | "model" | "version" | "year" | "price" | "mileage" | "fuel" | "gearbox" | "body"
-  | "power_hp" | "description" | "equipment" | "status" | "is_featured" | "published_at" | "sold_at" | "created_at"
-> & { vehicle_photos?: PhotoRow[] | null };
+  | "power_hp" | "status" | "is_featured" | "published_at" | "sold_at" | "created_at"
+> &
+  Partial<Pick<Tables<"vehicles">, "description" | "equipment">> & { vehicle_photos?: PhotoRow[] | null };
+
+/** Version légère pour les listes qui n'affichent que la carte (page Vendu) : ni description ni équipements. */
+export const SITE_VEHICLE_CARD_SELECT =
+  "id,slug,brand,model,version,year,price,mileage,fuel,gearbox,body,power_hp,status,is_featured,published_at,sold_at,created_at,vehicle_photos(storage_path,position,width,height)";
 
 /** Colonnes à demander à Supabase pour construire un `SiteVehicle`. */
 export const SITE_VEHICLE_SELECT =
@@ -62,7 +67,7 @@ export function toSiteVehicle(r: VehicleRow, now = Date.now()): SiteVehicle {
     images: photos.map((p) => ({
       asset: { _id: p.storage_path, metadata: p.width && p.height ? { dimensions: { width: p.width, height: p.height } } : {} },
     })),
-    description: r.description,
+    description: r.description ?? "",
     features: r.equipment ?? [],
     isNew: now - Date.parse(published) < NEW_DAYS * 864e5,
     isFeatured: r.is_featured,

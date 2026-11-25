@@ -32,7 +32,7 @@ export default function MobileHeader() {
   return (
     <header className="lg:hidden fixed inset-x-0 top-0 z-50">
       <div className="flex h-[68px] items-center justify-between border-b border-line bg-carbon/80 px-4 backdrop-blur-xl">
-        <Link href="/" onClick={close} aria-label="ForeverCars, accueil">
+        <Link prefetch={false} href="/" onClick={close} aria-label="ForeverCars, accueil">
           <Image src="/images/Forever-CarsLogo.svg" alt="ForeverCars" width={110} height={69} priority className="h-10 w-auto" />
         </Link>
         <button

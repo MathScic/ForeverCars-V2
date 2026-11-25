@@ -1,4 +1,4 @@
-// Photos stockées dans Supabase (stockage public « vehicle-photos ») : 1600 px et miniature 480 px en WebP.
+// Photos stockées dans Supabase (stockage public « vehicle-photos ») : 1600, 800 et 480 px en WebP.
 // Même interface que l'ancien constructeur d'URL Sanity (urlForImage(img).width(…).url()) : les composants ne changent pas.
 import type { SanityImage } from "@/lib/types/vehicle";
 
@@ -6,8 +6,11 @@ import type { SanityImage } from "@/lib/types/vehicle";
 // variables NEXT_PUBLIC_ citées telles quelles sont remplacées à la construction.
 const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/vehicle-photos/`;
 
-/** Adresse d'une photo : la miniature suffit jusqu'à 480 px de large, sinon la version 1600 px. */
-export const photoUrl = (path: string, width = 1600) => BASE + (width <= 480 ? path.replace(/\.webp$/, "-480.webp") : path);
+/** Adresse d'une photo : la plus petite taille stockée qui couvre la largeur demandée (480, 800 ou 1600 px). */
+export function photoUrl(path: string, width = 1600) {
+  const suffix = width <= 480 ? "-480" : width <= 800 ? "-800" : "";
+  return BASE + (suffix ? path.replace(/\.webp$/, `${suffix}.webp`) : path);
+}
 
 export function urlForImage(img: SanityImage | null | undefined) {
   const path = img?.asset?._id;
