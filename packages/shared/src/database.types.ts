@@ -56,6 +56,7 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          disabled_at: string | null
           full_name: string
           id: string
           role: Database["public"]["Enums"]["app_role"]
@@ -63,6 +64,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          disabled_at?: string | null
           full_name?: string
           id: string
           role?: Database["public"]["Enums"]["app_role"]
@@ -70,6 +72,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          disabled_at?: string | null
           full_name?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
@@ -329,7 +332,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_vehicle_photo: {
+        Args: {
+          p_height: number
+          p_path: string
+          p_vehicle: string
+          p_width: number
+        }
+        Returns: {
+          created_at: string
+          height: number | null
+          id: string
+          position: number
+          revision: number
+          storage_path: string
+          updated_at: string
+          vehicle_id: string
+          width: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "vehicle_photos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      migration_key_ok: { Args: { k: string }; Returns: boolean }
+      missing_photo_paths: { Args: { lim?: number }; Returns: string[] }
+      set_vehicle_photos: {
+        Args: { p_ids: string[]; p_vehicle: string }
+        Returns: string[]
+      }
     }
     Enums: {
       app_role: "admin" | "seller"

@@ -4,34 +4,47 @@
 //   ?action=sync  → rows + copie des photos manquantes (30 max) : appelé toutes les 10 min par la base (pg_cron)
 //   ?action=photos&offset=0&limit=6[&step=36][&missing=1] → copie en files parallèles (1600, 800, 480 px)
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { assignFileNumbers, mapPhotos, mapVehicle, QUERY, SIZES, sizedPath } from "./mapping.mjs";
+import { assignFileNumbers, mapPhotos, mapVehicle, QUERY } from "./mapping.mjs";
+import { photoCopier } from "./copy.ts";
+import { sanityScope } from "./ownership.mjs";
 
 const SANITY = "https://kh6xke8y.apicdn.sanity.io/v2024-01-01/data/query/production";
 declare const EdgeRuntime: { waitUntil(p: Promise<unknown>): void };
 const BASE = Deno.env.get("SUPABASE_URL")!;
 const db = createClient(BASE, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
-type Photo = ReturnType<typeof mapPhotos>[number];
+const copyOne = photoCopier(db, BASE);
 async function sanityDocs() {
   const res = await fetch(`${SANITY}?query=${encodeURIComponent(QUERY)}`);
   if (!res.ok) throw new Error(`Sanity a répondu ${res.status}`);
   return (await res.json()).result as Record<string, unknown>[];
 }
 const must = <T>({ data, error }: { data: T; error: unknown }) => { if (error) throw error; return data; };
+// L'API renvoie 1 000 lignes au plus par appel : les photos (plus de 2 500) sont lues par pages.
+async function allPhotoRows() {
+  const out: { id: string; storage_path: string; vehicle_id: string }[] = [];
+  for (let from = 0; ; from += 1000) {
+    const page = must(await db.from("vehicle_photos").select("id, storage_path, vehicle_id").order("id").range(from, from + 999)) ?? [];
+    out.push(...page);
+    if (page.length < 1000) return out;
+  }
+}
 
 async function migrateRows(docs: Record<string, unknown>[]) {
   const mapped = docs.map(mapVehicle);
-  const existing = must(await db.from("vehicles").select("slug, file_number")) ?? [];
-  const rows = assignFileNumbers(mapped.map((m) => m.row), existing);
-  must(await db.from("vehicles").upsert(rows, { onConflict: "slug" }));
-  const sanitySlugs = new Set(rows.map((r) => r.slug));
+  const existing = must(await db.from("vehicles").select("slug, file_number, created_by, updated_by")) ?? [];
+  // Fiches créées ou modifiées dans l'app : plus touchées par la synchro (voir ownership.mjs).
+  const scope = sanityScope(existing, assignFileNumbers(mapped.map((m) => m.row), existing));
+  must(await db.from("vehicles").upsert(scope.rows, { onConflict: "slug" }));
   // Fiche retirée de Sanity : masquée du site (repassée en brouillon), jamais supprimée.
-  const gone = existing.map((v) => v.slug).filter((s) => !sanitySlugs.has(s));
-  if (gone.length) must(await db.from("vehicles").update({ status: "draft" }).in("slug", gone).in("status", ["online", "reserved"]));
-  const idOf = new Map((must(await db.from("vehicles").select("id, slug")) ?? []).map((v) => [v.slug, v.id]));
-  const photos = docs.flatMap(mapPhotos).map((p) => ({ vehicle_id: idOf.get(p.slug), storage_path: p.path, position: p.position, width: p.width, height: p.height }));
-  // Photos retirées ou déplacées dans Sanity : anciennes lignes enlevées d'abord (positions libérées).
+  if (scope.gone.length) must(await db.from("vehicles").update({ status: "draft" }).in("slug", scope.gone).in("status", ["online", "reserved"]));
+  const ids = must(await db.from("vehicles").select("id, slug")) ?? [];
+  const idOf = new Map(ids.map((v) => [v.slug, v.id]));
+  const appIds = new Set(ids.filter((v) => scope.owned.has(v.slug)).map((v) => v.id));
+  const photos = docs.flatMap(mapPhotos).filter((p) => !scope.owned.has(p.slug))
+    .map((p) => ({ vehicle_id: idOf.get(p.slug), storage_path: p.path, position: p.position, width: p.width, height: p.height }));
+  // Photos retirées ou déplacées dans Sanity : anciennes lignes enlevées d'abord (positions libérées). Jamais celles de l'app.
   const wanted = new Set(photos.map((p) => p.storage_path));
-  const stale = (must(await db.from("vehicle_photos").select("id, storage_path")) ?? []).filter((p) => !wanted.has(p.storage_path)).map((p) => p.id);
+  const stale = (await allPhotoRows()).filter((p) => !appIds.has(p.vehicle_id) && !wanted.has(p.storage_path)).map((p) => p.id);
   for (let i = 0; i < stale.length; i += 200) must(await db.from("vehicle_photos").delete().in("id", stale.slice(i, i + 200)));
   // Par lots qui ne coupent jamais un véhicule en deux (ordre des photos cohérent à chaque envoi).
   let batch: typeof photos = [];
@@ -39,30 +52,11 @@ async function migrateRows(docs: Record<string, unknown>[]) {
   for (const [i, p] of photos.entries()) { batch.push(p); if (batch.length >= 400 && photos[i + 1]?.vehicle_id !== p.vehicle_id) await flush(); }
   await flush();
   return {
-    vehicules: rows.length, photos: photos.length, masquees: gone.length, lignesPhotosRetirees: stale.length,
+    vehicules: scope.rows.length, gereesParApp: scope.owned.size, photos: photos.length, masquees: scope.gone.length, lignesPhotosRetirees: stale.length,
     ecarts: mapped.filter((m) => m.issues.length).map((m) => ({ slug: m.row.slug, ecarts: m.issues })),
   };
 }
 
-const exists = async (path: string) => (await fetch(`${BASE}/storage/v1/object/public/vehicle-photos/${path}`, { method: "HEAD" })).ok;
-async function upload(path: string, body: Uint8Array) {
-  for (let attempt = 1; ; attempt++) {
-    const { error } = await db.storage.from("vehicle-photos").upload(path, body, { contentType: "image/webp", upsert: true, cacheControl: "31536000" });
-    if (!error || attempt === 4) return error;
-    await new Promise((r) => setTimeout(r, 500 * attempt)); // base occupée : on réessaie un peu plus tard
-  }
-}
-async function copyOne(p: Photo, onlyMissing: boolean) {
-  for (const [suffix, w, q] of SIZES) {
-    const path = sizedPath(p.path, suffix);
-    if (onlyMissing && (await exists(path))) continue;
-    const res = await fetch(`${p.source}?w=${w}&fm=webp&q=${q}`);
-    if (!res.ok) return `${path} : Sanity ${res.status}`;
-    const error = await upload(path, new Uint8Array(await res.arrayBuffer()));
-    if (error) return `${path} : ${error.message}`;
-  }
-  return null;
-}
 async function sync() {
   const docs = await sanityDocs();
   const report = await migrateRows(docs);

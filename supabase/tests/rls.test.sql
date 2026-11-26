@@ -1,7 +1,7 @@
 -- Tests des droits (RLS) : ce que le site (anon), un vendeur et un admin peuvent faire.
 -- À coller dans l'éditeur SQL de Supabase puis « Run ». Le résultat s'affiche comme une erreur :
 -- c'est voulu, cette erreur annule tout (données de test comprises), la base n'est pas modifiée.
--- Résultat attendu une fois les règles écrites : 21 lignes qui commencent toutes par « ok ».
+-- Résultat attendu : 21 lignes qui commencent toutes par « ok » (seuls les véhicules de test « t-… » sont comptés).
 -- (Avec Docker plus tard, on le passera au format `supabase test db`.)
 begin;
 create extension if not exists pgtap with schema extensions;
@@ -38,11 +38,11 @@ insert into public.activity_log (actor_id, action, entity, entity_id) values
 set local role anon;
 set local request.jwt.claims = '{"role": "anon"}';
 insert into tap (line) select results_eq(
-  $$ select slug from public.vehicles order by slug $$,
+  $$ select slug from public.vehicles where slug like 't-%' order by slug $$,
   $$ values ('t-en-ligne'), ('t-reserve'), ('t-vendu') $$,
   'site : voit les véhicules en ligne, réservés et vendus, jamais les brouillons');
 insert into tap (line) select results_eq(
-  $$ select storage_path from public.vehicle_photos $$, $$ values ('t/1/0.webp') $$,
+  $$ select storage_path from public.vehicle_photos where storage_path like 't/%' $$, $$ values ('t/1/0.webp') $$,
   'site : ne voit pas les photos d''un brouillon');
 insert into tap (line) select throws_ok($$ select * from public.vehicle_costs $$, '42501', null, 'site : aucun accès aux coûts');
 insert into tap (line) select throws_ok($$ select * from public.activity_log $$, '42501', null, 'site : aucun accès au journal');
@@ -55,7 +55,7 @@ insert into tap (line) select throws_ok(
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub": "00000000-0000-0000-0000-0000000000b2", "role": "authenticated"}';
-insert into tap (line) select is((select count(*)::int from public.vehicles), 4, 'vendeur : voit tous les véhicules, brouillons compris');
+insert into tap (line) select is((select count(*)::int from public.vehicles where slug like 't-%'), 4, 'vendeur : voit tous les véhicules, brouillons compris');
 insert into tap (line) select is_empty($$ select * from public.vehicle_costs $$, 'vendeur : ne voit aucun prix d''achat');
 insert into tap (line) select throws_ok(
   $$ insert into public.vehicle_costs (vehicle_id, purchase_price) values ('00000000-0000-0000-0000-000000000004', 1) $$,
@@ -80,7 +80,7 @@ insert into tap (line) select is_empty($$ select * from public.activity_log $$, 
 reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub": "00000000-0000-0000-0000-0000000000a1", "role": "authenticated"}';
-insert into tap (line) select is((select count(*)::int from public.vehicle_costs), 1, 'admin : voit les prix d''achat');
+insert into tap (line) select is((select count(*)::int from public.vehicle_costs where vehicle_id = '00000000-0000-0000-0000-000000000001'), 1, 'admin : voit les prix d''achat');
 insert into tap (line) select ok((select count(*) from public.activity_log) >= 1, 'admin : lit le journal');
 do $$ begin delete from public.vehicles where id = '00000000-0000-0000-0000-000000000004'; exception when others then null; end $$;
 insert into tap (line) select ok(not exists (select 1 from public.vehicles where id = '00000000-0000-0000-0000-000000000004'), 'admin : peut supprimer un véhicule');
