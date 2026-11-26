@@ -21,13 +21,14 @@ export default function VehicleRow({ vehicle: v, isAdmin, now }: Props) {
 
   return (
     <tr className="transition-colors hover:bg-ivory/[0.02]">
-      <td className={cell}>
+      {/* Cette colonne prend la place restante et raccourcit le nom au besoin : le tableau ne déborde plus. */}
+      <td className={`${cell} w-full max-w-0`}>
         <div className="flex items-center gap-4">
           <div className="aspect-[4/3] w-[88px] shrink-0 overflow-hidden rounded-sm bg-graphite-2">
             {cover ? <img src={cover.url} alt="" className="h-full w-full object-cover" /> : <span className="grid h-full place-items-center text-[10px] text-silver">Sans photo</span>}
           </div>
           <div className="min-w-0">
-            <p className="fc-model truncate text-[13px]">
+            <p className="fc-model line-clamp-2 text-[13px]">
               {v.brand} {v.model}
             </p>
             <p className="mt-1 truncate text-xs text-silver">
@@ -49,10 +50,11 @@ export default function VehicleRow({ vehicle: v, isAdmin, now }: Props) {
         <p className="fc-price text-[17px]">{formatPrice(v.price)}</p>
         {isAdmin && margin && <p className={`mt-1 text-xs tabular-nums ${margin.amount >= 0 ? "text-success" : "text-danger"}`}>marge {formatPrice(margin.amount)}</p>}
       </td>
-      <td className={cell}>
+      <td className={`${cell} whitespace-nowrap`}>
         <StatusBadge status={v.status} />
       </td>
-      <td className={`${cell} pr-0`}>
+      {/* Colonne collée à droite : les actions restent visibles même si le tableau défile. */}
+      <td className={`${cell} sticky right-0 bg-carbon pr-0`}>
         <VehicleActions vehicle={v} />
       </td>
     </tr>

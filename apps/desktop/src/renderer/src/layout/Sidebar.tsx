@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
-import { BarChart3, CarFront, FileText, Plus, Users } from "lucide-react";
+import { Archive, BarChart3, CarFront, FileText, Plus, Users } from "lucide-react";
 import logo from "../assets/Forever-CarsLogo.svg";
-import { useDemoStore } from "../demo/store";
+import { useStore } from "../data/store";
 
 // Liens de la maquette : capitales Archivo espacées ; actif = fond graphite + liseré orange.
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -11,7 +11,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Sidebar() {
-  const { isAdmin } = useDemoStore();
+  const { isAdmin } = useStore();
   const [version, setVersion] = useState("");
 
   useEffect(() => {
@@ -27,6 +27,9 @@ export default function Sidebar() {
         </NavLink>
         <NavLink to="/vendre" className={linkClass}>
           <Plus size={15} aria-hidden /> Mettre en vente
+        </NavLink>
+        <NavLink to="/vendus" className={linkClass}>
+          <Archive size={15} aria-hidden /> Vendus
         </NavLink>
         <NavLink to="/documents" className={linkClass}>
           <FileText size={15} aria-hidden /> Documents

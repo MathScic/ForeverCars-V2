@@ -1,6 +1,6 @@
 import { computeMargin, formatPrice } from "@forevercars/shared";
 import { Lock, ShieldCheck } from "lucide-react";
-import { useDemoStore } from "../../demo/store";
+import { useStore } from "../../data/store";
 import Card from "../../ui/Card";
 import { Field, Input } from "../../ui/Field";
 import type { DemoVehicle } from "../../demo/types";
@@ -14,7 +14,7 @@ interface Props {
 
 // Coûts internes et résultat net : réservés à l'admin, jamais envoyés au site.
 export default function InternalCosts({ vehicle: v, onChange }: Props) {
-  const { isAdmin } = useDemoStore();
+  const { isAdmin } = useStore();
   if (!isAdmin) {
     return (
       <Card className="p-5 text-sm text-silver flex items-start gap-3">

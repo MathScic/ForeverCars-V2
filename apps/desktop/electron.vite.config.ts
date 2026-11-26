@@ -12,7 +12,8 @@ function cspPlugin(): Plugin {
       "default-src 'self'",
       `script-src 'self'${dev ? " 'unsafe-inline'" : ""}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      // Photos du parc : stockage Supabase (lecture publique, comme sur le site).
+      "img-src 'self' data: blob: https://vptxtgqduoxdutimivnv.supabase.co",
       "font-src 'self' data:",
       "connect-src 'self'",
       "object-src 'none'",
@@ -26,6 +27,8 @@ function cspPlugin(): Plugin {
 }
 
 export default defineConfig({
+  // Tout le code est intégré au paquet ; seule « sharp » (traitement photo, binaire natif) reste à part
+  // (« dependencies » du package.json), ce qui garde l'installateur léger.
   main: { plugins: [externalizeDepsPlugin()] },
   preload: { plugins: [externalizeDepsPlugin()] },
   renderer: {

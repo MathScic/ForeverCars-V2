@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router";
 import { Check, Clock, Heart, Pencil, RotateCcw, Send, Trash2 } from "lucide-react";
-import type { ReactNode } from "react";
-import { nowIso, useDemoStore } from "../../demo/store";
+import { useState, type ReactNode } from "react";
+import { useStore } from "../../data/store";
 import type { DemoVehicle } from "../../demo/types";
+import ConfirmDialog from "../../ui/ConfirmDialog";
 
 type Act = "publish" | "markSold" | "toggleReserved" | "toggleFeatured" | "remove";
 
@@ -25,10 +26,11 @@ function ActButton({ label, onClick, danger, pressed, children }: { label: strin
 }
 
 export default function VehicleActions({ vehicle }: { vehicle: DemoVehicle }) {
-  const { dispatch, isAdmin } = useDemoStore();
+  const { dispatch, isAdmin } = useStore();
   const navigate = useNavigate();
   const name = `${vehicle.brand} ${vehicle.model}`;
-  const act = (type: Act) => dispatch({ type, id: vehicle.id, now: nowIso() });
+  const act = (type: Act) => void dispatch({ type, id: vehicle.id });
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const visible = vehicle.status === "online" || vehicle.status === "reserved";
   const reserved = vehicle.status === "reserved";
 
@@ -56,9 +58,23 @@ export default function VehicleActions({ vehicle }: { vehicle: DemoVehicle }) {
         </>
       )}
       {isAdmin && (
-        <ActButton label={`Supprimer ${name}`} danger onClick={() => window.confirm(`Supprimer définitivement ${name} ?`) && act("remove")}>
+        <ActButton label={`Supprimer ${name}`} danger onClick={() => setConfirmRemove(true)}>
           <Trash2 size={16} />
         </ActButton>
+      )}
+      {confirmRemove && (
+        <ConfirmDialog
+          title={`Supprimer ${name} ?`}
+          confirmLabel="Supprimer définitivement"
+          danger
+          onCancel={() => setConfirmRemove(false)}
+          onConfirm={() => {
+            setConfirmRemove(false);
+            act("remove");
+          }}
+        >
+          <p>La fiche et ses photos sont effacées, et le véhicule disparaît du site. Impossible de revenir en arrière.</p>
+        </ConfirmDialog>
       )}
     </div>
   );

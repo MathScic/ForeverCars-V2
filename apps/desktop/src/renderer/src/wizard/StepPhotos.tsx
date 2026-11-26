@@ -1,23 +1,38 @@
 import { useRef, useState, type DragEvent } from "react";
 import { FolderOpen, ImagePlus, UploadCloud } from "lucide-react";
+import type { Photo } from "../../../shared/model";
+import { errorText, useStore } from "../data/store";
 import Card from "../ui/Card";
-import type { Photo } from "../demo/types";
 import { filesFromDrop, hasFiles } from "./dropFiles";
 import PhotoGrid from "./PhotoGrid";
 import type { StepProps } from "./Wizard";
 
-// Ébauche : les images restent dans la mémoire de l'app. Le traitement réel
-// (rotation EXIF, 1600 px, compression, filigrane) se fera dans le process main (phase 7).
-const toPhotos = (files: File[]): Photo[] =>
-  files.map((f) => ({ id: crypto.randomUUID(), url: URL.createObjectURL(f), name: f.name }));
-
+// Les photos sont traitées sur ce PC (redressées, 3 tailles, filigrane) puis envoyées une à une ;
+// l'ordre et les retraits sont enregistrés tout de suite (la première photo est la couverture).
 const pill = "h-11 px-5 inline-flex items-center gap-2 rounded-sm font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] transition-colors";
 
 export default function StepPhotos({ vehicle, onChange, errors }: StepProps) {
+  const { addPhotos, orderPhotos, notify } = useStore();
   const [over, setOver] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const depth = useRef(0); // compteur : dragenter/dragleave se déclenchent aussi sur les enfants
-  const add = (files: File[]) => files.length > 0 && onChange({ photos: [...vehicle.photos, ...toPhotos(files)] });
-  const fromInput = (list: FileList | null) => add(Array.from(list ?? []).filter((f) => f.type.startsWith("image/")));
+
+  const setPhotos = (photos: Photo[]) => {
+    onChange({ photos });
+    orderPhotos(vehicle.id, photos.map((p) => p.id)).catch((e: unknown) => notify(errorText(e)));
+  };
+  const add = async (files: File[]) => {
+    if (files.length === 0 || progress) return;
+    setProgress({ done: 0, total: files.length });
+    try {
+      const added = await addPhotos(vehicle.id, files, (done) => setProgress({ done, total: files.length }));
+      // Envois en parallèle : on remet l'ordre des fichiers (triés par nom) à la fin.
+      if (added.length) setPhotos([...vehicle.photos, ...added]);
+    } finally {
+      setProgress(null);
+    }
+  };
+  const fromInput = (list: FileList | null) => void add(Array.from(list ?? []).filter((f) => f.type.startsWith("image/")));
 
   const dragProps = {
     onDragEnter: (e: DragEvent) => {
@@ -35,7 +50,7 @@ export default function StepPhotos({ vehicle, onChange, errors }: StepProps) {
       e.preventDefault();
       depth.current = 0;
       setOver(false);
-      add(await filesFromDrop(e.dataTransfer));
+      await add(await filesFromDrop(e.dataTransfer));
     },
   };
 
@@ -60,8 +75,18 @@ export default function StepPhotos({ vehicle, onChange, errors }: StepProps) {
         </div>
       </div>
 
+      {progress && (
+        <div role="status" className="grid gap-2">
+          <p className="text-sm text-silver">Traitement et envoi des photos : {progress.done} / {progress.total}</p>
+          <div className="h-1.5 overflow-hidden rounded-full bg-carbon">
+            <div className="h-full bg-orange transition-[width] duration-300" style={{ width: `${(progress.done / progress.total) * 100}%` }} />
+          </div>
+        </div>
+      )}
       {errors.photos && <p className="text-sm text-danger">{errors.photos}</p>}
-      <PhotoGrid photos={vehicle.photos} onChange={(photos) => onChange({ photos })} />
+      <div className={progress ? "pointer-events-none opacity-60" : ""}>
+        <PhotoGrid photos={vehicle.photos} onChange={setPhotos} />
+      </div>
 
       {over && (
         <div className="pointer-events-none absolute inset-0 rounded-md border-2 border-orange bg-carbon/85 flex flex-col items-center justify-center gap-3">

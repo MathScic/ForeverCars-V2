@@ -59,7 +59,7 @@ test("mise en vente complète : plaque, glisser-déposer, équipements, descript
 
   await expect(page.getByRole("heading", { name: "Toyota Yaris est en ligne" })).toBeVisible();
   await page.getByRole("link", { name: "Retour au parc" }).click();
-  await expect(page.locator("tbody tr")).toHaveCount(7);
+  await expect(page.locator("tbody tr")).toHaveCount(6);
 });
 
 test("une retouche manuelle de la description arrête la génération automatique", async () => {

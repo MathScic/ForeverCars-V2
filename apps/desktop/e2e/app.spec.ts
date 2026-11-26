@@ -19,15 +19,19 @@ test("la fenêtre s'ouvre avec le bon titre et le renderer est isolé", async ()
   // Preuve de l'isolation : aucun accès Node dans le renderer.
   expect(await page.evaluate(() => typeof (window as unknown as { require?: unknown }).require)).toBe("undefined");
   expect(await page.evaluate(() => typeof (window as unknown as { process?: unknown }).process)).toBe("undefined");
-  // Le pont typé fonctionne et ne renvoie que la version.
+  // Le pont typé fonctionne et n'expose que les familles d'appels prévues (rien d'Electron ni de Node).
   expect(await page.evaluate(() => (window as unknown as AppWindow).api.app.version())).toBe("0.1.0");
-  expect(Object.keys(await page.evaluate(() => (window as unknown as AppWindow).api))).toEqual(["app"]);
+  expect(Object.keys(await page.evaluate(() => (window as unknown as AppWindow).api))).toEqual(["app", "auth", "team", "vehicles", "photos", "activity", "documents"]);
 });
 
-test("le parc affiche les 6 véhicules de démo avec leur numéro de dossier", async () => {
+test("le parc affiche les 5 véhicules de démo récents ; la vente de plus de 7 jours est dans Vendus", async () => {
   await expect(page.getByRole("heading", { name: "Le parc" })).toBeVisible();
-  await expect(page.locator("tbody tr")).toHaveCount(6);
+  await expect(page.locator("tbody tr")).toHaveCount(5);
   await expect(page.getByText(/^FC-\d{4}-0001$/)).toBeVisible();
+  await page.getByRole("link", { name: /dans la page Vendus/ }).click();
+  await expect(page.getByRole("heading", { name: "Vendus" })).toBeVisible();
+  await expect(page.locator("tbody tr")).toHaveCount(1);
+  await expect(page.locator("tbody")).toContainText("Mercedes-Benz GLA");
 });
 
 test("le vendeur ne voit ni marge ni suppression", async () => {

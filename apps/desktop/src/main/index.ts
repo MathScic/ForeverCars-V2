@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { app, BrowserWindow } from "electron";
 import { registerIpc } from "./ipc";
 import { denyAllPermissions, hardenWebContents } from "./security";
+import { revokeSessionOnQuit } from "./supabase/client";
 
 // Tests e2e : dossier de données isolé, pour ne pas toucher aux données de l'utilisateur.
 if (process.env.FOREVERCARS_USER_DATA) app.setPath("userData", process.env.FOREVERCARS_USER_DATA);
@@ -45,4 +46,15 @@ void app.whenReady().then(() => {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+// Avant de quitter : déconnexion (on se reconnecte à chaque ouverture de l'app).
+let revoked = false;
+app.on("before-quit", (event) => {
+  if (revoked) return;
+  event.preventDefault();
+  revoked = true;
+  void revokeSessionOnQuit()
+    .catch(() => undefined)
+    .finally(() => app.quit());
 });

@@ -23,3 +23,15 @@ export const GEARBOX_LABELS = {
   manuelle: "Manuelle",
   automatique: "Automatique",
 } as const;
+
+/** Types de carrosserie du site (filtres et cartes). */
+export const BODY_LABELS = {
+  berline: "Berline",
+  citadine: "Citadine",
+  suv: "SUV",
+  break: "Break",
+  coupe: "Coupé",
+  cabriolet: "Cabriolet",
+  monospace: "Monospace",
+  utilitaire: "Utilitaire",
+} as const;

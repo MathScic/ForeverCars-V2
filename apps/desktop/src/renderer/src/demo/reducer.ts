@@ -11,6 +11,7 @@ export type DemoAction =
   | { type: "toggleReserved"; id: string; now: string }
   | { type: "setDocument"; id: string; doc: string; done: boolean; now: string }
   | { type: "toggleFeatured"; id: string; now: string }
+  | { type: "unpublish"; id: string; now: string }
   | { type: "remove"; id: string; now: string }
   | { type: "reset"; state: DemoState };
 
@@ -45,6 +46,7 @@ export function demoReducer(state: DemoState, action: DemoAction): DemoState {
     case "markSold":
     case "toggleReserved":
     case "toggleFeatured":
+    case "unpublish":
     case "remove":
       return applyVehicleAction(state, action);
     case "setDocument": {
@@ -60,7 +62,7 @@ export function demoReducer(state: DemoState, action: DemoAction): DemoState {
 
 function applyVehicleAction(
   state: DemoState,
-  action: Extract<DemoAction, { type: "publish" | "markSold" | "toggleReserved" | "toggleFeatured" | "remove" }>,
+  action: Extract<DemoAction, { type: "publish" | "markSold" | "toggleReserved" | "toggleFeatured" | "unpublish" | "remove" }>,
 ): DemoState {
   const target = state.vehicles.find((v) => v.id === action.id);
   if (!target) return state;
@@ -81,6 +83,9 @@ function applyVehicleAction(
       const label = target.isFeatured ? "Retiré des coups de cœur" : "Coup de cœur";
       return { ...state, vehicles: update(state, target.id, now, { isFeatured: !target.isFeatured }), activity: log(state, now, `${label} : ${nameOf(target)}`) };
     }
+    case "unpublish":
+      if (target.status !== "online" && target.status !== "reserved") return state;
+      return { ...state, vehicles: update(state, target.id, now, { status: "draft", isFeatured: false }), activity: log(state, now, `Retiré du site : ${nameOf(target)}`) };
     case "remove":
       return { ...state, vehicles: state.vehicles.filter((v) => v.id !== target.id), activity: log(state, now, `Supprimé : ${nameOf(target)}`) };
   }

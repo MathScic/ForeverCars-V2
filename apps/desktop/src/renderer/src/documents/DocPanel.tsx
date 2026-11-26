@@ -1,42 +1,29 @@
+import { useState } from "react";
 import { formatMileage, formatPrice } from "@forevercars/shared";
 import type { DemoVehicle } from "../demo/types";
+import { errorText, useStore } from "../data/store";
 import Card from "../ui/Card";
-import { Tag } from "../ui/Badge";
-import { DOCS, docProgress, firstMissing, type DocType } from "./catalog";
+import { DOCS, docProgress, firstMissing } from "./catalog";
+import DocRow from "./DocRow";
 
-interface Props {
-  vehicle: DemoVehicle;
-  onSet: (doc: string, done: boolean) => void;
-}
-
-const action =
-  "inline-flex h-11 min-w-[124px] items-center justify-center rounded-sm px-5 font-display text-[11px] font-semibold uppercase tracking-[0.2em] [font-stretch:112%] transition-colors duration-300";
-
-function DocRow({ doc, ready, onSet }: { doc: DocType; ready: boolean; onSet: Props["onSet"] }) {
-  const tag = ready ? <Tag tone="success">{doc.kind === "gen" ? "Généré" : "Reçu"}</Tag> : doc.kind === "gen" ? <Tag>À générer</Tag> : <Tag tone="danger">Manquant</Tag>;
-  return (
-    <li className="flex flex-wrap items-center gap-4 border-t border-line py-4">
-      <span className="min-w-0 flex-1 text-[15px]">{doc.name}</span>
-      {tag}
-      {doc.kind === "file" ? (
-        // Démo : le fichier choisi marque la pièce comme reçue (l'envoi réel arrive avec Supabase Storage).
-        <label className={`${action} cursor-pointer border border-line-strong text-ivory hover:border-ivory has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-orange`}>
-          {ready ? "Remplacer" : "Ajouter"}
-          <input type="file" accept="image/*,application/pdf" className="sr-only" onChange={(e) => e.target.files?.length && onSet(doc.id, true)} />
-        </label>
-      ) : (
-        <button type="button" onClick={() => onSet(doc.id, true)} className={`${action} ${ready ? "border border-line-strong text-ivory hover:border-ivory" : "bg-orange text-carbon hover:bg-orange/90"}`}>
-          {ready ? "Regénérer" : "Générer"}
-        </button>
-      )}
-    </li>
-  );
-}
-
-// Dossier d'un véhicule (maquette backoffice-docs.html) : 4 pièces à fournir, 3 documents générés.
-export default function DocPanel({ vehicle: v, onSet }: Props) {
+// Dossier d'un véhicule (maquette backoffice-docs.html) : 4 pièces à fournir, 3 documents de vente.
+export default function DocPanel({ vehicle: v }: { vehicle: DemoVehicle }) {
+  const { mode, addDocument, removeDocument, openDocument, notify } = useStore();
+  const [busy, setBusy] = useState(false);
   const { done, total } = docProgress(v.documents);
   const missing = firstMissing(v.documents);
+
+  const run = async (action: () => Promise<void>) => {
+    setBusy(true);
+    try {
+      await action();
+    } catch (e) {
+      notify(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <Card className="p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -54,9 +41,20 @@ export default function DocPanel({ vehicle: v, onSet }: Props) {
         </span>
       </div>
       {missing && <p className="mt-5 text-sm text-orange">À demander en priorité : {missing.name.toLowerCase()}.</p>}
+      {mode === "live" && <p className="mt-2 text-xs text-silver">Rangées dans un espace privé : jamais visibles sur le site.</p>}
+      {busy && <p role="status" className="mt-2 text-xs text-silver">Envoi en cours…</p>}
       <ul className="mt-6">
         {DOCS.map((d) => (
-          <DocRow key={d.id} doc={d} ready={Boolean(v.documents?.[d.id])} onSet={onSet} />
+          <DocRow
+            key={d.id}
+            doc={d}
+            ready={Boolean(v.documents?.[d.id])}
+            live={mode === "live"}
+            busy={busy}
+            onAdd={(file) => void run(() => addDocument(v.id, d.id, file))}
+            onOpen={() => void run(() => openDocument(v.id, d.id))}
+            onRemove={() => void run(() => removeDocument(v.id, d.id))}
+          />
         ))}
       </ul>
     </Card>

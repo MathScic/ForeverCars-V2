@@ -9,11 +9,16 @@ const EXTERNAL_HOSTS = new Set(["forevercars.fr", "www.forevercars.fr"]);
 // (sinon une image lâchée dans la fenêtre remplacerait l'application).
 const RENDERER_FILE = pathToFileURL(join(__dirname, "../renderer/index.html")).href;
 
+// Windows ignore la casse des chemins : « file:///c:/… » et « file:///C:/… » désignent le même fichier.
+const sameCase = (url: string) => (process.platform === "win32" ? url.toLowerCase() : url);
+
 /** L'URL appartient-elle à l'application (serveur de dev ou page construite) ? */
 export function isAppUrl(url: string): boolean {
   const devUrl = process.env.ELECTRON_RENDERER_URL;
   if (devUrl && url.startsWith(devUrl)) return true;
-  return url === RENDERER_FILE || url.startsWith(`${RENDERER_FILE}#`);
+  const page = sameCase(url);
+  const file = sameCase(RENDERER_FILE);
+  return page === file || page.startsWith(`${file}#`);
 }
 
 function openExternalIfAllowed(url: string): void {

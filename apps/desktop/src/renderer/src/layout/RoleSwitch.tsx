@@ -1,4 +1,4 @@
-import { useDemoStore } from "../demo/store";
+import { useStore } from "../data/store";
 import type { Role } from "../demo/types";
 
 const roles: { value: Role; label: string }[] = [
@@ -8,7 +8,7 @@ const roles: { value: Role; label: string }[] = [
 
 // Uniquement pour l'ébauche : simule la connexion d'un admin ou d'un vendeur.
 export default function RoleSwitch() {
-  const { state, dispatch } = useDemoStore();
+  const { state, dispatch } = useStore();
   return (
     <div role="radiogroup" aria-label="Rôle simulé" className="flex items-center gap-1 rounded-full border border-line-strong p-1">
       {roles.map((r) => {

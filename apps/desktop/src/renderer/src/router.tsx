@@ -2,6 +2,7 @@ import { createHashRouter } from "react-router";
 import Shell from "./layout/Shell";
 import Dashboard from "./pages/Dashboard";
 import Documents from "./pages/Documents";
+import SoldArchive from "./pages/SoldArchive";
 import Stats from "./pages/Stats";
 import Team from "./pages/Team";
 import Wizard from "./wizard/Wizard";
@@ -16,6 +17,7 @@ export const router = createHashRouter([
       { path: "vendre", element: <Wizard /> },
       { path: "vendre/:id", element: <Wizard /> },
       { path: "succes/:id", element: <Success /> },
+      { path: "vendus", element: <SoldArchive /> },
       { path: "documents", element: <Documents /> },
       { path: "statistiques", element: <Stats /> },
       { path: "equipe", element: <Team /> },

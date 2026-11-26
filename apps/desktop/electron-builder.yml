@@ -1,0 +1,33 @@
+# Installateur Windows : un double-clic installe l'app, l'icône « ForeverCars » est posée sur le bureau,
+# et l'app s'ouvre directement (aucun terminal). Commande : pnpm --filter desktop dist
+appId: fr.forevercars.backoffice
+productName: ForeverCars Back-Office
+executableName: ForeverCars
+directories:
+  # Hors de OneDrive : plusieurs centaines de Mo, que OneDrive verrouille pendant qu'il les synchronise.
+  output: ${env.LOCALAPPDATA}/ForeverCars-build
+  buildResources: resources
+# Seul le code construit et les icônes partent dans l'app (le filigrane est déjà intégré au code).
+files:
+  - out/**
+  - resources/icon.png
+# Electron déjà téléchargé par pnpm : pas de second téléchargement.
+electronDist: node_modules/electron/dist
+# sharp (photos) est un binaire natif prêt pour Windows : rien à recompiler, mais il doit rester hors de l'archive.
+npmRebuild: false
+asarUnpack:
+  - "**/node_modules/sharp/**"
+  - "**/node_modules/@img/**"
+win:
+  target:
+    - target: nsis
+      arch: x64
+  icon: resources/icon.ico
+nsis:
+  oneClick: true
+  perMachine: false
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: ForeverCars
+  artifactName: ForeverCars-Installation-${version}.${ext}
+publish: null

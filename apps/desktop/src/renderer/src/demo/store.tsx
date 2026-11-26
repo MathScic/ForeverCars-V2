@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
+import { StoreContext, type Store } from "../data/store";
+import Notice from "../ui/Notice";
 import { demoReducer, type DemoAction } from "./reducer";
 import { createSeedState } from "./seed";
 import type { DemoState } from "./types";
 
-// Les données de démo sont conservées localement entre deux lancements.
+// Mode démo (tests, présentation) : données fictives conservées sur ce poste, rien n'est envoyé.
 // v2 : ajout du numéro de dossier, de la couleur, de la garantie et des exports.
 const STORAGE_KEY = "forevercars-demo-v2";
 
@@ -23,37 +25,61 @@ function load(): DemoState {
   }
 }
 
-interface DemoStore {
-  state: DemoState;
-  dispatch: (action: DemoAction) => void;
-  isAdmin: boolean;
-}
-
-const DemoStoreContext = createContext<DemoStore | null>(null);
+export const nowIso = () => new Date().toISOString();
 
 export function DemoStoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(demoReducer, undefined, load);
+  const [notice, setNotice] = useState<string | null>(null);
+  const closeNotice = useCallback(() => setNotice(null), []);
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
-      // stockage indisponible : l'ébauche continue en mémoire
+      // stockage indisponible : la démo continue en mémoire
     }
   }, [state]);
 
-  const value = useMemo(() => ({ state, dispatch, isAdmin: state.role === "admin" }), [state]);
-  return <DemoStoreContext.Provider value={value}>{children}</DemoStoreContext.Provider>;
-}
+  const store = useMemo<Store>(() => {
+    const find = (id: string) => state.vehicles.find((v) => v.id === id) ?? null;
+    return {
+      mode: "demo",
+      state,
+      isAdmin: state.role === "admin",
+      userName: state.role === "admin" ? "Clément" : "Vendeur",
+      dispatch: async (a) => dispatch(a.type === "setRole" ? a : ({ ...a, now: nowIso() } as DemoAction)),
+      act: async (id, type) => {
+        dispatch({ type, id, now: nowIso() });
+        return type === "remove" ? null : find(id);
+      },
+      saveVehicle: async (vehicle) => {
+        const now = nowIso();
+        const saved = { ...vehicle, updatedAt: now, revision: (vehicle.revision ?? 0) + 1 };
+        dispatch({ type: "save", vehicle: saved, now });
+        return saved;
+      },
+      claimVehicle: async (id) => {
+        const v = find(id);
+        if (!v) throw new Error("Ce véhicule n'existe plus.");
+        return v;
+      },
+      addPhotos: async (_vehicleId, files, onProgress) => {
+        onProgress(files.length);
+        return files.map((f) => ({ id: crypto.randomUUID(), url: URL.createObjectURL(f), name: f.name }));
+      },
+      orderPhotos: async () => undefined, // la démo garde l'ordre dans la fiche, enregistrée à chaque étape
+      addDocument: async (id, doc) => dispatch({ type: "setDocument", id, doc, done: true, now: nowIso() }),
+      removeDocument: async (id, doc) => dispatch({ type: "setDocument", id, doc, done: false, now: nowIso() }),
+      openDocument: async () => setNotice("Démo : aucun vrai fichier n'est rangé dans ce dossier."),
+      notify: setNotice,
+      reset: () => dispatch({ type: "reset", state: createSeedState() }),
+    };
+  }, [state]);
 
-export function useDemoStore(): DemoStore {
-  const store = useContext(DemoStoreContext);
-  if (!store) throw new Error("useDemoStore doit être utilisé dans <DemoStoreProvider>");
-  return store;
-}
-
-export const nowIso = () => new Date().toISOString();
-
-export function resetDemo(dispatch: DemoStore["dispatch"]): void {
-  dispatch({ type: "reset", state: createSeedState() });
+  return (
+    <StoreContext.Provider value={store}>
+      {children}
+      <Notice message={notice} onClose={closeNotice} />
+    </StoreContext.Provider>
+  );
 }

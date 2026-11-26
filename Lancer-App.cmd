@@ -1,6 +1,6 @@
 @echo off
 rem Lance l'application du garage (back-office) sur ce PC (double-clic).
-rem Version de demonstration : donnees fictives, rien n'est envoye au site pour l'instant.
+rem Branchee sur le vrai parc (Supabase) : se connecter avec son compte. Ce qui est publie part sur forevercars.fr.
 cd /d "%~dp0"
 echo Installation des dependances (rapide si deja faite)...
 call pnpm install --frozen-lockfile

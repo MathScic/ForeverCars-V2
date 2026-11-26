@@ -1,25 +1,28 @@
 import Card from "../ui/Card";
 import { Field, Input, Select } from "../ui/Field";
-import type { Fuel, Gearbox } from "../demo/types";
-import { FUEL_LABELS, GEARBOX_LABELS } from "../services/equipment";
+import { useStore } from "../data/store";
+import type { Body, Fuel, Gearbox } from "../demo/types";
+import { BODY_LABELS, FUEL_LABELS, GEARBOX_LABELS } from "../services/equipment";
+import PlateField from "./PlateField";
 import PlateLookupBox from "./PlateLookupBox";
 import type { StepProps } from "./Wizard";
 
 const num = (value: string) => (value === "" ? 0 : Number(value));
 
 export default function StepIdentification({ vehicle: v, onChange, errors }: StepProps) {
+  const { mode } = useStore();
   return (
     <Card className="p-6 space-y-6">
       <div className="grid grid-cols-[220px_1fr] gap-5 items-start">
         <Field label="N° de dossier" error={errors.fileNumber} hint="Attribué automatiquement">
           <Input value={v.fileNumber} onChange={(e) => onChange({ fileNumber: e.target.value })} className="font-mono" />
         </Field>
-        <PlateLookupBox
-          plate={v.plate}
-          error={errors.plate}
-          onPlate={(plate) => onChange({ plate })}
-          onFound={(result) => onChange(result)}
-        />
+        {/* Démo : recherche par plaque simulée. Réel : plaque saisie à la main (aucun service branché). */}
+        {mode === "demo" ? (
+          <PlateLookupBox plate={v.plate} error={errors.plate} onPlate={(plate) => onChange({ plate })} onFound={(result) => onChange(result)} />
+        ) : (
+          <PlateField plate={v.plate} error={errors.plate} onPlate={(plate) => onChange({ plate })} />
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-5">
@@ -53,6 +56,12 @@ export default function StepIdentification({ vehicle: v, onChange, errors }: Ste
         </Field>
         <Field label="Puissance (ch)" error={errors.powerHp}>
           <Input type="number" min={0} value={v.powerHp || ""} onChange={(e) => onChange({ powerHp: num(e.target.value) })} />
+        </Field>
+        <Field label="Carrosserie" hint="Sert au filtre « type » du site">
+          <Select value={v.body ?? ""} onChange={(e) => onChange({ body: (e.target.value || null) as Body | null })}>
+            <option value="">À préciser</option>
+            {Object.entries(BODY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </Select>
         </Field>
         <div className="grid grid-cols-2 gap-5">
           <Field label="Propriétaires">

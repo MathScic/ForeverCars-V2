@@ -4,25 +4,27 @@ import type { StepIndex } from "./draft";
 
 interface Props {
   step: StepIndex;
+  /** Enregistrement en cours : on évite le double clic. */
+  busy?: boolean;
   onBack: () => void;
   onNext: () => void;
   onSaveDraft: () => void;
 }
 
 // À la dernière étape, la publication se fait depuis le bloc « Prêt à publier ».
-export default function WizardFooter({ step, onBack, onNext, onSaveDraft }: Props) {
+export default function WizardFooter({ step, busy = false, onBack, onNext, onSaveDraft }: Props) {
   return (
     <div className="flex items-center justify-between gap-4 pt-6 border-t border-line">
-      <Button variant="ghost" onClick={onBack}>
+      <Button variant="ghost" onClick={onBack} disabled={busy}>
         <ArrowLeft size={16} /> {step === 0 ? "Retour au parc" : "Précédent"}
       </Button>
       {step === 3 ? (
-        <Button variant="outline" onClick={onSaveDraft}>
+        <Button variant="outline" onClick={onSaveDraft} disabled={busy}>
           <Save size={16} /> Garder en brouillon
         </Button>
       ) : (
-        <Button size="lg" onClick={onNext}>
-          Suivant <ArrowRight size={16} />
+        <Button size="lg" onClick={onNext} disabled={busy}>
+          {busy ? "Enregistrement…" : "Suivant"} <ArrowRight size={16} />
         </Button>
       )}
     </div>

@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { _electron as electron, type ElectronApplication, type Page } from "@playwright/test";
 
-/** Lance l'app construite dans un dossier de données neuf (n'écrase pas celles de l'utilisateur). */
+/** Lance l'app construite en mode démo (aucune connexion à Supabase), dans un dossier de données neuf. */
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
   // Le terminal de VS Code définit ELECTRON_RUN_AS_NODE=1, qui empêche Electron de démarrer.
   const env = { ...process.env };
@@ -11,7 +11,7 @@ export async function launchApp(): Promise<{ app: ElectronApplication; page: Pag
   const app = await electron.launch({
     // Lance le dossier de l'app (package.json → out/main/index.js) pour avoir sa vraie version.
     args: [join(__dirname, "..")],
-    env: { ...env, FOREVERCARS_USER_DATA: mkdtempSync(join(tmpdir(), "fc-e2e-")) } as Record<string, string>,
+    env: { ...env, FOREVERCARS_DEMO: "1", FOREVERCARS_USER_DATA: mkdtempSync(join(tmpdir(), "fc-e2e-")) } as Record<string, string>,
   });
   const page = await app.firstWindow();
   await page.waitForLoadState("domcontentloaded");

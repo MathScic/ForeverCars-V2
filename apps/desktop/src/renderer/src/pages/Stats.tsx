@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { formatPrice } from "@forevercars/shared";
-import { useDemoStore } from "../demo/store";
+import { useStore } from "../data/store";
 import Card from "../ui/Card";
 import Bars from "../stats/Bars";
 import HBar from "../stats/HBar";
@@ -21,7 +21,7 @@ function Panel({ title, note, children }: { title: string; note?: string; childr
 
 // Statistiques (maquette backoffice-stats.html). La marge, donnée interne, n'apparaît que pour l'admin.
 export default function Stats() {
-  const { state, isAdmin } = useDemoStore();
+  const { state, isAdmin } = useStore();
   const [period, setPeriod] = useState<Period>("12m");
   const [now] = useState(() => Date.now());
   const sold = soldBetween(state.vehicles, periodStart(period, now), now);

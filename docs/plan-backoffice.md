@@ -33,6 +33,12 @@ mises à jour automatiques, certificat de signature à prévoir.
 
 À trancher plus tard : identification par numéro VIN (en plus du n° de dossier).
 
+**Mise à jour du 25/11/2026** : le site lit déjà Supabase (phase 9, étapes 1 et 2 faites ; synchro Sanity → Supabase
+toutes les 10 min). L'app est branchée **en ligne d'abord** (phases 6 et 7 : connexion, parc réel, mise en vente avec
+photos), le **hors-ligne** (phase 5) vient ensuite. Sanity dépanne tant que l'app n'est pas validée ; un véhicule créé ou
+modifié dans l'app n'est plus touché par la synchro. Une fois l'app validée : bascule complète (synchro arrêtée,
+`SANITY_SYNC_ACTIVE` à false dans l'app, Studio et dépendances Sanity retirés du site).
+
 ## Phases
 
 Chaque phase : **objectif → étapes → tests → critères de sortie**. Commence chaque phase par un schéma de ce qu'on va construire.

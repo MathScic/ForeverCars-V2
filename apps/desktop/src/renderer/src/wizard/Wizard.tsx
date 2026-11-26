@@ -1,29 +1,23 @@
-import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { nowIso, useDemoStore } from "../demo/store";
-import type { DemoVehicle } from "../demo/types";
-import { generateDescription } from "../services/description";
-import { nextFileNumber } from "../services/fileNumber";
-import { emptyVehicle, finalize, STEPS, validateStep, type Errors, type StepIndex } from "./draft";
+import type { Vehicle } from "../../../shared/model";
+import { STEPS, type Errors, type StepIndex } from "./draft";
+import EditActions from "./EditActions";
 import Stepper from "./Stepper";
 import StepIdentification from "./StepIdentification";
 import StepPhotos from "./StepPhotos";
 import StepPreview from "./StepPreview";
 import StepPricing from "./StepPricing";
+import { useWizard } from "./useWizard";
 import WizardFooter from "./WizardFooter";
 
 export interface StepProps {
-  vehicle: DemoVehicle;
-  onChange: (patch: Partial<DemoVehicle>) => void;
+  vehicle: Vehicle;
+  onChange: (patch: Partial<Vehicle>) => void;
   errors: Errors;
   onPublish: () => void;
 }
 
 const views = [StepIdentification, StepPhotos, StepPricing, StepPreview];
-
-// Tant que la description n'a pas été retouchée à la main, elle suit la fiche.
-const withAutoDescription = (v: DemoVehicle): DemoVehicle =>
-  v.descriptionIsAuto ? { ...v, description: generateDescription(v) } : v;
 
 // Une clé par véhicule : changer d'URL repart d'un état propre.
 export default function WizardRoute() {
@@ -32,60 +26,35 @@ export default function WizardRoute() {
 }
 
 function Wizard({ id }: { id?: string }) {
-  const { state, dispatch } = useDemoStore();
   const navigate = useNavigate();
-  const existing = state.vehicles.find((v) => v.id === id);
-  const [vehicle, setVehicle] = useState<DemoVehicle>(() => {
-    if (existing) return existing;
-    const now = nowIso();
-    const fileNumber = nextFileNumber(state.vehicles.map((v) => v.fileNumber), new Date(now).getFullYear());
-    return emptyVehicle(`v-${Date.now()}`, now, fileNumber);
-  });
-  const [step, setStep] = useState<StepIndex>(0);
-  const [errors, setErrors] = useState<Errors>({});
-  // Change d'étape et remonte en haut de la page.
-  const goTo = (s: StepIndex) => {
-    setStep(s);
-    document.querySelector("main")?.scrollTo({ top: 0 });
-  };
+  const w = useWizard(id);
+  if (w.loadError) return <p role="alert" className="text-orange">{w.loadError}</p>;
+  if (!w.vehicle) return <p role="status" className="text-silver">Ouverture de la fiche…</p>;
 
-  const onChange = (patch: Partial<DemoVehicle>) => setVehicle((v) => withAutoDescription({ ...v, ...patch }));
-  // Brouillon automatique : chaque étape validée est enregistrée.
-  const save = () => dispatch({ type: "save", vehicle: finalize(vehicle), now: nowIso() });
-
-  const next = () => {
-    const found = validateStep(step, vehicle);
-    setErrors(found);
-    if (Object.keys(found).length > 0) return;
-    save();
-    goTo(Math.min(3, step + 1) as StepIndex);
-  };
-
-  const publish = () => {
-    save();
-    // Simulation : la vraie logique de publication sera écrite en phase 7.
-    dispatch({ type: "publish", id: vehicle.id, now: nowIso() });
-    navigate(`/succes/${vehicle.id}`);
-  };
-
-  const View = views[step]!;
+  const View = views[w.step]!;
   return (
     <div className="mx-auto grid max-w-5xl gap-10">
-      <div>
-        <span className="fc-eyebrow">Dossier {vehicle.fileNumber}</span>
-        <h1 className="fc-h2 mt-5">{existing ? `Modifier : ${existing.brand} ${existing.model}` : "Mettre un véhicule en vente"}</h1>
-        <p className="mt-4 text-silver">Brouillon enregistré à chaque étape : rien ne se perd si vous fermez l&apos;application.</p>
+      <div className="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <span className="fc-eyebrow">Dossier {w.vehicle.fileNumber}</span>
+          <h1 className="fc-h2 mt-5">{id ? `Modifier : ${w.vehicle.brand} ${w.vehicle.model}` : "Mettre un véhicule en vente"}</h1>
+          <p className="mt-4 text-silver">Brouillon enregistré à chaque étape : rien ne se perd si vous fermez l&apos;application.</p>
+        </div>
+        {id && <EditActions vehicle={w.vehicle} />}
       </div>
-      <Stepper steps={STEPS} current={step} onSelect={(s) => s < step && goTo(s)} />
-      <View vehicle={vehicle} onChange={onChange} errors={errors} onPublish={publish} />
+      <Stepper steps={STEPS} current={w.step} onSelect={(s) => s < w.step && w.goTo(s)} />
+      <View vehicle={w.vehicle} onChange={w.onChange} errors={w.errors} onPublish={() => void w.publish()} />
+      {w.saveError && (
+        <p role="alert" className="text-sm text-danger">
+          {w.saveError}
+        </p>
+      )}
       <WizardFooter
-        step={step}
-        onBack={() => (step === 0 ? navigate("/") : goTo((step - 1) as StepIndex))}
-        onNext={next}
-        onSaveDraft={() => {
-          save();
-          navigate("/");
-        }}
+        step={w.step}
+        busy={w.busy}
+        onBack={() => (w.step === 0 ? navigate("/") : w.goTo((w.step - 1) as StepIndex))}
+        onNext={() => void w.next()}
+        onSaveDraft={() => void w.saveDraft()}
       />
     </div>
   );
