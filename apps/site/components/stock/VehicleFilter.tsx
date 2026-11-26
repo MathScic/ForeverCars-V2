@@ -43,7 +43,7 @@ function Chips({ group, options, value, onPick }: { group: string; options: [str
   );
 }
 
-// Filtres sur plusieurs lignes (choix validé) : une ligne par critère, options qui passent à la ligne.
+// Une ligne par critère, options qui passent à la ligne. Rangé dans FilterDrawer (replié par défaut).
 export default function VehicleFilters({ onFilterChange, brands = ["Tous"], maxPriceLimit = 50000 }: FiltersProps) {
   const [filters, setFilters] = useState<FilterState>({ brand: "Tous", fuel: "Tous", transmission: "Tous", maxPrice: maxPriceLimit });
 
@@ -56,7 +56,7 @@ export default function VehicleFilters({ onFilterChange, brands = ["Tous"], maxP
   const fill = ((filters.maxPrice - MIN_PRICE) / (maxPriceLimit - MIN_PRICE)) * 100;
 
   return (
-    <div className="rounded-md border border-line bg-graphite" role="search" aria-label="Filtres">
+    <div className="border-t border-line" role="search" aria-label="Filtres">
       <div className={row}>
         <span className={label}>Marque</span>
         <Chips group="Marque" options={brands.map((b) => [b === "Tous" ? "Toutes" : b, b])} value={filters.brand} onPick={(v) => handleChange("brand", v)} />

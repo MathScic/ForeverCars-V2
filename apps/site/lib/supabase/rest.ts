@@ -1,5 +1,6 @@
 // Lecture publique de Supabase par le site : clé publiable, droits « site » (véhicules visibles et leurs photos).
-// Mis en cache 60 s et étiqueté « vehicles » : une publication depuis l'app apparaît en moins d'une minute.
+// Étiqueté « vehicles » : la base vide ce cache dès qu'un véhicule change (app/api/revalidate).
+// Les 60 s restent un filet de sécurité si cet appel n'arrive pas.
 import { env } from "@/lib/env";
 
 export async function rest<T>(path: string): Promise<T> {

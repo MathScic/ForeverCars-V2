@@ -1,12 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Vehicle } from "@/lib/types/vehicle";
 import { urlForImage } from "@/lib/photos";
+import { useNearScreen } from "@/components/ui/useNearScreen";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
   onClick: () => void;
-  /** Les premières cartes sont visibles tout de suite : chargées en priorité (LCP). */
+  /** La première carte est visible tout de suite : sa photo est chargée en priorité (LCP). */
   priority?: boolean;
 }
 
@@ -17,11 +20,13 @@ export default function VehicleCard({ vehicle, onClick, priority = false }: Vehi
   const imageUrl = builder ? builder.width(720).height(540).quality(78).url() : null;
   const isReserved = vehicle.status === "reserved";
   const name = `${vehicle.brand} ${vehicle.model}`;
+  // Les autres photos n'arrivent qu'à l'approche de l'écran (la 1re photo garde toute la bande passante).
+  const [frame, near] = useNearScreen<HTMLButtonElement>(!priority);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-md border border-line bg-graphite transition-[border-color,transform] duration-[600ms] ease-[var(--ease-spring)] hover:-translate-y-1 hover:border-orange/45">
-      <button type="button" onClick={onClick} aria-label={`Aperçu ${name}`} className="relative aspect-[4/3] w-full overflow-hidden bg-graphite-2">
-        {imageUrl ? (
+      <button ref={frame} type="button" onClick={onClick} aria-label={`Aperçu ${name}`} className="relative aspect-[4/3] w-full overflow-hidden bg-graphite-2">
+        {imageUrl && near ? (
           <Image
             src={imageUrl}
             alt=""
@@ -32,7 +37,7 @@ export default function VehicleCard({ vehicle, onClick, priority = false }: Vehi
             blurDataURL={vehicle.images?.[0]?.asset?.metadata?.lqip}
             className={`object-cover transition-transform duration-[1200ms] ease-[var(--ease-spring)] group-hover:scale-105 ${isReserved ? "brightness-75" : ""}`}
           />
-        ) : (
+        ) : imageUrl ? null : (
           <span className="absolute inset-0 grid place-items-center text-silver">Image à venir</span>
         )}
         {/* Vignettage : unifie des photos prises en atelier et en extérieur */}
@@ -57,7 +62,7 @@ export default function VehicleCard({ vehicle, onClick, priority = false }: Vehi
         </p>
         <div className="mt-auto flex items-center justify-between border-t border-line pt-4">
           <span className={`fc-price text-[22px] ${isReserved ? "!text-ivory" : ""}`}>{vehicle.price.toLocaleString("fr-FR")} €</span>
-          <Link href={`/stock/${vehicle.slug}`} className="fc-label py-3 transition-[color,transform] duration-500 hover:text-orange group-hover:translate-x-1">
+          <Link href={`/stock/${vehicle.slug}`} prefetch={false} className="fc-label py-3 transition-[color,transform] duration-500 hover:text-orange group-hover:translate-x-1">
             Voir la fiche →
           </Link>
         </div>
